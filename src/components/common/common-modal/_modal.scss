@@ -1,0 +1,180 @@
+.modal-backdrop {
+  position: fixed;
+  overflow: hidden;
+  z-index: 10;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  vertical-align: middle;
+}
+
+.modal-content-wrapper {
+  max-height: fit-content;
+  background: white;
+  margin: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: fixed;
+  height: -moz-max-content;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  justify-content: center;
+  display: flex;
+  padding: 30px;
+  border-radius: 10px;
+  align-content: center;
+  max-width: 92vw;
+}
+
+.MuiModal-root {
+  &.bottom-sheet {
+    .modal-content-wrapper {
+      width: auto;
+      max-width: 36rem;
+      min-width: 50vw;
+      top: auto;
+      border-radius: 12px 12px 0 0;
+      height: auto;
+      overflow-y: unset;
+      overflow-x: unset;
+      padding: 1rem;
+
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      ::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px #1DBECB;
+        border-radius: 10px;
+        margin-top: 60px;
+        margin-bottom: 60px
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #1DBECB;
+        border-radius: 10px;
+      }
+
+      @media (max-width: 768px) {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .modal-content {
+        position: relative;
+
+        .wrapper-content {
+          min-height: 25%;
+          max-height: calc(100vh - 407px);
+          padding-right: 10px;
+
+          &.scroll-content {
+            overflow: auto;
+          }
+        }
+
+        .icon-close {
+          color: transparent;
+          position: absolute;
+          right: 0;
+          top: 0;
+        }
+      }
+    }
+
+    &.wrapper-pilih {
+      .modal-content-wrapper {
+        height: 407px;
+
+        @media (min-width: 768px) {
+          height: unset;
+          border-radius: 10px;
+          top: 0;
+          max-width: 420px;
+          min-width: unset;
+        }
+
+        .modal-content {
+          height: unset;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+
+          .wrapper-content {
+            height: unset;
+          }
+        }
+      }
+    }
+
+    &.wrapper-pilih-courier {
+      .modal-content-wrapper {
+        height: 330px;
+
+        @media (min-width: 768px) {
+          height: unset;
+        }
+
+        .modal-content {
+          height: unset;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+
+          .wrapper-content {
+            height: unset;
+          }
+        }
+      }
+
+      .modal-content {
+        justify-content: unset !important;
+
+        .css-hyxlzm {
+          margin-right: -0.7rem;
+        }
+      }
+    }
+
+    &.wrapper-notif {
+      &>div {
+        background-color: transparent;
+      }
+
+      .modal-content-wrapper {
+        background: transparent;
+        height: unset;
+
+        .modal-content {
+          background: #ffffffbd;
+          border: 2px solid #00d9b5;
+          padding: 0.8rem;
+          border-radius: 10px;
+
+          .box {
+            align-items: center;
+          }
+
+          .img-box {
+            width: 47px;
+            margin-right: 0.8rem;
+          }
+
+          .des {
+            color: #686868;
+          }
+
+          .title {
+            color: #6e2c91;
+            font-size: 18px;
+            text-transform: uppercase;
+          }
+        }
+      }
+    }
+  }
+}

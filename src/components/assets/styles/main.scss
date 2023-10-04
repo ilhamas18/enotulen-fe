@@ -1,0 +1,39 @@
+@import url("https://fonts.cdnfonts.com/css/satoshi");
+
+@import "~tailwindcss/base";
+@import "~tailwindcss/components";
+@import "~tailwindcss/utilities";
+
+@import "./satoshi.scss";
+
+@layer base {
+  body {
+    @apply font-satoshi font-normal text-base text-body bg-whiten relative z-1;
+  }
+}
+
+@layer utilities {
+  /* Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .chat-height {
+    @apply h-[calc(100vh_-_8.125rem)] lg:h-[calc(100vh_-_5.625rem)];
+  }
+  .inbox-height {
+    @apply h-[calc(100vh_-_8.125rem)] lg:h-[calc(100vh_-_5.625rem)];
+  }
+}
+
+@import url("../../common/button/_button.scss");
+@import url("../../common/common-modal/_modal.scss");
+@import url("../../common/switch-button/_switch-button.scss");
+@import url("../../common/text-input/_input.scss");
+
+@import url("../../../app/notulen/detail/[id]/cetak/_cetak.scss");

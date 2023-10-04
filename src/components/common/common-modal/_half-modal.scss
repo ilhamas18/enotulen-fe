@@ -1,0 +1,113 @@
+.half-modal-wrap {
+  overflow: hidden;
+  padding: 20px;
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px #1DBECB;
+    border-radius: 10px;
+    margin-top: 60px;
+    margin-bottom: 60px
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #1DBECB;
+    border-radius: 10px;
+  }
+
+  &.mini-half-card {
+    overflow: hidden;
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+  }
+
+  &.xl {
+    ::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px #002DBB;
+      border-radius: 10px;
+
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #002DBB;
+      border-radius: 10px;
+    }
+  }
+
+  &.axis {
+    ::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px #753C94;
+      border-radius: 10px;
+
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #753C94;
+      border-radius: 10px;
+    }
+  }
+
+  height: 80%;
+
+  .modal-card-custom {
+    height: 100%;
+  }
+}
+
+.custom-half-modal {
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  margin-right: -50%;
+  left: 50%;
+  background-color: white;
+  right: auto;
+  height: 60%;
+  transform: translate(-52%, 10%);
+  bottom: 0;
+  border-radius: 14px;
+  border: none;
+  box-shadow: -2px 5px 44px 7px rgba(136, 156, 166, 0.55);
+  -webkit-box-shadow: -2px 5px 44px 7px rgba(136, 156, 166, 0.55);
+  -moz-box-shadow: -2px 5px 44px 7px rgba(136, 156, 166, 0.55);
+  animation: bottom-to-top 0.25s ease-in;
+
+  &.mini-half-card {
+    height: 35%;
+    padding-bottom: 10px;
+    transform: translate(-52%, 10%);
+  }
+
+  &.close {
+    animation: top-to-bottom 0.25s ease-in;
+  }
+
+  @keyframes bottom-to-top {
+    0% {
+      transform: translate(-52%, 100%);
+    }
+
+    100% {
+      transform: translate(-52%, 10%);
+    }
+  }
+
+  @keyframes top-to-bottom {
+    0% {
+      transform: translate(-52%, 10%);
+    }
+
+    100% {
+      transform: translate(-52%, 100%);
+    }
+  }
+}

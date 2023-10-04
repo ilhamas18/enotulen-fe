@@ -1,0 +1,230 @@
+.form {
+  position: relative;
+  width: 100%;
+
+  &__input {
+    width: 100%;
+    height: 30px;
+    border: 1.5px solid #E2E2E2;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: inherit;
+    outline: none;
+    padding: 1.25rem;
+    background: none;
+
+    &:hover {
+      border-color: #002DBB;
+    }
+
+    &.error {
+      border-color: #EE3E80;
+    }
+  }
+
+  &__input:focus {
+    border-color: #002DBB;
+
+    &.error {
+      border-color: #EE3E80;
+    }
+  }
+
+  &__input_secondary {
+    width: 100%;
+    height: 30px;
+    border: 2px solid #E2E2E2;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: inherit;
+    outline: none;
+    padding: 1.25rem;
+    background: none;
+
+    &:hover {
+      border-color: none;
+    }
+
+    &.error {
+      border-color: #EE3E80;
+    }
+  }
+
+  &__input_secondary:focus {
+    border-color: none;
+
+    &.error {
+      border-color: #EE3E80;
+    }
+  }
+
+  &__input-text-area {
+    width: 100%;
+    height: 140px;
+    border: 2px solid #E2E2E2;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: inherit;
+    outline: none;
+    padding: 1.25rem;
+    background: none;
+
+    &:focus {
+      border-color: #002DBB;
+    }
+
+    &:hover {
+      border-color: #002DBB;
+    }
+
+    &.error {
+      border-color: #EE3E80;
+    }
+  }
+
+  &__label {
+    position: absolute;
+    left: 1rem;
+    top: 0.6rem;
+    padding: 0 0.5rem;
+    font-size: normal;
+    font-weight: 100;
+    color: #68788A;
+    cursor: text;
+    transition: top 200ms ease-in,
+      left 200ms ease-in,
+      font-size 200ms ease-in;
+    background-color: white;
+  }
+
+  &__label_textarea {
+    position: absolute;
+    left: 1rem;
+    top: 3.2rem;
+    padding: 0 0.5rem;
+    color: #68788A;
+    cursor: text;
+    transition: top 200ms ease-in,
+      left 200ms ease-in,
+      font-size 200ms ease-in;
+    background-color: white;
+  }
+
+  .text-error {
+    color: #fc4c00;
+  }
+}
+
+.form__input:focus~.form__label,
+.form__input:not(:placeholder-shown).form__input:not(:focus)~.form__label {
+  top: -0.5rem;
+  font-size: 0.8rem;
+  left: 0.8rem;
+  color: #002DBB;
+
+  &.error {
+    color: #EE3E80;
+  }
+
+  &:center {
+    letter-spacing: 8vh;
+    font-weight: 700;
+    font-family: Arial, Helvetica, sans-serif;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    align-self: center;
+    text-align: center;
+  }
+}
+
+.form__input-text-area:focus~.form__label_textarea,
+.form__input-text-area:not(:placeholder-shown).form__input-text-area:not(:focus)~.form__label_textarea {
+  top: -0.5rem;
+  left: 0.8rem;
+  color: #002DBB;
+  font-size: small;
+  font-weight: 100;
+
+  &.error {
+    color: #EE3E80;
+  }
+
+  &:center {
+    letter-spacing: 8vh;
+    font-weight: 700;
+    font-family: Arial, Helvetica, sans-serif;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    align-self: center;
+    text-align: center;
+  }
+}
+
+.form__input_secondary:focus~.form__label,
+.form__input_secondary:not(:placeholder-shown).form__input_secondary:not(:focus)~.form__label {
+  top: -0.5rem;
+  font-size: 0.8rem;
+  left: 0.8rem;
+  color: #555;
+
+  &.error {
+    color: #EE3E80;
+  }
+
+  &:center {
+    letter-spacing: 8vh;
+    font-weight: 700;
+    font-family: Arial, Helvetica, sans-serif;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    align-self: center;
+    text-align: center;
+  }
+}
+
+.form__input_secondary:focus~.form__label_textarea,
+.form__input_secondary:not(:placeholder-shown).form__input_secondary:not(:focus)~.form__label_textarea {
+  top: -0.5rem;
+  font-size: 0.8rem;
+  left: 0.8rem;
+  color: #555;
+
+  &.error {
+    color: #EE3E80;
+  }
+
+  &:center {
+    letter-spacing: 8vh;
+    font-weight: 700;
+    font-family: Arial, Helvetica, sans-serif;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    align-self: center;
+    text-align: center;
+  }
+}
+
+.btn-close {
+  position: absolute;
+  bottom: 0.2rem;
+  right: 0rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  margin-bottom: 2px;
+}
+
+.btn-close:focus,
+.btn-close:active,
+.btn-close:visited {
+  outline-width: 0px;
+}

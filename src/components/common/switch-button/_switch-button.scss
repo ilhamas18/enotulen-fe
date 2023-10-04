@@ -1,0 +1,32 @@
+.nav-button {
+  padding-left: 1px;
+  padding-right: 1px;
+  height: 50px;
+  width: 100%;
+
+  .nav-btn {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .tabActive {
+      border-radius: 54px;
+      width: 100%;
+      height: 100%;
+      color: white;
+      background: #002DBB;
+      transition: .6s;
+      cursor: pointer;
+    }
+
+    .tabNonActive {
+      border-radius: 54px;
+      width: 100%;
+      height: 100%;
+      color: black;
+      background: white;
+      cursor: pointer;
+    }
+  }
+}
