@@ -1,4 +1,5 @@
 {
-  "/master/data-opd/page": "app/master/data-opd/page.js",
-  "/master/tematik/tambah/page": "app/master/tematik/tambah/page.js"
+  "/page": "app/page.js",
+  "/auth/login/page": "app/auth/login/page.js",
+  "/master/data-opd/page": "app/master/data-opd/page.js"
 }

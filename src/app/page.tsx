@@ -3,9 +3,10 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { fetchApi } from '@/components/mixins/request';
 import LaporanNotulen from '@/components/pages/laporan/laporanNotulen';
+import withAuth from '@/components/hocs/withAuth'
 import Swal from 'sweetalert2';
 
-export default function Home() {
+function Home() {
   const [notulens, setNotulens] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -49,3 +50,5 @@ export default function Home() {
     </div>
   )
 }
+
+export default withAuth(Home)

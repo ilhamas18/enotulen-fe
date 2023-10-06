@@ -1,13 +1,46 @@
 import Link from "next/link";
+import { useEffect } from "react";
+import { shallowEqual, useDispatch } from "react-redux";
 import Image from "next/image";
+import { getCookie, deleteCookie } from "cookies-next";
+import { fetchApi } from "@/components/mixins/request";
 import { RxHamburgerMenu } from "react-icons/rx";
 import DarkModeSwitcher from "./DarkModeSwitcher";
 import DropdownUser from "./DropdownUser";
+import { useSelector } from "react-redux";
+import { State } from "@/store/reducer";
 
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
+  setAuthenticated: any
 }) => {
+
+  const { profile } = useSelector((state: State) => ({
+    profile: state.profile.profile
+  }), shallowEqual)
+
+  useEffect(() => {
+    getProfile();
+  }, []);
+
+  const getProfile = async () => {
+    const token = getCookie("refreshSession");
+    if (typeof token !== "undefined") {
+      const resUser = await fetchApi({
+        url: "/pegawai/getProfile",
+        method: "get",
+        type: "auth"
+      })
+      if (!resUser.success) {
+        deleteCookie("refreshSession");
+      }
+      props.setAuthenticated(true)
+    } else {
+      props.setAuthenticated(false)
+    }
+  }
+
   return (
     <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
       <div className="flex flex-grow items-center justify-between px-4 py-2 shadow-2 md:px-6 2xl:px-11">
@@ -55,7 +88,7 @@ const Header = (props: {
         <div className="hidden sm:block">
           <div className="flex gap-2 items-center justify-center">
             <Image src="/logo/Lambang_Kota_Madiun.png" width={30} height={25} alt="Logo Kota Madiun" />
-            <div className="font-bold">Badan Perencanaan, Penelitian, dan Pengembangan Daerah</div>
+            <div className="font-bold">{profile?.Perangkat_Daerah?.nama_opd}</div>
           </div>
         </div>
 

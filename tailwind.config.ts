@@ -76,6 +76,7 @@ const config: Config = {
         "title-md2": ["26px", "30px"],
         "title-sm": ["20px", "26px"],
         "title-xsm": ["18px", "24px"],
+        "title-xsm2": ["16px", "22px"],
         "title-ss": ["14px", "20px"],
       },
       spacing: {

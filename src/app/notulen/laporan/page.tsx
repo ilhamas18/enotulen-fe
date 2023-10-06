@@ -8,6 +8,7 @@ import LaporanNotulenAuth from '@/components/pages/laporan/laporanAuth';
 import Breadcrumb from '@/components/global/Breadcrumbs/Breadcrumb';
 import { getShortDate, getTime } from '@/components/hooks/formatDate';
 import { ImTable2 } from 'react-icons/im';
+import withAuth from '@/components/hocs/withAuth';
 
 const Laporan = () => {
   const [notulens, setNotulens] = useState<any>([]);
@@ -41,13 +42,21 @@ const Laporan = () => {
         const { data } = response.data;
         const temp: any = []
         data.map((el: any, i: number) => {
+         console.log(data);
+         
           temp.push({
             id: i+1,
             index: el.id,
+            tagging: el.tagging.map((el: any) => el.label),
             tanggal: el.tanggal[0]?.startDate !== el.tanggal[0]?.endDate ? getShortDate(el.tanggal[0]?.startDate) + ' - ' + getShortDate( el.tanggal[0]?.endDate) : getShortDate(el.tanggal[0]?.startDate),
             waktu: getTime(el.waktu) + ' WIB',
             acara: el.acara,
-            lokasi: el.lokasi
+            lokasi: el.lokasi,
+            foto: '-',
+            daftarHadir: '-',
+            undangan: '-',
+            spj: '-',
+            lainLain: '-'
           })
         })
         setNotulens(temp);
@@ -79,4 +88,4 @@ const Laporan = () => {
   )
 }
 
-export default Laporan;
+export default withAuth(Laporan);

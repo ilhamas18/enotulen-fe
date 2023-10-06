@@ -1,5 +1,5 @@
+'use client';
 import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SidebarLinkGroup from "./SiderbarLinkGroup";
@@ -7,6 +7,8 @@ import { RxDashboard } from "react-icons/rx";
 import { IoIosArrowDown } from "react-icons/io";
 import { AiOutlineDatabase } from "react-icons/ai";
 import { FaPeopleGroup, FaPeopleRoof } from "react-icons/fa6";
+import { shallowEqual, useSelector } from "react-redux";
+import { State } from "@/store/reducer";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -15,6 +17,11 @@ interface SidebarProps {
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const pathname = usePathname();
+  const [role, setRole] = useState<string>('');
+  
+  const { profile } = useSelector((state: State) => ({
+    profile: state.profile.profile
+  }), shallowEqual);
 
   const trigger = useRef<any>(null);
   const sidebar = useRef<any>(null);
@@ -58,6 +65,25 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     }
   }, [sidebarExpanded]);
 
+  useEffect(() => {
+    switch(profile.role) {
+      case '1':
+        setRole('ADMIN KOTA')
+        break;
+      case '2':
+        setRole('ADMIN OPD')
+        break;
+      case '3':
+        setRole('VERIFIKATOR')
+        break;
+      case '4':
+        setRole('VERIFIKATOR')
+        break;
+      default:
+        setRole('');
+    }
+  }, [])
+
   return (
     <aside
       ref={sidebar}
@@ -66,7 +92,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     >
       {/* <!-- SIDEBAR HEADER --> */}
       <div className="flex items-center justify-center">
-        <div className="font-bold text-meta-6 text-lg lg:py-6.5 py-4">Admin Kota</div>
+        <div className="font-bold text-meta-6 text-lg lg:py-6.5 py-4">{role}</div>
         <button
           ref={trigger}
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -114,7 +140,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               </li>
 
               {/* <!-- Menu Item Master --> */}
-              <SidebarLinkGroup
+              {profile.role == 1 && (
+                <SidebarLinkGroup
                 activeCondition={
                   pathname.includes("master")
                 }
@@ -181,9 +208,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   )
                 }}
               </SidebarLinkGroup>
+              )}
 
               {/* <!-- Menu Item Data Kependudukan --> */}
-              <SidebarLinkGroup
+              {profile.role == 2 && (
+                <SidebarLinkGroup
                 activeCondition={
                   pathname.includes("kependudukan")
                 }
@@ -223,7 +252,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${pathname === "/" && "text-white"
                                 } `}
                             >
-                              Form Daftar Notulen
+                              Input Notulen
                             </Link>
                           </li>
                         </ul>
@@ -232,6 +261,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   )
                 }}
               </SidebarLinkGroup>
+              )}
             </ul>
           </div>
         </nav>
@@ -241,3 +271,39 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 }
 
 export default Sidebar
+
+// interface Props {
+//   user: any; 
+// }
+
+// export async function getServerSideProps({
+//   req,
+//   res,
+// }: GetServerSidePropsContext): Promise<{ props: Props }> {
+//   const token = getCookie('refreshSession', { req, res });
+//   console.log('masook');
+  
+//   if (typeof token === 'undefined') {
+//     setCookie('tostShow', 'show', { req, res });
+//     return {
+//       redirect: {
+//         permanent: false,
+//         destination: '/',
+//       },
+//       props: {},
+//     };
+//   }
+
+//   const resUser = await fetchApi({
+//     url: `/profile`,
+//     method: 'get',
+//     type: 'auth',
+//     token,
+//   });
+
+//   return {
+//     props: {
+//       user: resUser.res,
+//     },
+//   };
+// }

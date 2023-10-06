@@ -17,7 +17,7 @@ interface type {
   placeholder?: string;
   label?: string;
   max?: number;
-  value?: string;
+  value?: any;
   anim?: boolean;
   errors?: any;
   change?: any;

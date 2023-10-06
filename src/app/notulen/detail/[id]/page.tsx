@@ -6,6 +6,7 @@ import NotulenDetailProps from '@/components/pages/notulen/detail';
 import Loading from '@/components/global/Loading/loading';
 import Swal from 'sweetalert2';
 import Breadcrumb from '@/components/global/Breadcrumbs/Breadcrumb';
+import withAuth from '@/components/hocs/withAuth';
 
 const NotulenDetail = ({ params }: { params: { id: number } }) => {
   const { id } = params;
@@ -92,4 +93,4 @@ const NotulenDetail = ({ params }: { params: { id: number } }) => {
   )
 }
 
-export default NotulenDetail;
+export default withAuth(NotulenDetail);

@@ -1,5 +1,7 @@
+'use client'
 import AddNotulenForm from "@/components/pages/notulen/form"
 import { FaWpforms } from "react-icons/fa";
+import withAuth from "@/components/hocs/withAuth";
 
 const Notulen = () => {
   const gradientStyle = {
@@ -20,4 +22,4 @@ const Notulen = () => {
   )
 }
 
-export default Notulen
+export default withAuth(Notulen)

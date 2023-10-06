@@ -1,3 +1,4 @@
+import withAuth from "@/components/hocs/withAuth"
 import TematikForm from "@/components/pages/tematik/form"
 
 const TambahTematik = () => {
@@ -8,4 +9,4 @@ const TambahTematik = () => {
   )
 }
 
-export default TambahTematik
+export default withAuth(TambahTematik)

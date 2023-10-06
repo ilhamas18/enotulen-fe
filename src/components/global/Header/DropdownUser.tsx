@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
+import { State } from "@/store/reducer";
 
 const DropdownUser = () => {
+  const { profile } = useSelector((state: State) => ({
+    profile: state.profile.profile
+  }), shallowEqual);
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const trigger = useRef<any>(null);
@@ -41,9 +46,9 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Nama User
+            {profile.nama}
           </span>
-          <span className="block text-xs">19980407 202302 1 002</span>
+          <span className="block text-xs">{profile.nip}</span>
         </span>
         <svg
           className="hidden fill-current sm:block"
@@ -96,7 +101,7 @@ const DropdownUser = () => {
             </Link>
           </li>
         </ul>
-        <button className="flex items-center gap-3.5 py-4 px-6 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
+        <button className="flex items-center gap-3.5 py-4 px-6 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base" >
           <svg
             className="fill-current"
             width="22"

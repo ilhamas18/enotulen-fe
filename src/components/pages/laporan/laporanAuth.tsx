@@ -18,10 +18,19 @@ const columns: GridColDef[] = [
     align: 'center'
   },
   { 
+    field: 'tagging', 
+    headerName: 'Tagging', 
+    width: 180, 
+    // flex: 1,
+    headerClassName: 'super-app-theme--header',
+    headerAlign: 'center',
+    align: 'center'
+  },
+  { 
     field: 'tanggal', 
     headerName: 'Hari/Tgl', 
     width: 180, 
-    flex: 1,
+    // flex: 1,
     headerClassName: 'super-app-theme--header',
     headerAlign: 'center',
     align: 'center'
@@ -30,7 +39,7 @@ const columns: GridColDef[] = [
     field: 'waktu', 
     headerName: 'Waktu', 
     width: 130, 
-    flex: 1,
+    // flex: 1,
     headerClassName: 'super-app-theme--header',
     headerAlign: 'center',
     align: 'center'
@@ -39,7 +48,7 @@ const columns: GridColDef[] = [
     field: 'acara',
     headerName: 'Acara',
     width: 280,
-    flex: 1,
+    // flex: 1,
     headerClassName: 'super-app-theme--header',
     headerAlign: 'center',
     align: 'center'
@@ -48,7 +57,52 @@ const columns: GridColDef[] = [
     field: 'lokasi',
     headerName: 'Lokasi',
     width: 230,
-    flex: 1,
+    // flex: 1,
+    headerClassName: 'super-app-theme--header',
+    headerAlign: 'center',
+    align: 'center'
+  },
+  {
+    field: 'foto',
+    headerName: 'Foto',
+    width: 170,
+    // flex: 1,
+    headerClassName: 'super-app-theme--header',
+    headerAlign: 'center',
+    align: 'center'
+  },
+  {
+    field: 'daftarHadiir',
+    headerName: 'Daftar Hadir',
+    width: 170,
+    // flex: 1,
+    headerClassName: 'super-app-theme--header',
+    headerAlign: 'center',
+    align: 'center'
+  },
+  {
+    field: 'undangan',
+    headerName: 'Undangan',
+    width: 170,
+    // flex: 1,
+    headerClassName: 'super-app-theme--header',
+    headerAlign: 'center',
+    align: 'center'
+  },
+  {
+    field: 'spj',
+    headerName: 'SPJ',
+    width: 170,
+    // flex: 1,
+    headerClassName: 'super-app-theme--header',
+    headerAlign: 'center',
+    align: 'center'
+  },
+  {
+    field: 'lainLain',
+    headerName: 'Lain-lain',
+    width: 170,
+    // flex: 1,
     headerClassName: 'super-app-theme--header',
     headerAlign: 'center',
     align: 'center'

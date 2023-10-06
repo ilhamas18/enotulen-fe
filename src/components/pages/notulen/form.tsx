@@ -11,10 +11,13 @@ import { fetchApi } from '@/components/mixins/request';
 import Swal from 'sweetalert2'
 import DateRangePicker from '../laporan/x-modal/XDateRangePicker';
 import { formatDate } from '@/components/hooks/formatDate';
+import Select from 'react-select';
 import Loading from '@/components/global/Loading/loading';
 import { AiOutlineClose } from 'react-icons/ai';
 import { withFormik, FormikProps, FormikBag } from 'formik';
 import * as Yup from 'yup';
+import { shallowEqual, useSelector } from 'react-redux';
+import { State } from '@/store/reducer';
 
 const EditorBlock = dynamic(() => import('../../hooks/editor'));
 
@@ -62,10 +65,12 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   const [pesertaRapat, setPesertaRapat] = useState<string>('');
   const [idPesertaRapat, setIdPesertaRapat] = useState<number>(1);
   const [listPegawai, setListPegawai] = useState<any>([]);
+  const [listTagging, setListTagging] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     fetchPegawai();
+    fetchTagging();
   }, []);
 
   const fetchPegawai = async () => {
@@ -100,6 +105,36 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
         })
       })
       setListPegawai(temp);
+    }
+  }
+
+  const fetchTagging = async () => {
+    const response = await fetchApi({
+      url: `/tagging/getAllTagging`,
+      method: 'get',
+      type: "auth"
+    })
+
+    if (!response.success) {
+      if (response.data.code == 500) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Koneksi bermasalah!',
+        })
+      }
+      setLoading(false);
+    } else {
+      const { data } = response.data;
+
+      let temp: any = [];
+      data.forEach((item: any) => {
+        temp.push({
+          label: item.nama_tagging,
+          value: item.id,
+        })
+      })
+      setListTagging(temp);
     }
   }
 
@@ -138,6 +173,20 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
       <div className="form-container bg-white rounded-lg">
         <form className="form-wrapper-general relative">
           <div className="px-8 flex flex-col space-y-7 mt-4">
+            <div className="data flex flex-row bg-white">
+              <Select
+                isMulti
+                name="tagging"
+                options={listTagging}
+                className="basic-multi-select w-full bg-white"
+                classNamePrefix="select"
+                onChange={(selectedOption: any) => {
+                  handleChange({
+                    target: { name: "tagging", value: selectedOption }
+                  })
+                }}
+              />
+            </div>
             <div className="data flex flex-row mt-4">
               <div className={`flex border-2 ${errors.rangeTanggal ? 'border-xl-pink' : 'border-light-gray'} rounded-lg w-full py-3 px-4`} onClick={() => setOpenDateRange(true)}>
                 {values?.rangeTanggal[0]?.startDate === null ? (
@@ -373,7 +422,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
 function CreateForm({ handleSubmit }: MyFormProps) {
   const FormWithFormik = withFormik({
     mapPropsToValues: () => ({
-      tagging: null,
+      tagging: [],
       rangeTanggal: [
         {
           startDate: null,
@@ -393,13 +442,8 @@ function CreateForm({ handleSubmit }: MyFormProps) {
       atasan: null,
     }),
     validationSchema: Yup.object().shape({
-      tagging: Yup.object()
-        .shape({
-          label: Yup.string(),
-          value: Yup.number()
-        })
-        .required("Bagian dibutuhkan")
-        .nullable(),
+      // tagging: Yup.array()
+      // .required('Harap isi tanggal pelaksanaan !'),
       rangeTanggal: Yup.array()
         .required('Harap isi tanggal pelaksanaan !'),
       jam: Yup.mixed().nullable()
@@ -439,11 +483,16 @@ function CreateForm({ handleSubmit }: MyFormProps) {
 }
 
 const AddNotulenForm = () => {
+  const { profile } = useSelector((state: State) => ({
+    profile: state.profile.profile
+  }), shallowEqual);
+  
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const handleSubmit = async (values: FormValues) => {
     const payload = {
+      // tagging: values.tagging,
       tanggal: values.rangeTanggal,
       waktu: values.jam,
       pendahuluan: values.pendahuluan,
@@ -456,7 +505,7 @@ const AddNotulenForm = () => {
       pelapor: values.pelapor.data,
       atasan: values.atasan.data,
       status: '-',
-      id_pegawai: 2
+      id_pegawai: profile.id
     }
 
     const response = await fetchApi({
