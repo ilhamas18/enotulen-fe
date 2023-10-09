@@ -64,20 +64,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
       document.querySelector("body")?.classList.remove("sidebar-expanded");
     }
   }, [sidebarExpanded]);
-
+  
   useEffect(() => {
     switch(profile.role) {
-      case '1':
+      case 1:
         setRole('ADMIN KOTA')
         break;
-      case '2':
+      case 2:
         setRole('ADMIN OPD')
         break;
-      case '3':
+      case 3:
         setRole('VERIFIKATOR')
         break;
-      case '4':
-        setRole('VERIFIKATOR')
+      case 4:
+        setRole('USER')
         break;
       default:
         setRole('');
@@ -140,81 +140,81 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               </li>
 
               {/* <!-- Menu Item Master --> */}
-              {profile.role == 1 && (
+              <div className={`${profile.role == 1 || profile.role == 2 ? 'block' : 'hidden'}`}>
                 <SidebarLinkGroup
-                activeCondition={
-                  pathname.includes("master")
-                }
-              >
-                {(handleClick, open) => {
-                  return (
-                    <React.Fragment>
-                      <Link
-                        href="#"
-                        className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4
-                        ${pathname.includes("master") && "bg-graydark dark:bg-meta-4"}`
-                        }
-                        onClick={(e) => {
-                          e.preventDefault();
-                          sidebarExpanded
-                            ? handleClick()
-                            : setSidebarExpanded(true)
-                        }}
-                      >
-                        <AiOutlineDatabase size={20} />
-                        Master
-                        <IoIosArrowDown size={20} className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && "rotate-180"}`} />
-                      </Link>
-                      <div className={`translate transform overflow-hidden ${!open && "hidden"}`}>
-                        <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                          <li>
-                            <Link
-                              href="/master/data-opd"
-                              className={`first-letter:group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white
-                                ${pathname === "/master/data-opd" && "text-white"}`}
-                            >Data OPD</Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/master/data-user"
-                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white
-                                ${pathname === "/master/data-user" && "text-white"}`}
-                            >Data User</Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/master/data-urusan"
-                              className={`first-letter:group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white
-                                ${pathname === "/master/data-urusan" && "text-white"}`}
-                            >Data Urusan</Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/master/data-kinerja"
-                              className={`first-letter:group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white
-                                ${pathname === "/master/data-kinerja" && "text-white"}`}
-                            >Data Kinerja</Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/master/tagging"
-                              className={`first-letter:group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white
-                                ${pathname === "/master/tagging" && "text-white"}`}
-                            >Tematik</Link>
-                          </li>
-                        </ul>
-                      </div>
-                    </React.Fragment>
-                  )
-                }}
-              </SidebarLinkGroup>
-              )}
+                  activeCondition={
+                    pathname.includes("master")
+                  }
+                >
+                  {(handleClick, open) => {
+                    return (
+                      <React.Fragment>
+                        <Link
+                          href="#"
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4
+                          ${pathname.includes("master") && "bg-graydark dark:bg-meta-4"}`
+                          }
+                          onClick={(e) => {
+                            e.preventDefault();
+                            sidebarExpanded
+                              ? handleClick()
+                              : setSidebarExpanded(true)
+                          }}
+                        >
+                          <AiOutlineDatabase size={20} />
+                          Master
+                          <IoIosArrowDown size={20} className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && "rotate-180"}`} />
+                        </Link>
+                        <div className={`translate transform overflow-hidden ${!open && "hidden"}`}>
+                          <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                            <li>
+                              <Link
+                                href="/master/data-opd"
+                                className={`first-letter:group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white
+                                  ${pathname.includes("/master/data-opd") && "text-white"}
+                                  ${profile.role == 1 ? 'block' : 'hidden'}`}
+                              >Data OPD</Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/master/data-user"
+                                className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white
+                                  ${pathname === "/master/data-user" && "text-white"}`}
+                              >Data User</Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/master/data-urusan"
+                                className={`first-letter:group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white
+                                  ${pathname === "/master/data-urusan" && "text-white"}`}
+                              >Data Urusan</Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/master/data-kinerja"
+                                className={`first-letter:group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white
+                                  ${pathname === "/master/data-kinerja" && "text-white"}`}
+                              >Data Kinerja</Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/master/tematik"
+                                className={`first-letter:group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white
+                                  ${pathname === "/master/tematik" && "text-white"}`}
+                              >Tematik</Link>
+                            </li>
+                          </ul>
+                        </div>
+                      </React.Fragment>
+                    )
+                  }}
+                </SidebarLinkGroup>
+              </div>
 
-              {/* <!-- Menu Item Data Kependudukan --> */}
-              {profile.role == 2 && (
+              {/* {profile.role == 3 || profile.role == 4 && ( */}
                 <SidebarLinkGroup
                 activeCondition={
-                  pathname.includes("kependudukan")
+                  pathname.includes("notulen")
                 }
               >
                 {(handleClick, open) => {
@@ -240,7 +240,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           <li>
                             <Link
                               href="/notulen/laporan"
-                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${pathname === "/" && "text-white"
+                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${pathname === "/notulen/laporan" || pathname.includes('/notulen/detail') && "text-white"
                                 } `}
                             >
                               List Notulen
@@ -249,8 +249,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           <li>
                             <Link
                               href="/notulen/form"
-                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${pathname === "/" && "text-white"
-                                } `}
+                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${pathname === '/notulen/form' && "text-white"
+                                } ${profile.role == 4 ? 'block' : 'hidden'}`}
                             >
                               Input Notulen
                             </Link>
@@ -261,7 +261,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   )
                 }}
               </SidebarLinkGroup>
-              )}
+              {/* )} */}
             </ul>
           </div>
         </nav>

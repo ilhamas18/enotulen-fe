@@ -99,7 +99,11 @@ function CreateForm({ handleSubmit }: MyFormProps) {
   return <FormWithFormik />
 }
 
-const TematikForm = () => {
+interface PropTypes {
+  setFlagFilled: any;
+}
+
+const TematikForm = ({ setFlagFilled }: PropTypes) => {
   const handleSubmit = async (values: FormValues) => {
     const payload = {
       nama_tagging: values.namaTagging
@@ -124,10 +128,11 @@ const TematikForm = () => {
       Swal.fire({
         position: 'top-end',
         icon: 'success',
-        title: 'Your work has been saved',
+        title: 'Data tagging berhasil tersimpan',
         showConfirmButton: false,
         timer: 1500
       })
+      setFlagFilled(true);
     }
   }
 

@@ -15,6 +15,15 @@
     }
   }
 
+  &.btn-error {
+    background-color: #dc2626;
+    border: none;
+
+    &:hover {
+      background-color: #EE3E80;
+    }
+  }
+
   &.btn-black {
     background-color: #000;
     border: none;

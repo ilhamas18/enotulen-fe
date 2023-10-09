@@ -18,6 +18,7 @@ module.exports = {
     includePaths: [path.join(__dirname, "styles")],
   },
   env: {
+    BASE_URL: process.env.BASE_URL,
   },
   reactStrictMode: false,
   swcMinify: true,

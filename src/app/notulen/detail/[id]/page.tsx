@@ -86,7 +86,7 @@ const NotulenDetail = ({ params }: { params: { id: number } }) => {
         notulenDetail === null ? (
           <div>Maaf, Data Notulen Kosong !</div>
         ) : (
-          <NotulenDetailProps data={notulenDetail} tagging={listTagging} />
+          <NotulenDetailProps data={notulenDetail} listTagging={listTagging} />
         )
       )}
     </div>

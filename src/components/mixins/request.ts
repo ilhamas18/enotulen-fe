@@ -89,9 +89,7 @@ export const fetchApi = async ({
   token,
   result200 = false,
 }: reqApi) => {
-  // let baseURL = process.env.SITE_URL;
-  // let baseURL = 'http://10.10.2.54:8080'
-  let baseURL = "http://localhost:8080"
+  let baseURL = process.env.BASE_URL;
   let header;
   
   if (type === "auth") {

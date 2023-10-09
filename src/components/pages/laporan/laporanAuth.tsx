@@ -8,37 +8,37 @@ import { fetchApi } from '@/components/mixins/request';
 import Swal from 'sweetalert2';
 
 const columns: GridColDef[] = [
-  { 
-    field: 'id', 
-    headerName: 'No', 
-    maxWidth: 40, 
+  {
+    field: 'id',
+    headerName: 'No',
+    maxWidth: 40,
     flex: 1,
     headerClassName: 'super-app-theme--header',
     headerAlign: 'center',
     align: 'center'
   },
-  { 
-    field: 'tagging', 
-    headerName: 'Tagging', 
-    width: 180, 
+  {
+    field: 'tagging',
+    headerName: 'Tagging',
+    width: 180,
     // flex: 1,
     headerClassName: 'super-app-theme--header',
     headerAlign: 'center',
     align: 'center'
   },
-  { 
-    field: 'tanggal', 
-    headerName: 'Hari/Tgl', 
-    width: 180, 
+  {
+    field: 'tanggal',
+    headerName: 'Hari/Tgl',
+    width: 180,
     // flex: 1,
     headerClassName: 'super-app-theme--header',
     headerAlign: 'center',
     align: 'center'
   },
-  { 
-    field: 'waktu', 
-    headerName: 'Waktu', 
-    width: 130, 
+  {
+    field: 'waktu',
+    headerName: 'Waktu',
+    width: 130,
     // flex: 1,
     headerClassName: 'super-app-theme--header',
     headerAlign: 'center',
@@ -111,10 +111,10 @@ const columns: GridColDef[] = [
 
 interface LaporanNotulenAuthType {
   data: any,
-  loading: boolean
+  profile: any,
 }
 
-const LaporanNotulenAuth = ({ data, loading }: LaporanNotulenAuthType) => {
+const LaporanNotulenAuth = ({ data, profile }: LaporanNotulenAuthType) => {
   const router = useRouter();
 
   const handleOnCellClick = (params: any) => {
@@ -124,24 +124,40 @@ const LaporanNotulenAuth = ({ data, loading }: LaporanNotulenAuthType) => {
   return (
     <div style={{ height: 400, width: '100%' }} className='bg-white dark:bg-meta-4 dark:text-white'>
       <div className="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% ..."></div>
-      <Box sx={{ 
+      <Box sx={{
         height: 400,
         width: '100%',
       }}>
-        <DataGrid
-          rows={data}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 5,
+        {profile.role == 3 ? (
+          <DataGrid
+            rows={data}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 5,
+                },
               },
-            },
-          }}
-          onCellClick={handleOnCellClick}
-          checkboxSelection
-          disableRowSelectionOnClick
-        />
+            }}
+            onCellClick={handleOnCellClick}
+            checkboxSelection
+            disableRowSelectionOnClick
+          />
+        ) : (
+          <DataGrid
+            rows={data}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 5,
+                },
+              },
+            }}
+            onCellClick={handleOnCellClick}
+            disableRowSelectionOnClick
+          />
+        )}
       </Box>
     </div>
   )

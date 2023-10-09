@@ -9,10 +9,17 @@ import Breadcrumb from '@/components/global/Breadcrumbs/Breadcrumb';
 import { getShortDate, getTime } from '@/components/hooks/formatDate';
 import { ImTable2 } from 'react-icons/im';
 import withAuth from '@/components/hocs/withAuth';
+import { shallowEqual, useSelector } from 'react-redux';
+import { State } from '@/store/reducer';
+import Loading from '@/components/global/Loading/loading';
 
 const Laporan = () => {
   const [notulens, setNotulens] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const { profile } = useSelector((state: State) => ({
+    profile: state.profile.profile
+  }), shallowEqual)
 
   useEffect(() => {
     fetchData();
@@ -25,7 +32,7 @@ const Laporan = () => {
   const fetchData = async () => {
     setLoading(true)
     const response = await fetchApi({
-      url: `/notulen/getAllNotulens`,
+      url: `/notulen/getAuthNotulen/${profile.Perangkat_Daerah.kode_opd}`,
       method: "get",
       type: "auth"
     })
@@ -42,21 +49,19 @@ const Laporan = () => {
         const { data } = response.data;
         const temp: any = []
         data.map((el: any, i: number) => {
-         console.log(data);
-         
           temp.push({
             id: i+1,
             index: el.id,
-            tagging: el.tagging.map((el: any) => el.label),
+            tagging: el.tagging !== null ? el.tagging.map((el: any) => el.label) : '-',
             tanggal: el.tanggal[0]?.startDate !== el.tanggal[0]?.endDate ? getShortDate(el.tanggal[0]?.startDate) + ' - ' + getShortDate( el.tanggal[0]?.endDate) : getShortDate(el.tanggal[0]?.startDate),
             waktu: getTime(el.waktu) + ' WIB',
             acara: el.acara,
             lokasi: el.lokasi,
-            foto: '-',
-            daftarHadir: '-',
-            undangan: '-',
-            spj: '-',
-            lainLain: '-'
+            foto: el.link_img_foto !== null ? 'Ada' : '-',
+            daftarHadir: el.link_img_daftar_hadir !== null ? 'Ada' : '-',
+            undangan: el.link_img_surat_undangan !== null ? 'Ada' : '-',
+            spj: el.link_img_spj !== null ? 'Ada' : '-',
+            lainLain: el.link_pendukung !== null ? 'Ada' : '-'
           })
         })
         setNotulens(temp);
@@ -83,7 +88,11 @@ const Laporan = () => {
           <div className='text-title-xsm'>Notulen</div>
         </div>
       </div>
-      <LaporanNotulenAuth data={notulens} loading={loading} />
+      {loading ? (
+        <Loading loading={loading} setLoading={setLoading} />
+      ) : (
+        <LaporanNotulenAuth data={notulens} profile={profile} />
+      )}
     </div>
   )
 }

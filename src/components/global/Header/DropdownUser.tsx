@@ -1,9 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { State } from "@/store/reducer";
+import { deleteCookie } from "cookies-next";
+import { setProfile } from "@/store/profile/action";
+import { setOPD } from "@/store/opd/action";
 
-const DropdownUser = () => {
+interface PropTypes {
+  setAuthenticated: any;
+}
+
+const DropdownUser = ({ setAuthenticated }: PropTypes) => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+
   const { profile } = useSelector((state: State) => ({
     profile: state.profile.profile
   }), shallowEqual);
@@ -35,6 +46,14 @@ const DropdownUser = () => {
     document.addEventListener("keydown", keyHandler);
     return () => document.removeEventListener("keydown", keyHandler);
   });
+
+  const handleLogout = () => {
+    deleteCookie("refreshSession");
+    setAuthenticated(false);
+    dispatch(setProfile([]));
+    dispatch(setOPD([]));
+    router.push('/auth/login');
+  }
 
   return (
     <div className="relative">
@@ -101,7 +120,7 @@ const DropdownUser = () => {
             </Link>
           </li>
         </ul>
-        <button className="flex items-center gap-3.5 py-4 px-6 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base" >
+        <button className="flex items-center gap-3.5 py-4 px-6 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base" onClick={handleLogout}>
           <svg
             className="fill-current"
             width="22"

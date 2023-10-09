@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation'
 import TextInput from '@/components/common/text-input/input';
 import { Button } from '@/components/common/button/button';
+import Link from 'next/link';
 import dynamic from "next/dynamic";
 import EditorJS, { OutputData } from "@editorjs/editorjs";
 import { AiFillPlusCircle } from "react-icons/ai";
@@ -18,6 +19,9 @@ import { withFormik, FormikProps, FormikBag } from 'formik';
 import * as Yup from 'yup';
 import { shallowEqual, useSelector } from 'react-redux';
 import { State } from '@/store/reducer';
+import axios from 'axios';
+import { getCookies } from 'cookies-next';
+import { IoMdClose } from 'react-icons/io';
 
 const EditorBlock = dynamic(() => import('../../hooks/editor'));
 
@@ -34,6 +38,11 @@ interface FormValues {
   acara: string,
   pelapor: any,
   atasan: any,
+  suratUndangan: any,
+  daftarHadir: any,
+  spj: any,
+  foto: any,
+  pendukung: any
 }
 
 interface OtherProps {
@@ -68,9 +77,23 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   const [listTagging, setListTagging] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [uploadMsgUndangan, setUploadMsgUndangan] = useState<string>('');
+  const [progressUndangan, setProgressUndangan] = useState<any>({ started: false, pc: 0 });
+
+  const [uploadMsgDaftarHadir, setUploadMsgDaftarHadir] = useState<string>('');
+  const [progressDaftarHadir, setProgressDaftarHadir] = useState<any>({ started: false, pc: 0 });
+
+  const [uploadMsgSPJ, setUploadMsgSPJ] = useState<string>('');
+  const [progressSPJ, setProgressSPJ] = useState<any>({ started: false, pc: 0 });
+
+  const [uploadMsgfoto, setUploadMsgFoto] = useState<string>('');
+  const [progressfoto, setProgressFoto] = useState<any>({ started: false, pc: 0 });
+
+  const [uploadMsgPendukung, setUploadMsgPendukung] = useState<string>('');
+  const [progressPendukung, setProgressPendukung] = useState<any>({ started: false, pc: 0 });
+
   useEffect(() => {
     fetchPegawai();
-    fetchTagging();
   }, []);
 
   const fetchPegawai = async () => {
@@ -108,36 +131,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     }
   }
 
-  const fetchTagging = async () => {
-    const response = await fetchApi({
-      url: `/tagging/getAllTagging`,
-      method: 'get',
-      type: "auth"
-    })
-
-    if (!response.success) {
-      if (response.data.code == 500) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Koneksi bermasalah!',
-        })
-      }
-      setLoading(false);
-    } else {
-      const { data } = response.data;
-
-      let temp: any = [];
-      data.forEach((item: any) => {
-        temp.push({
-          label: item.nama_tagging,
-          value: item.id,
-        })
-      })
-      setListTagging(temp);
-    }
-  }
-
   const handleOpenAddPeserta = (e: any) => {
     e.preventDefault()
     setOpenAddParticipant(!openAddParticipant)
@@ -168,12 +161,217 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     })
   }
 
+  const handleUploadSuratUndangan = async (event: any) => {
+    let url = `${process.env.BASE_URL}/notulen/uploadFile`;
+    console.log(url, '<<<');
+
+    event.preventDefault();
+    const fileUrl = event.target.files[0];
+
+    setUploadMsgUndangan('Uploading ...');
+    setProgressUndangan((prevState: any) => {
+      return { ...prevState, started: true }
+    })
+
+    let fd = new FormData();
+    fd.append('file', fileUrl);
+    const body: any = fd;
+
+    const response: any = await axios.post(url, body, {
+      onUploadProgress: (progressEvent: any) => {
+        setProgressUndangan((prevState: any) => {
+          return { ...prevState, pc: progressEvent.progress * 100 }
+        },
+        )
+      },
+      headers: {
+        Authorization: `Bearer ${getCookies()?.refreshSession}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+    if (response.data.success) {
+      const { data } = response.data;
+
+      setUploadMsgUndangan('Upload berhasil');
+      handleChange({
+        target: { name: "suratUndangan", value: fileUrl.name }
+      })
+    } else {
+      setUploadMsgUndangan('Upload gagal')
+    }
+  }
+
+  const handleUploadDaftarHadir = async (event: any) => {
+    let url = `${process.env.BASE_URL}/notulen/uploadFile`;
+    event.preventDefault();
+    const fileUrl = event.target.files[0];
+
+    setUploadMsgDaftarHadir('Uploading ...');
+    setProgressDaftarHadir((prevState: any) => {
+      return { ...prevState, started: true }
+    })
+
+    let fd = new FormData();
+    fd.append('file', fileUrl);
+    const body: any = fd;
+
+    const response: any = await axios.post(url, body, {
+      onUploadProgress: (progressEvent: any) => {
+        setProgressDaftarHadir((prevState: any) => {
+          return { ...prevState, pc: progressEvent.progress * 100 }
+        },
+        )
+      },
+      headers: {
+        Authorization: `Bearer ${getCookies()?.refreshSession}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+    if (response.data.success) {
+      const { data } = response.data;
+
+      setUploadMsgDaftarHadir('Upload berhasil');
+      handleChange({
+        target: { name: "daftarHadir", value: fileUrl.name }
+      })
+    } else {
+      setUploadMsgUndangan('Upload gagal')
+    }
+  }
+
+  const handleUploadSPJ = async (event: any) => {
+    let url = `${process.env.BASE_URL}/notulen/uploadFile`;
+    event.preventDefault();
+    const fileUrl = event.target.files[0];
+
+    setUploadMsgSPJ('Uploading ...');
+    setProgressSPJ((prevState: any) => {
+      return { ...prevState, started: true }
+    })
+
+    let fd = new FormData();
+    fd.append('file', fileUrl);
+    const body: any = fd;
+
+    const response: any = await axios.post(url, body, {
+      onUploadProgress: (progressEvent: any) => {
+        setProgressSPJ((prevState: any) => {
+          return { ...prevState, pc: progressEvent.progress * 100 }
+        },
+        )
+      },
+      headers: {
+        Authorization: `Bearer ${getCookies()?.refreshSession}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+    if (response.data.success) {
+      const { data } = response.data;
+
+      setUploadMsgSPJ('Upload berhasil');
+      handleChange({
+        target: { name: "spj", value: fileUrl.name }
+      })
+    } else {
+      setUploadMsgUndangan('Upload gagal')
+    }
+  }
+
+  const handleUploadFoto = async (event: any) => {
+    let url = `${process.env.BASE_URL}/notulen/uploadFile`;
+    event.preventDefault();
+    const fileUrl = event.target.files[0];
+
+    setUploadMsgFoto('Uploading ...');
+    setProgressFoto((prevState: any) => {
+      return { ...prevState, started: true }
+    })
+
+    let fd = new FormData();
+    fd.append('file', fileUrl);
+    const body: any = fd;
+
+    const response: any = await axios.post(url, body, {
+      onUploadProgress: (progressEvent: any) => {
+        setProgressFoto((prevState: any) => {
+          return { ...prevState, pc: progressEvent.progress * 100 }
+        },
+        )
+      },
+      headers: {
+        Authorization: `Bearer ${getCookies()?.refreshSession}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+    if (response.data.success) {
+      const { data } = response.data;
+
+      setUploadMsgFoto('Upload berhasil');
+      handleChange({
+        target: { name: "foto", value: fileUrl.name }
+      })
+    } else {
+      setUploadMsgUndangan('Upload gagal')
+    }
+  }
+
+  const handleUploadFilePendukung = async (event: any) => {
+    let url = `${process.env.BASE_URL}/notulen/uploadFile`;
+    event.preventDefault();
+    const fileUrl = event.target.files[0];
+
+    setUploadMsgPendukung('Uploading ...');
+    setProgressPendukung((prevState: any) => {
+      return { ...prevState, started: true }
+    })
+
+    let fd = new FormData();
+    fd.append('file', fileUrl);
+    const body: any = fd;
+
+    const response: any = await axios.post(url, body, {
+      onUploadProgress: (progressEvent: any) => {
+        setProgressPendukung((prevState: any) => {
+          return { ...prevState, pc: progressEvent.progress * 100 }
+        },
+        )
+      },
+      headers: {
+        Authorization: `Bearer ${getCookies()?.refreshSession}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+    if (response.data.success) {
+      const { data } = response.data;
+
+      setUploadMsgPendukung('Upload berhasil');
+      handleChange({
+        target: { name: "pendukung", value: fileUrl.name }
+      })
+    } else {
+      setUploadMsgUndangan('Upload gagal')
+    }
+  }
+
+  const handleDeleteFile = async (key: string) => {
+    await fetchApi({
+      method: 'delete',
+      url: `/notulen//deleteFile/${key}`,
+      type: 'auth'
+    })
+  }
+
   return (
     <React.Fragment>
       <div className="form-container bg-white rounded-lg">
         <form className="form-wrapper-general relative">
           <div className="px-8 flex flex-col space-y-7 mt-4">
-            <div className="data flex flex-row bg-white">
+            {/* <div className="data flex flex-row bg-white">
               <Select
                 isMulti
                 name="tagging"
@@ -186,7 +384,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   })
                 }}
               />
-            </div>
+            </div> */}
             <div className="data flex flex-row mt-4">
               <div className={`flex border-2 ${errors.rangeTanggal ? 'border-xl-pink' : 'border-light-gray'} rounded-lg w-full py-3 px-4`} onClick={() => setOpenDateRange(true)}>
                 {values?.rangeTanggal[0]?.startDate === null ? (
@@ -374,6 +572,117 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 }}
               />
             </div>
+            {values.suratUndangan == null ? (
+              <div className="data flex flex-col">
+                <label className="block mb-2 text-sm font-medium text-gray-900 text-Nunito dark:text-white">Upload Surat Undangan</label>
+                <input className="block w-full text-md text-gray-900 border border-light-gray py-2 rounded-lg cursor-pointer bg-white focus:outline-none" type="file" onChange={(event: any) => { handleUploadSuratUndangan(event) }} />
+                <div className="w-full">{progressUndangan.started && <progress max="100" value={progressUndangan.pc}></progress>}</div>
+                {uploadMsgUndangan && <span>{uploadMsgUndangan}</span>}
+              </div>
+            ) : (
+              <div className='flex items-center justify-between'>
+                <div className='flex flex-col gap-2'>
+                  <div>Surat Undangan</div>
+                  <Link href={`${process.env.BASEURL}/notulen/getFile/${values.suratUndangan}`} passHref legacyBehavior>
+                    <a target="_blank">
+                      <td className="text-blue-500 underline">{values.suratUndangan}</td>
+                    </a>
+                  </Link>
+                </div>
+                <div onClick={() => handleDeleteFile(values.suratUndangan)}>
+                  <IoMdClose size={20} />
+                </div>
+              </div>
+            )}
+            {values.daftarHadir == null ? (
+              <div className="data flex flex-col">
+                <label className="block mb-2 text-sm font-medium text-gray-900 text-Nunito dark:text-white">Upload Daftar Hadiur</label>
+                <input className="block w-full text-md text-gray-900 border border-light-gray py-2 rounded-lg cursor-pointer bg-white focus:outline-none" type="file" onChange={(event: any) => { handleUploadDaftarHadir(event) }} />
+                <div className="w-full">{progressDaftarHadir.started && <progress max="100" value={progressDaftarHadir.pc}></progress>}</div>
+                {uploadMsgDaftarHadir && <span>{uploadMsgDaftarHadir}</span>}
+              </div>
+            ) : (
+              <div className='flex items-center justify-between'>
+                <div className='flex flex-col gap-2'>
+                  <div>Daftar Hadir</div>
+                  <Link href={`${process.env.BASEURL}/notulen/getFile/${values.daftarHadir}`} passHref legacyBehavior>
+                    <a target="_blank">
+                      <td className="text-blue-500 underline">{values.daftarHadir}</td>
+                    </a>
+                  </Link>
+                </div>
+                <div onClick={() => handleDeleteFile(values.daftarHadir)}>
+                  <IoMdClose size={20} />
+                </div>
+              </div>
+            )}
+            {values.spj == null ? (
+              <div className="data flex flex-col">
+                <label className="block mb-2 text-sm font-medium text-gray-900 text-Nunito dark:text-white">Upload SPJ</label>
+                <input className="block w-full text-md text-gray-900 border border-light-gray py-2 rounded-lg cursor-pointer bg-white focus:outline-none" type="file" onChange={(event: any) => { handleUploadSPJ(event) }} />
+                <div className="w-full">{progressSPJ.started && <progress max="100" value={progressSPJ.pc}></progress>}</div>
+                {uploadMsgSPJ && <span>{uploadMsgSPJ}</span>}
+              </div>
+            ) : (
+              <div className='flex items-center justify-between'>
+                <div className='flex flex-col gap-2'>
+                  <div>SPJ</div>
+                  <Link href={`${process.env.BASEURL}/notulen/getFile/${values.spj}`} passHref legacyBehavior>
+                    <a target="_blank">
+                      <td className="text-blue-500 underline">{values.spj}</td>
+                    </a>
+                  </Link>
+                </div>
+                <div onClick={() => handleDeleteFile(values.spj)}>
+                  <IoMdClose size={20} />
+                </div>
+              </div>
+            )}
+            {values.foto == null ? (
+              <div className="data flex flex-col">
+                <label className="block mb-2 text-sm font-medium text-gray-900 text-Nunito dark:text-white">Upload Foto</label>
+                <input className="block w-full text-md text-gray-900 border border-light-gray py-2 rounded-lg cursor-pointer bg-white focus:outline-none" type="file" onChange={(event: any) => { handleUploadFoto(event) }} />
+                <div className="w-full">{progressfoto.started && <progress max="100" value={progressfoto.pc}></progress>}</div>
+                {uploadMsgfoto && <span>{uploadMsgfoto}</span>}
+              </div>
+            ) : (
+              <div className='flex items-center justify-between'>
+                <div className='flex flex-col gap-2'>
+                  <div>Foto</div>
+                  <Link href={`${process.env.BASEURL}/notulen/getFile/${values.foto}`} passHref legacyBehavior>
+                    <a target="_blank">
+                      <td className="text-blue-500 underline">{values.foto}</td>
+                    </a>
+                  </Link>
+                </div>
+                <div onClick={() => handleDeleteFile(values.foto)}>
+                  <IoMdClose size={20} />
+                </div>
+              </div>
+            )}
+            {values.pendukung == null ? (
+              <div className="data flex flex-col">
+                <label className="block mb-2 text-sm font-medium text-gray-900 text-Nunito dark:text-white">Upload Pendukung</label>
+                <input className="block w-full text-md text-gray-900 border border-light-gray py-2 rounded-lg cursor-pointer bg-white focus:outline-none" type="file" onChange={(event: any) => { handleUploadFilePendukung(event) }} />
+                <div className="w-full">{progressPendukung.started && <progress max="100" value={progressPendukung.pc}></progress>}</div>
+                {uploadMsgPendukung && <span>{uploadMsgPendukung}</span>}
+              </div>
+            ) : (
+              <div className='flex items-center justify-between'>
+                <div className='flex flex-col gap-2'>
+                  <div>File Pendukung</div>
+                  <Link href={`${process.env.BASEURL}/notulen/getFile/${values.pendukung}`} passHref legacyBehavior>
+                    <a target="_blank">
+                      <td className="text-blue-500 underline">{values.pendukung}</td>
+                    </a>
+                  </Link>
+                </div>
+                <div onClick={() => handleDeleteFile(values.pendukung)}>
+                  <IoMdClose size={20} />
+                </div>
+              </div>
+            )}
+
           </div>
           <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
             <div className="w-[8em]">
@@ -440,6 +749,11 @@ function CreateForm({ handleSubmit }: MyFormProps) {
       acara: "",
       pelapor: null,
       atasan: null,
+      suratUndangan: null,
+      daftarHadir: null,
+      spj: null,
+      foto: null,
+      pendukung: null
     }),
     validationSchema: Yup.object().shape({
       // tagging: Yup.array()
@@ -486,13 +800,15 @@ const AddNotulenForm = () => {
   const { profile } = useSelector((state: State) => ({
     profile: state.profile.profile
   }), shallowEqual);
-  
+
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth() + 1;
+
   const handleSubmit = async (values: FormValues) => {
     const payload = {
-      // tagging: values.tagging,
       tanggal: values.rangeTanggal,
       waktu: values.jam,
       pendahuluan: values.pendahuluan,
@@ -505,6 +821,13 @@ const AddNotulenForm = () => {
       pelapor: values.pelapor.data,
       atasan: values.atasan.data,
       status: '-',
+      bulan: currentMonth,
+      link_img_surat_undangan: values.suratUndangan,
+      link_img_daftar_hadir: values.daftarHadir,
+      link_img_spj: values.spj,
+      link_img_foto: values.foto,
+      link_img_pendukung: values.pendukung,
+      kode_opd: profile.Perangkat_Daerah.kode_opd,
       id_pegawai: profile.id
     }
 

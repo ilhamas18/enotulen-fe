@@ -54,9 +54,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
       <form className="form-wrapper-general">
         <div className="px-8 font-Nunito flex flex-col space-y-7 mt-4">
           <div className="data flex flex-row">
-            <div className="text-white bg-blue-400 h-[42px] -mr-[1px] w-[38px] flex items-center justify-center rounded rounded-sm mt-[10px]">
-              <BsFillPersonVcardFill size={19} />
-            </div>
             <TextInput
               type="text"
               id="nip"
@@ -69,9 +66,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
             />
           </div>
           <div className="data flex flex-row">
-            <div className="text-white bg-blue-400 h-[42px] -mr-[1px] w-[38px] flex items-center justify-center rounded rounded-sm mt-[10px]">
-              <RiLockPasswordFill size={19} />
-            </div>
             <TextInput
               type="password"
               id="password"
@@ -191,7 +185,6 @@ const LoginForm = () => {
           method: "get",
           type: "auth"
         })
-       console.log(response);
        
         if (response.success) {
           dispatch(setProfile(response.data.data));
@@ -227,14 +220,14 @@ const LoginForm = () => {
       type: "withoutAuth",
       body: payload
     })
-
+    
     if (!response.success) {
       router.push('/auth/login');
-      if (response.code == 400) {
+      if (response.code == 404) {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
-          text: 'Password yang Anda masukkan salah',
+          text: 'NIP tidak ditemukan',
         })
       } else if (response.code == 400) {
         Swal.fire({

@@ -3,12 +3,9 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Sidebar from "../global/Sidebar/Sidebar";
 import Header from "../global/Header/Header";
-import { getCookie, deleteCookie } from "cookies-next";
-import { fetchApi } from "../mixins/request";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "../../store";
-import { setProfile } from "@/store/profile/action";
 
 interface PropTypes {
   children: any,

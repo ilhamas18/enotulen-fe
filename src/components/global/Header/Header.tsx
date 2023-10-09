@@ -80,9 +80,9 @@ const Header = (props: {
               </span>
             </span>
           </button>
-          <Link className="block flex-shrink-0 lg:hidden" href="/">
+          {/* <Link className="block flex-shrink-0 lg:hidden" href="/">
             <RxHamburgerMenu size={32} />
-          </Link>
+          </Link> */}
         </div>
 
         <div className="hidden sm:block">
@@ -96,7 +96,7 @@ const Header = (props: {
           <ul className="flex items-center gap-2 2xsm:gap-4">
             <DarkModeSwitcher />
           </ul>
-          <DropdownUser />
+          <DropdownUser setAuthenticated={props.setAuthenticated} />
         </div>
       </div>
     </header>

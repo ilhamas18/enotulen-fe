@@ -20,7 +20,6 @@ interface AuthType {
 export function AuthProvider({ children, authenticated }: AuthType) {
   const [isAuthenticated, setAuthenticated] = React.useState<boolean>(false); 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  console.log(isAuthenticated, '<<< isAuthenticated');
   
   React.useEffect(() => {
     setAuthenticated(authenticated);
