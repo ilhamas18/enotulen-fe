@@ -10,9 +10,13 @@ import { BsPrinter } from "react-icons/bs";
 import { formatDate, getTime } from "@/components/hooks/formatDate";
 import Laporan from "@/app/notulen/laporan/page";
 import withAuth from "@/components/hocs/withAuth";
+import edjsHTML from "editorjs-html";
+import Blocks from 'editorjs-blocks-react-renderer';
 
 const editorJsHtml = require("editorjs-html");
 const EditorJsToHtml = editorJsHtml();
+
+
 
 type ParsedContent = string | JSX.Element;
 
@@ -21,23 +25,28 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
   const [laporan, setLaporan] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const htmlIsiRapat =
-    laporan?.isi_rapat !== undefined &&
-    (EditorJsToHtml.parse(JSON.parse(laporan?.isi_rapat)) as ParsedContent[]);
-  const htmlTindakLanjut =
-    laporan?.tindak_lanjut !== undefined &&
-    (EditorJsToHtml.parse(
-      JSON.parse(laporan?.tindak_lanjut)
-    ) as ParsedContent[]);
+  const edjsParser = edjsHTML();
+  let htmlIsiRapat = laporan.isi_rapat !== undefined && edjsParser.parse(JSON.parse(laporan.isi_rapat));
+  // const blocks = (EditorJsToHtml.parse(htmlIsiRapat.blocks) as ParsedContent[])
+  // if (laporan.isi_rapat !== undefined) {
+  //   htmlIsiRapat = 
+  //   // console.log(HTML, '<<<<');
+
+  // }
+
+
+  const htmlTindakLanjut = laporan?.tindak_lanjut !== undefined && (EditorJsToHtml.parse(JSON.parse(laporan?.tindak_lanjut)) as ParsedContent[]);
+  // const edjsParser = edjsHTML();
+  // const htmlParse = edjsParser.parse(laporan.isi_rapat);
+  // console.log(laporan.isi_rapat, '>>>>>');
+
 
   const printRef: any = useRef();
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
   });
 
-  const html =
-    laporan.length != 0 &&
-    (EditorJsToHtml.parse(JSON.parse(laporan?.isi_rapat)) as ParsedContent[]);
+  const html = laporan.length != 0 && (EditorJsToHtml.parse(JSON.parse(laporan?.isi_rapat)) as ParsedContent[]);
 
   useEffect(() => {
     fetchData();
@@ -128,7 +137,6 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
     const options: any = { weekday: "long" };
     return date.toLocaleDateString("id-ID", options);
   }
-  console.log(laporan);
 
   return (
     <React.Fragment>
@@ -218,7 +226,7 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                           {laporan.tanggal[0]?.startDate !== null &&
                             laporan.tanggal[0]?.endDate !== null &&
                             laporan.tanggal[0]?.startDate ===
-                              laporan.tanggal[0]?.endDate && (
+                            laporan.tanggal[0]?.endDate && (
                               <span>
                                 {formatDate(laporan.tanggal[0]?.startDate)}
                               </span>
@@ -226,7 +234,7 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                           {laporan.tanggal[0]?.startDate !== null &&
                             laporan.tanggal[0]?.endDate !== null &&
                             laporan.tanggal[0]?.startDate !==
-                              laporan.tanggal[0]?.endDate && (
+                            laporan.tanggal[0]?.endDate && (
                               <span>
                                 {formatDateRange(
                                   laporan.tanggal[0]?.startDate,
@@ -281,9 +289,17 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                     Penjelasan Rapat
                   </div>
                   <div className="body text-black dark:text-white text-title-xsm mt-4 ml-4 ">
-                    <div
-                      dangerouslySetInnerHTML={{ __html: htmlIsiRapat }}
-                    ></div>
+                    {laporan.isi_rapat !== undefined && <Blocks data={JSON.parse(laporan.isi_rapat)} config={{
+                      list: {
+                        className: "list-decimal"
+                      },
+                      paragraph: {
+                        className: "text-base text-opacity-75",
+                        actionsClassNames: {
+                          alignment: "text-{alignment}",
+                        }
+                      }
+                    }} />}
                   </div>
                 </div>
                 <div className="penjelasan-rapat flex-col">
@@ -291,9 +307,17 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                     Tindak Lanjut
                   </div>
                   <div className="body text-black dark:text-white text-title-xsm mt-4 ml-4 ">
-                    <div
-                      dangerouslySetInnerHTML={{ __html: htmlTindakLanjut }}
-                    ></div>
+                    {laporan.tindak_lanjut !== undefined && <Blocks data={JSON.parse(laporan.tindak_lanjut)} config={{
+                      list: {
+                        className: "list-decimal"
+                      },
+                      paragraph: {
+                        className: "text-base text-opacity-75",
+                        actionsClassNames: {
+                          alignment: "text-{alignment}",
+                        }
+                      }
+                    }} />}
                   </div>
                 </div>
               </div>
