@@ -944,17 +944,26 @@ function CreateForm({ handleSubmit }: MyFormProps) {
       dibuatTanggal: null
     }),
     validationSchema: Yup.object().shape({
-      rangeTanggal: Yup.array().required("Harap isi tanggal pelaksanaan !"),
-      jam: Yup.mixed().nullable().required("Waktu tidak boleh kosong !"),
+      rangeTanggal: Yup.array()
+        .required("Harap isi tanggal pelaksanaan !"),
+      jam: Yup.mixed()
+        .nullable()
+        .required("Waktu tidak boleh kosong !"),
       pendahuluan: Yup.string()
         .required("Harap isi pendahuluan !")
         .min(4, "Minimal 4 karakter"),
-      pimpinanRapat: Yup.string().required("Harap isi nama pimpinan rapat !"),
-      pesertaArray: Yup.array().required("Harap isi peserta !"),
-      isiRapat: Yup.mixed().nullable(),
-      tindakLanjut: Yup.mixed().nullable(),
-      lokasi: Yup.string().required("Lokasi tidak boleh kosong !"),
-      acara: Yup.string().required("Acara tidak boleh kosong !"),
+      pimpinanRapat: Yup.string()
+        .required("Harap isi nama pimpinan rapat !"),
+      pesertaArray: Yup.array()
+        .required("Harap isi peserta !"),
+      isiRapat: Yup.mixed()
+        .nullable(),
+      tindakLanjut: Yup.mixed()
+        .nullable(),
+      lokasi: Yup.string()
+        .required("Lokasi tidak boleh kosong !"),
+      acara: Yup.string()
+        .required("Acara tidak boleh kosong !"),
       pelapor: Yup.object()
         .shape({
           label: Yup.string(),

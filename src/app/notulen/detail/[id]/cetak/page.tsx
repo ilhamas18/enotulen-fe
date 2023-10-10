@@ -58,7 +58,6 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
       method: "get",
       type: "auth",
     });
-    console.log(response);
 
     if (!response.success) {
       setLoading(false);
@@ -167,25 +166,25 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                     PEMERINTAH KOTA MADIUN
                   </div>
                   <div className="text-black dark:text-white font-bold text-title-ss uppercase">
-                    {/* {laporan?.Pegawai?.Perangkat_Daerah?.nama_opd} */}
-                    BADAN PERENCANAAN, PENELITIAN DAN PEMBANGUNAN DAERAH
+                    {laporan?.Perangkat_Daerah?.nama_opd}
+                    {/* BADAN PERENCANAAN, PENELITIAN DAN PEMBANGUNAN DAERAH */}
                   </div>
                   <div className="text-black dark:text-white font-bold text-title-xsm tracking-widest">
-                    {/* ({laporan?.Pegawai?.Perangkat_Daerah?.singkatan}) */}
-                    (BAPPELITBANGDA)
+                    ({laporan?.Perangkat_Daerah?.singkatan})
+                    {/* (BAPPELITBANGDA) */}
                   </div>
                   <div className="text-black dark:text-white font-bold text-title-ss">
-                    {/* {laporan?.Pegawai?.Perangkat_Daerah?.alamat} */}
-                    Jl Mayjen Panjaitan No. 17 Lt II, Kode Pos: 63137, Jawa
-                    Timur
+                    {laporan?.Perangkat_Daerah?.alamat}
+                    {/* Jl Mayjen Panjaitan No. 17 Lt II, Kode Pos: 63137, Jawa
+                    Timur */}
                   </div>
                   <div className="text-black dark:text-white font-bold text-title-ss">
-                    TELP : ( 0351 ) 471535 / FAX: ( 0351 ) 471535
-                    {/* TELP : {laporan?.Pegawai?.Perangkat_Daerah?.telepon}/FAX. {laporan?.Pegawai?.Perangkat_Daerah?.faximile} */}
+                    {/* TELP : ( 0351 ) 471535 / FAX: ( 0351 ) 471535 */}
+                    TELP : {laporan?.Perangkat_Daerah?.telepon}/FAX. {laporan?.Perangkat_Daerah?.faximile}
                   </div>
                   <div className="text-black dark:text-white text-title-ss">
-                    {/* Website : {laporan?.Pegawai?.Perangkat_Daerah?.website} */}
-                    Website : http://www. madiunkota.go.id
+                    Website : {laporan?.Perangkat_Daerah?.website}
+                    {/* Website : http://www. madiunkota.go.id */}
                   </div>
                 </div>
               </div>
@@ -328,29 +327,52 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
               </div>
             </div>
             <div className="flex items-center justify-between px-4">
-              <div className="flex flex-col text-center">
-                <div className="font-bold text-black dark:text-white text-title-ss mt-12">
-                  Mengetahui,
+              <div className="flex flex-col items-center justify-between text-center w-[45%] h-[17em]">
+                <div>
+                  <div className="font-bold text-black dark:text-white text-title-ss mt-12">
+                    Mengetahui,
+                  </div>
+                  <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                    {laporan.atasan?.jabatan}
+                  </div>
                 </div>
-                <div className="font-bold text-black dark:text-white text-title-ss mt-1">
-                  {laporan.atasan?.jabatan}
-                </div>
-                <div className="font-bold text-black dark:text-white text-title-ss mt-[120px] border-b border-black">
-                  {laporan.atasan?.nama}
-                </div>
-                <div className="text-black dark:text-white text-title-ss mt-1">
-                  {" "}
-                  {laporan.atasan?.nama_pangkat}{" "}
-                </div>
-                <div className="font-bold text-black dark:text-white text-title-ss mt-1">
-                  NIP. {laporan.atasan?.nip}
+                <div>
+                  <div className="font-bold text-black dark:text-white text-title-ss border-b border-black">
+                    {laporan.atasan?.nama}
+                  </div>
+                  <div className="text-black dark:text-white text-title-ss mt-1">
+                    {" "}
+                    {laporan.atasan?.nama_pangkat}{" "}
+                  </div>
+                  <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                    NIP. {laporan.atasan?.nip}
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-col text-center">
+              <div className="flex flex-col items-center justify-between text-center w-[45%] h-[17em]">
+                <div>
+                  <div className="font-bold text-black dark:text-white text-title-ss mt-12">
+                    Yang Melapor,
+                  </div>
+                </div>
+                <div>
+                  <div className="font-bold text-black dark:text-white text-title-ss border-b border-black">
+                    {laporan.pelapor?.nama}
+                  </div>
+                  <div className="text-black dark:text-white text-title-ss mt-1">
+                    {" "}
+                    {laporan.pelapor?.nama_pangkat}{" "}
+                  </div>
+                  <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                    NIP. {laporan.pelapor?.nip}
+                  </div>
+                </div>
+              </div>
+              {/* <div className="flex flex-col text-center w-[45%] h-[40px]">
                 <div className="font-bold text-black dark:text-white text-title-ss mt-[60px]">
                   Yang Melapor,
                 </div>
-                <div className="font-bold text-black dark:text-white text-title-ss mt-[120px] border-b border-black">
+                <div className="font-bold text-black dark:text-white text-title-ss border-b border-black">
                   {laporan.pelapor?.nama}
                 </div>
                 <div className="text-black dark:text-white text-title-ss mt-1">
@@ -359,7 +381,7 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                 <div className="font-bold text-black dark:text-white text-title-ss mt-1">
                   NIP. {laporan.pelapor?.nip}
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </>

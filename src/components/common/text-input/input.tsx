@@ -164,7 +164,7 @@ const TextInput = ({
           onChange={change}
           placeholder={placeholder}
           className={`
-           ${errors ? "error text-xl-pink" : ""}`
+            ${errors && touched ? "error" : ""}`
           }
         // classNamePrefix="react-select"
         />
