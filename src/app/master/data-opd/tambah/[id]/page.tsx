@@ -1,8 +1,6 @@
 "use client";
-import { fetchApi } from '@/components/mixins/request';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
 import Loading from '@/components/global/Loading/loading';
 import TambahOPDForm from '@/components/pages/opd/tambahOPDForm';
 import { State } from '@/store/reducer';
@@ -14,46 +12,9 @@ const TambahOPD = ({ params }: { params: { id: number } }) => {
   const { opd } = useSelector((state: State) => ({
     opd: state.opd
   }), shallowEqual);
-  
-  const [listOPD, setListOPD] = useState<any>([]);
+
   const [loading, setLoading] = useState<boolean>(false);
   const { id } = params;
-  
-  useEffect(() => {
-    fetchDataOPD();
-  }, []);
-
-  const fetchDataOPD = async () => {
-    setLoading(true);
-    const response = await fetchApi({
-      url: '/opd/fetchDataOPD',
-      method: 'get',
-      type: "auth"
-    })
-    console.log(response, '<<<');
-    
-    if (!response.success) {
-      if (response.data.code == 500) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Koneksi bermasalah!',
-        })
-      }
-      setLoading(false);
-    } else {
-      const { data } = response.data;
-      let temp: any = [];
-      data.forEach((el: any) => {
-        temp.push({
-          label: el.nama_opd,
-          value: el.kode_opd
-        })
-      })
-      setListOPD(temp);
-      setLoading(false);
-    }
-  }
 
   return (
     <div className="form-opd-container">

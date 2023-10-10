@@ -48,8 +48,8 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   const handleCancel = () => router.push('/master/data-opd');
 
   return (
-    <React.Fragment>
-      <form className="form-wrapper-general relative">
+    <div className='relative'>
+      <form className="form-wrapper-general">
         <div className="px-8 flex flex-col space-y-7 mt-4">
           <div className="data flex flex-row">
             <TextInput
@@ -118,34 +118,34 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
           </div>
         </div>
         <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
-          <div className="w-[8em]">
-            <Button
-              variant="xl"
-              type="secondary"
-              className="button-container mb-2 mt-5"
-              rounded
-              onClick={() => handleCancel()}
-            >
-              <div className="flex justify-center items-center text-[#002DBB] font-Nunito">
-                <span className="button-text">Batal</span>
-              </div>
-            </Button>
-          </div>
-          <div className="w-[8em]">
+          <div className="w-[8em] absolute bottom-0 right-8">
             <Button
               variant="xl"
               className="button-container mb-2 mt-5"
               rounded
               onClick={handleSubmit}
             >
-              <div className="flex justify-center items-center text-white font-Nunito">
+              <div className="flex justify-center items-center text-white">
                 <span className="button-text">Tambah</span>
               </div>
             </Button>
           </div>
         </div>
       </form>
-    </React.Fragment>
+      <div className="w-[8em]">
+        <Button
+          variant="xl"
+          type="secondary"
+          className="button-container mb-4 mt-2 ml-8"
+          rounded
+          onClick={() => handleCancel()}
+        >
+          <div className="flex justify-center items-center text-[#002DBB] font-Nunito">
+            <span className="button-text">Batal</span>
+          </div>
+        </Button>
+      </div>
+    </div>
   )
 }
 
@@ -189,7 +189,6 @@ const TambahOPDForm = ({ dataOPD }: PropTypes) => {
       faximile: values.faximile,
       website: values.website
     }
-    console.log(`/opd/addOPD/${dataOPD.opd.kode_opd}`);
 
     const response = await fetchApi({
       url: `/opd/addOPD/${dataOPD.opd.kode_opd}`,
@@ -197,7 +196,6 @@ const TambahOPDForm = ({ dataOPD }: PropTypes) => {
       body: payload,
       type: "auth"
     })
-    console.log(response);
 
     if (!response.success) {
       if (response.data.code == 500) {

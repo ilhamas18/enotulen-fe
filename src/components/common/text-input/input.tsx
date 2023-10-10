@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { DesktopDateTimePicker } from '@mui/x-date-pickers/DesktopDateTimePicker';
 
@@ -165,8 +166,19 @@ const TextInput = ({
           className={`
            ${errors ? "error text-xl-pink" : ""}`
           }
-          // classNamePrefix="react-select"
+        // classNamePrefix="react-select"
         />
+      )}
+      {type === "date-picker" && (
+        <div style={{ width: '100%' }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label={label}
+              value={value}
+              onChange={change}
+            />
+          </LocalizationProvider>
+        </div>
       )}
       {type === "time" && (
         <div style={{ width: '100%' }}>

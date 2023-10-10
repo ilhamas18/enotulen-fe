@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
-import { setOPD } from '@/store/opd/action';
+// import { setOPD } from '@/store/opd/action';
 
 const columns: GridColDef[] = [
   {
@@ -16,8 +16,17 @@ const columns: GridColDef[] = [
     align: 'center'
   },
   {
-    field: 'kode_opd',
-    headerName: 'Kode',
+    field: 'nama',
+    headerName: 'Nama',
+    width: 300,
+    // flex: 1,
+    headerClassName: 'super-app-theme--header',
+    headerAlign: 'center',
+    align: 'center'
+  },
+  {
+    field: 'nip',
+    headerName: 'NIP',
     width: 180,
     // flex: 1,
     headerClassName: 'super-app-theme--header',
@@ -25,8 +34,8 @@ const columns: GridColDef[] = [
     align: 'center'
   },
   {
-    field: 'nama_opd',
-    headerName: 'Nama OPD',
+    field: 'pangkat',
+    headerName: 'Pangkat',
     width: 180,
     // flex: 1,
     headerClassName: 'super-app-theme--header',
@@ -34,45 +43,18 @@ const columns: GridColDef[] = [
     align: 'center'
   },
   {
-    field: 'singkatan',
-    headerName: 'Singkatan',
-    width: 180,
+    field: 'opd',
+    headerName: 'OPD',
+    width: 250,
     // flex: 1,
     headerClassName: 'super-app-theme--header',
     headerAlign: 'center',
     align: 'center'
   },
   {
-    field: 'alamat',
-    headerName: 'Alamat',
-    width: 180,
-    // flex: 1,
-    headerClassName: 'super-app-theme--header',
-    headerAlign: 'center',
-    align: 'center'
-  },
-  {
-    field: 'telepon',
-    headerName: 'Telp',
-    width: 180,
-    // flex: 1,
-    headerClassName: 'super-app-theme--header',
-    headerAlign: 'center',
-    align: 'center'
-  },
-  {
-    field: 'faximile',
-    headerName: 'Fax',
-    width: 180,
-    // flex: 1,
-    headerClassName: 'super-app-theme--header',
-    headerAlign: 'center',
-    align: 'center'
-  },
-  {
-    field: 'website',
-    headerName: 'Web',
-    width: 180,
+    field: 'role',
+    headerName: 'Role',
+    width: 120,
     // flex: 1,
     headerClassName: 'super-app-theme--header',
     headerAlign: 'center',
@@ -81,27 +63,27 @@ const columns: GridColDef[] = [
 ];
 
 interface PropTypes {
-  data: any
+  dataPegawai: any;
 }
 
-const ListOPD = ({ data }: PropTypes) => {
+const DataListUser = ({ dataPegawai }: PropTypes) => {
   const router = useRouter();
   const dispatch = useDispatch();
 
   const handleOnCellClick = (params: any) => {
-    dispatch(setOPD(params.row));
+    // dispatch(setOPD(params.row));
     router.push(`/master/data-opd/tambah/${params.row.kode_opd}`)
   }
 
   return (
-    <div style={{ height: 400, width: '100%' }} className='bg-white dark:bg-meta-4 dark:text-white'>
+    <div style={{ height: 500, width: '100%' }} className='bg-white dark:bg-meta-4 dark:text-white'>
       <div className="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% ..."></div>
       <Box sx={{
         height: 500,
         width: '100%',
       }}>
         <DataGrid
-          rows={data}
+          rows={dataPegawai}
           columns={columns}
           initialState={{
             pagination: {
@@ -118,4 +100,4 @@ const ListOPD = ({ data }: PropTypes) => {
   )
 }
 
-export default ListOPD;
+export default DataListUser;

@@ -6,7 +6,7 @@ import SidebarLinkGroup from "./SiderbarLinkGroup";
 import { RxDashboard } from "react-icons/rx";
 import { IoIosArrowDown } from "react-icons/io";
 import { AiOutlineDatabase } from "react-icons/ai";
-import { FaPeopleGroup, FaPeopleRoof } from "react-icons/fa6";
+import { GiPapers} from "react-icons/gi";
 import { shallowEqual, useSelector } from "react-redux";
 import { State } from "@/store/reducer";
 
@@ -179,7 +179,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <Link
                                 href="/master/data-user"
                                 className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white
-                                  ${pathname === "/master/data-user" && "text-white"}`}
+                                  ${pathname.includes("/master/data-user") && "text-white"}`}
                               >Data User</Link>
                             </li>
                             <li>
@@ -212,7 +212,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               </div>
 
               {/* {profile.role == 3 || profile.role == 4 && ( */}
-                <SidebarLinkGroup
+              <SidebarLinkGroup
                 activeCondition={
                   pathname.includes("notulen")
                 }
@@ -231,7 +231,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             : setSidebarExpanded(true);
                         }}
                       >
-                        <FaPeopleGroup size={20} />
+                        <GiPapers size={20} />
                         <div className="text-title-">Notulen</div>
                         <IoIosArrowDown size={20} className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && "rotate-180"}`} />
                       </Link>
@@ -241,7 +241,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             <Link
                               href="/notulen/laporan"
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${pathname === "/notulen/laporan" || pathname.includes('/notulen/detail') && "text-white"
-                                } `}
+                                } ${pathname === '/notulen/laporan' && 'text-white'} `}
                             >
                               List Notulen
                             </Link>

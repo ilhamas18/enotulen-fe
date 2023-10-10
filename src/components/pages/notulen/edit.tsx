@@ -22,7 +22,7 @@ import { State } from "@/store/reducer";
 import axios from "axios";
 import { getCookies } from "cookies-next";
 import { IoMdClose } from "react-icons/io";
-import { formatMonth } from "@/components/helpers/formatMonth";
+import moment from "moment"
 
 const EditorBlock = dynamic(() => import("../../hooks/editor"));
 
@@ -50,6 +50,9 @@ interface FormValues {
 interface OtherProps {
   title?: string;
   ref?: any;
+  dataNotulen?: any;
+  pelapor?: any;
+  atasan?: any;
 }
 
 interface MyFormProps extends OtherProps {
@@ -70,9 +73,8 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     isSubmitting,
     ref,
   } = props;
-  const { profile } = useSelector((state: State) => ({
-    profile: state.profile.profile
-  }), shallowEqual)
+
+  const router = useRouter();
 
   const [openDateRange, setOpenDateRange] = useState<boolean>(false);
   const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
@@ -119,11 +121,10 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
 
   const fetchDataPegawai = async () => {
     const response = await fetchApi({
-      url: `/pegawai/getPelapor/${profile.Perangkat_Daerah.kode_opd}/all`,
+      url: `/pegawai/getAllPegawai`,
       method: "get",
       type: "auth",
     });
-    console.log(response, '>>>> error');
 
     if (!response.success) {
       if (response.data.code == 500) {
@@ -156,7 +157,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
 
   const fetchDataAtasan = async () => {
     const response = await fetchApi({
-      url: `/pegawai/getPelapor/${profile.Perangkat_Daerah.kode_opd}/atasan`,
+      url: `/pegawai/getAllPegawai`,
       method: "get",
       type: "auth",
     });
@@ -425,9 +426,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     });
   };
 
+  const handleBack = () => router.back()
+
   return (
     <React.Fragment>
-      <div className="form-container bg-white rounded-lg">
+      <div className="form-container bg-white rounded-lg relative">
         <form className="form-wrapper-general relative">
           <div className="px-8 flex flex-col space-y-7 mt-4">
             <div className="data flex flex-row mt-4">
@@ -552,10 +555,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   <li className="font flex flex-col gap-2" key={i}>
                     <div className="flex justify-between">
                       <div className="flex gap-2">
-                        <div
-                          className={`${values.pesertaArray.length > 1 ? "block" : "hidden"
-                            }`}
-                        >
+                        <div className={`${values.pesertaArray.length > 1 ? "block" : "hidden"}`}>
                           {i + 1} .
                         </div>
                         <div>{el.nama}</div>
@@ -872,18 +872,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
             )}
           </div>
           <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
-            <div className="w-[8em]">
-              <Button
-                variant="xl"
-                type="secondary"
-                className="button-container mb-2 mt-5"
-                rounded
-              >
-                <div className="flex justify-center items-center text-[#002DBB] font-Nunito">
-                  <span className="button-text">Batal</span>
-                </div>
-              </Button>
-            </div>
+
             <div className="w-[8em]">
               <Button
                 variant="xl"
@@ -893,12 +882,24 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 onClick={handleSubmit}
               >
                 <div className="flex justify-center items-center text-white font-Nunito">
-                  <span className="button-text">Tambah</span>
+                  <span className="button-text">Edit</span>
                 </div>
               </Button>
             </div>
           </div>
         </form>
+        <div className="w-[8em] absolute right-7 bottom-4" onClick={handleBack}>
+          <Button
+            variant="xl"
+            type="secondary"
+            className="button-container mb-2 mt-5"
+            rounded
+          >
+            <div className="flex justify-center items-center text-[#002DBB] font-Nunito">
+              <span className="button-text">Batal</span>
+            </div>
+          </Button>
+        </div>
 
         <DateRangePicker
           isOpen={openDateRange}
@@ -915,32 +916,32 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   );
 };
 
-function CreateForm({ handleSubmit }: MyFormProps) {
+function CreateForm({ handleSubmit, dataNotulen, pelapor, atasan }: MyFormProps) {
   const FormWithFormik = withFormik({
     mapPropsToValues: () => ({
       tagging: [],
       rangeTanggal: [
         {
-          startDate: null,
-          endDate: null,
+          startDate: dataNotulen.tanggal[0]?.startDate != null ? new Date(dataNotulen.tanggal[0]?.startDate) : null,
+          endDate: dataNotulen.tanggal[0]?.endDate != null ? new Date(dataNotulen.tanggal[0]?.endDate) : null,
           key: "selection",
         },
       ],
-      jam: null,
-      pendahuluan: "",
-      pimpinanRapat: "",
-      pesertaArray: [],
-      isiRapat: null,
-      tindakLanjut: null,
-      lokasi: "",
-      acara: "",
-      pelapor: null,
-      atasan: null,
-      suratUndangan: null,
-      daftarHadir: null,
-      spj: null,
-      foto: null,
-      pendukung: null,
+      jam: dataNotulen.waktu !== null ? dataNotulen.waktu : null,
+      pendahuluan: dataNotulen.pendahuluan !== null ? dataNotulen.pendahuluan : "",
+      pimpinanRapat: dataNotulen.pimpinan_rapat !== null ? dataNotulen.pimpinan_rapat : "",
+      pesertaArray: dataNotulen.peserta_rapat.length != 0 ? dataNotulen.peserta_rapat : [],
+      isiRapat: dataNotulen.isi_rapat !== null ? JSON.parse(dataNotulen.isi_rapat) : null,
+      tindakLanjut: dataNotulen.tindak_lanjut !== null ? JSON.parse(dataNotulen.tindak_lanjut) : null,
+      lokasi: dataNotulen.lokasi !== "" ? dataNotulen.lokasi : "",
+      acara: dataNotulen.acara !== "" ? dataNotulen.acara : "",
+      pelapor: dataNotulen.pelapor !== null ? pelapor : null,
+      atasan: dataNotulen.atasan !== null ? atasan : null,
+      suratUndangan: dataNotulen.link_img_surat_undangan !== null ? dataNotulen.link_img_surat_undangan : null,
+      daftarHadir: dataNotulen.link_img_daftar_hadir !== null ? dataNotulen.link_img_daftar_hadir : null,
+      spj: dataNotulen.link_img_spj !== null ? dataNotulen.link_img_spj : null,
+      foto: dataNotulen.link_img_foto !== null ? dataNotulen.link_img_foto : null,
+      pendukung: dataNotulen.link_img_pendukung !== null ? dataNotulen.link_img_pendukung : null,
       dibuatTanggal: null
     }),
     validationSchema: Yup.object().shape({
@@ -977,7 +978,14 @@ function CreateForm({ handleSubmit }: MyFormProps) {
   return <FormWithFormik />;
 }
 
-const AddNotulenForm = () => {
+interface PropTypes {
+  dataNotulen: any;
+}
+
+const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
+  const [pelapor, setNamaPelapor] = useState<any>(null);
+  const [atasan, setAtasan] = useState<any>(null);
+
   const { profile } = useSelector(
     (state: State) => ({
       profile: state.profile.profile,
@@ -987,6 +995,36 @@ const AddNotulenForm = () => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setNamaPelapor({
+      label: dataNotulen.pelapor.nama,
+      value: dataNotulen.pelapor.nip,
+      data: {
+        nama: dataNotulen.pelapor.nama,
+        nip: dataNotulen.pelapor.nip,
+        pangkat: dataNotulen.pelapor.pangkat,
+        namaPangkat: dataNotulen.pelapor.nama_pangkat,
+        jabatan: dataNotulen.pelapor.jabatan
+      },
+    });
+
+    setAtasan({
+      label: dataNotulen.atasan.nama,
+      value: dataNotulen.atasan.nip,
+      data: {
+        nama: dataNotulen.atasan.nama,
+        nip: dataNotulen.atasan.nip,
+        pangkat: dataNotulen.atasan.pangkat,
+        namaPangkat: dataNotulen.atasan.nama_pangkat,
+        jabatan: dataNotulen.atasan.jabatan
+      },
+    })
+  }, [])
+
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth() + 1;
+  const currentYear = currentDate.getFullYear();
 
   const handleSubmit = async (values: FormValues) => {
     const payload = {
@@ -1016,7 +1054,7 @@ const AddNotulenForm = () => {
     };
 
     const response = await fetchApi({
-      url: `/notulen/addNotulen`,
+      url: `/notulen/editNotulen`,
       method: "post",
       body: payload,
       type: "auth",
@@ -1049,284 +1087,15 @@ const AddNotulenForm = () => {
       {loading ? (
         <Loading loading={loading} setLoading={setLoading} />
       ) : (
-        <CreateForm handleSubmit={handleSubmit} />
+        <CreateForm
+          handleSubmit={handleSubmit}
+          dataNotulen={dataNotulen}
+          pelapor={pelapor}
+          atasan={atasan}
+        />
       )}
     </div>
   );
 };
 
 export default AddNotulenForm;
-
-// const FormNotulenForm = () => {
-//   const router = useRouter();
-
-//   const [jam, setJam] = useState<string>('');
-//   const [pendahuluan, setPendahuluan] = useState<string>('');
-//   const [pimpinanRapat, setPimpinanRapat] = useState<string>('');
-//   const [pesertaRapat, setPesertaRapat] = useState<string>('');
-//   // const [pesertaArray, setPesertaArray] = useState<any>({ id: 0, nama: '' });
-//   const [pesertaArray, setPesertaArray] = useState<any>([])
-//   const [lokasi, setLokasi] = useState<string>('');
-//   const [acara, setAcara] = useState<string>('');
-//   const [pelapor, setPelapor] = useState<string>('');
-//   const [atasan, setAtasan] = useState<string>('');
-//   const [isiRapat, setIsiRapat] = useState<OutputData>();
-//   // const [value, setValue] = React.useState<DateRange<Dayjs>>([
-//   //   dayjs('2022-04-17'),
-//   //   dayjs('2022-04-21'),
-//   // ]);
-//   const [rangeTanggal, setRangeTanggal] = useState<any>([
-// {
-//   startDate: null,
-//   endDate: null,
-//   key: 'selection'
-// }
-//   ]);
-
-//   const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
-//   const [openDateRange, setOpenDateRange] = useState<boolean>(false);
-//   const [loading, setLoading] = useState<boolean>(false);
-
-//   const handleAddParticipant = (e: any) => {
-//     e.preventDefault();
-//     setOpenAddParticipant(false);
-//     setPesertaRapat('');
-//     let temp = pesertaArray;
-//     temp.push({ nama: pesertaRapat })
-//     setPesertaArray(temp);
-//     // const temp = pesertaArray;
-//     // temp[pesertaArray.id] = {
-//     //   id: pesertaArray.id++,
-//     //   nama: pesertaRapat
-//     // }
-//     // setPesertaArray(temp);
-//   }
-
-//   const handleSubmit = async (e: any) => {
-//     e.preventDefault();
-//     const payload = {
-//       tanggal: rangeTanggal,
-//       waktu: jam,
-//       pendahuluan: pendahuluan,
-//       pimpinan_rapat: pimpinanRapat,
-//       peserta_rapat: pesertaArray,
-//       isi_rapat: JSON.stringify(isiRapat),
-//       lokasi: lokasi,
-//       acara: acara,
-//       pelapor: pelapor,
-//       atasan: atasan,
-//       status: '-',
-//       id_pegawai: 2
-//     }
-
-//     const response = await fetchApi({
-//       url: `/notulen/addNotulen`,
-//       method: 'post',
-//       body: payload,
-//       type: "auth"
-//     })
-//     console.log(response, '<<<');
-
-//     if (!response.success) {
-//       if (response.data.code == 500) {
-//         Swal.fire({
-//           icon: 'error',
-//           title: 'Oops...',
-//           text: 'Koneksi bermasalah!',
-//         })
-//       }
-//       setLoading(false);
-//     } else {
-//       if (response.data.code == 200) {
-//         setLoading(false);
-//         Swal.fire({
-//           position: 'top-end',
-//           icon: 'success',
-//           title: 'Your work has been saved',
-//           showConfirmButton: false,
-//           timer: 1500
-//         })
-//         router.push('/notulen/laporan')
-//       }
-//     }
-//   }
-
-//   return (
-//     <div className="form-container bg-white">
-//       <form className="form-wrapper-general" onSubmit={handleSubmit}>
-//         <div className="px-8 font-Nunito flex flex-col space-y-7 mt-4">
-//           <div className="data flex flex-row mt-4">
-//             <div className='flex border-2 border-light-gray rounded-lg w-full py-3 px-4' onClick={() => setOpenDateRange(true)}>
-//               {rangeTanggal[0]?.startDate === null ? (
-//                 <span>Pilih Hari / Tanggal</span>
-//               ) : (
-//                 <div className='flex gap-4'>
-//                   {rangeTanggal[0]?.startDate !== null && <span>{formatDate(rangeTanggal[0]?.startDate)}</span>}
-//                   {rangeTanggal[0]?.endDate !== null && rangeTanggal[0]?.endDate !== rangeTanggal[0]?.startDate && <span> - {formatDate(rangeTanggal[0]?.endDate)}</span>}
-//                 </div>
-//               )}
-//             </div>
-
-//           </div>
-//           <div className="data flex flex-row w-full">
-//             <TextInput
-//               type="time"
-//               id="jam"
-//               name="jam"
-//               label="Masukkan Jam"
-//               change={(e: any) => setJam(e.$d)}
-//               value={jam}
-//             // errors={errors.nama}
-//             // value={values.nama}
-//             // change={handleChange}
-//             />
-//           </div>
-//           <div className='mt-2 -pb-2'>Penjelasan :</div>
-//           <div className="data flex flex-row">
-//             <TextInput
-//               type="text-area"
-//               id="pendahuluan"
-//               name="pendahuluan"
-//               label="Pendahuluan"
-//               change={(e: any) => setPendahuluan(e.target.value)}
-//               value={pendahuluan}
-//             />
-//           </div>
-//           <div className="data flex flex-row">
-//             <TextInput
-//               type="text"
-//               id="pimpinanRapat"
-//               name="pimpinanRapat"
-//               label="Pimpinan Rapat"
-//               change={(e: any) => setPimpinanRapat(e.target.value)}
-//               value={pimpinanRapat}
-//             />
-//           </div>
-//           <div className="flex flex-col justify-center mb-2">
-//             <div className='flex gap-2'>
-//               <button onClick={(e) => {
-//                 e.preventDefault()
-//                 setOpenAddParticipant(!openAddParticipant)
-//               }}><AiFillPlusCircle size={26} /></button>
-//               <div>Tambah Peserta</div>
-//             </div>
-//             <div className={`data flex flex-row ${openAddParticipant ? 'block' : 'hidden'}`}>
-//               <div className='flex flex-col w-full'>
-//                 <TextInput
-//                   type="text"
-//                   id="pesertaRapat"
-//                   name="pesertaRapat"
-//                   label="Peserta Rapat"
-//                   change={(e: any) => setPesertaRapat(e.target.value)}
-//                   value={pesertaRapat}
-//                 />
-//                 <button onClick={(e) => handleAddParticipant(e)}>Tambah</button>
-//               </div>
-//             </div>
-//             <ul className='mt-4 ml-4'>
-//               <li className='font flex flex-col gap-2'>
-//                 {pesertaArray.map((el: any, i: number) => (
-//                   <div key={i} className='flex gap-2'>
-//                     <div>{i + 1} .</div>
-//                     <div>{el.nama}</div>
-//                   </div>
-//                 ))}
-//               </li>
-//             </ul>
-//           </div>
-//           <div className='mt-8 -mb-4 text-deep-gray'>Tambahkan Isi Rapat</div>
-//           <div className="container border border-light-gray rounded-lg">
-//             <EditorBlock data={isiRapat} onChange={setIsiRapat} holder="editorjs-container" />
-//           </div>
-//           <div className="data flex flex-row">
-//             <TextInput
-//               type="text"
-//               id="lokasi"
-//               name="lokasi"
-//               label="Lokasi / tempat"
-//               change={(e: any) => setLokasi(e.target.value)}
-//               value={lokasi}
-//             />
-//           </div>
-//           <div className="data flex flex-row">
-//             <TextInput
-//               type="text"
-//               id="acara"
-//               name="acara"
-//               label="Acara"
-//               change={(e: any) => setAcara(e.target.value)}
-//               value={acara}
-//             />
-//           </div>
-//           <div className="data flex flex-row">
-//             <TextInput
-//               type="text"
-//               id="subKegiatan"
-//               name="subKegiatan"
-//               label="Pilih Nama Pelapor"
-//               placeholder="Pilih Nama Pelapor"
-//               change={(e: any) => setPelapor(e.target.value)}
-//               value={pelapor}
-//             />
-//           </div>
-//           <div className="data flex flex-row">
-//             <TextInput
-//               type="text"
-//               id="subKegiatan"
-//               name="subKegiatan"
-//               label="Pilih Nama Atasan"
-//               placeholder="Pilih Nama Atasan"
-//               change={(e: any) => setAtasan(e.target.value)}
-//               value={atasan}
-//             // errors={errors.subKegiatan}
-//             // options={subKegiatanList}
-//             // handleBlur={handleBlur}
-//             // setValueSelected={handleChange}
-//             // change={(selectedOption: any) => {
-//             //   handleChange({
-//             //     target: { name: "subKegiatan", value: selectedOption }
-//             //   })
-//             // }}
-//             />
-//           </div>
-//         </div>
-//         <div className="btn-submit mx-8 flex flex-row space-x-3">
-//           <div className="w-[8em]">
-//             <Button
-//               variant="xl"
-//               className="button-container mb-2 mt-5"
-//               // loading={loading}
-//               rounded
-//             // onClick={handleSubmit}
-//             >
-//               <div className="flex justify-center items-center text-white font-Nunito">
-//                 <span className="button-text">Tambah</span>
-//               </div>
-//             </Button>
-//           </div>
-//           <div className="w-[8em]">
-//             <Button
-//               variant="xl"
-//               type="secondary"
-//               className="button-container mb-2 mt-5"
-//               rounded
-//             >
-//               <div className="flex justify-center items-center text-[#002DBB] font-Nunito">
-//                 <span className="button-text">Batal</span>
-//               </div>
-//             </Button>
-//           </div>
-//         </div>
-//       </form>
-
-//       <DateRangePicker
-//         isOpen={openDateRange}
-//         setIsOpen={setOpenDateRange}
-//         rangeTanggal={rangeTanggal}
-//         setRangeTanggal={setRangeTanggal}
-//       />
-//     </div>
-//   )
-// }
-
-// export default FormNotulenForm

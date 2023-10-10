@@ -7,8 +7,7 @@ import { Button } from '@/components/common/button/button';
 import Swal from 'sweetalert2'
 import Image from "next/image";
 import { useAuth } from "@/components/providers/Auth";
-import { BsFillPersonVcardFill } from 'react-icons/bs';
-import { RiLockPasswordFill } from "react-icons/ri";
+import Loading from "@/components/global/Loading/loading";
 import { withFormik, FormikProps, FormikBag } from 'formik';
 import * as Yup from 'yup';
 import { setCookie, getCookie, getCookies } from "cookies-next";
@@ -158,6 +157,7 @@ const LoginForm = () => {
   const dispatch = useDispatch();
   const { setAuthenticated } = useAuth();
   const [active, setActive] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const token = getCookie("refreshSession");
@@ -177,7 +177,7 @@ const LoginForm = () => {
       if (!resUser.success) {
         deleteCookie("refreshSession");
       }
-      
+
       if (resUser.success) {
         const { data } = resUser.data
         const response = await fetchApi({
@@ -185,7 +185,7 @@ const LoginForm = () => {
           method: "get",
           type: "auth"
         })
-       
+
         if (response.success) {
           dispatch(setProfile(response.data.data));
           router.push('/');
@@ -209,6 +209,8 @@ const LoginForm = () => {
   }
 
   const handleSubmit = async (values: FormValues) => {
+    setLoading(true);
+
     const payload = {
       nip: values.nip,
       password: values.password
@@ -220,7 +222,7 @@ const LoginForm = () => {
       type: "withoutAuth",
       body: payload
     })
-    
+
     if (!response.success) {
       router.push('/auth/login');
       if (response.code == 404) {
@@ -229,18 +231,21 @@ const LoginForm = () => {
           title: 'Oops...',
           text: 'NIP tidak ditemukan',
         })
+        setLoading(false);
       } else if (response.code == 400) {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
           text: 'NIP tidak ditemukan',
         })
+        setLoading(false);
       } else if (response.code == 500) {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
           text: 'Koneksi bermasalah',
         })
+        setLoading(false);
       }
       return false
     } else if (response.success) {
@@ -258,7 +263,13 @@ const LoginForm = () => {
   }
 
   return (
-    <CreateForm handleSubmit={handleSubmit} />
+    <React.Fragment>
+      {loading ? (
+        <Loading loading={Loading} setLoading={setLoading} />
+      ) : (
+        <CreateForm handleSubmit={handleSubmit} />
+      )}
+    </React.Fragment>
   )
 }
 

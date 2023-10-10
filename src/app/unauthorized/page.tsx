@@ -1,3 +1,4 @@
+'use client'
 import withAuth from "@/components/hocs/withAuth";
 import { GrStatusWarning } from "react-icons/gr";
 
