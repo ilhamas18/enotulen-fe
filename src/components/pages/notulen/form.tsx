@@ -271,7 +271,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   };
 
   const handleUploadSuratUndangan = async (event: any) => {
-    let url = `${process.env.BASE_URL}/notulen/uploadFile`;
+    let url = `${process.env.BASE_URL}/upload/undangan`;
 
     event.preventDefault();
     const fileUrl = event.target.files[0];
@@ -282,7 +282,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     });
 
     let fd = new FormData();
-    fd.append("file", fileUrl);
+    fd.append("undangan", fileUrl);
     const body: any = fd;
 
     const response: any = await axios.post(url, body, {
