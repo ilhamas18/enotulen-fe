@@ -96,6 +96,10 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
     setStatus(val);
   };
 
+  const handleDownloadFile = async (val: any) => {
+    router.push(`${process.env.BASE_URL}/notulen/getFile/${val}`)
+  }
+
   return (
     <>
       <div className="flex items-center justify-between mt-8 mb-2">
@@ -322,17 +326,9 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
             <div className="md:mt-0 mt-2 md:w-[75%] w-full">
               <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4 hover:cursor-pointer">
                 {data.link_img_surat_undangan !== null ? (
-                  <Link
-                    href={`localhost:8080/notulen/getFile/${data.link_img_surat_undangan}`}
-                    passHref
-                    legacyBehavior
-                  >
-                    <a target="_blank">
-                      <td className="text-blue-500 underline">
-                        {data.link_img_surat_undangan}
-                      </td>
-                    </a>
-                  </Link>
+                  <button onClick={() => handleDownloadFile(data.link_img_surat_undangan)}>
+                    {data.link_img_surat_undangan}
+                  </button>
                 ) : (
                   <div>-</div>
                 )}
@@ -464,7 +460,7 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
           )}
         </div>
       </div> */}
-      <div className={`${data.status === '-' ? 'block' : 'hidden'}`}>
+      <div className={`${data.status === '-' ? 'block' : 'hidden'} flex justify-between`}>
         <div className={`${profile.role == 3 ? "block" : "hidden"}`}>
           <div>
             <Button

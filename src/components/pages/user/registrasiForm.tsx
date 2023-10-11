@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import EditForm from './editForm';
 import TextInput from "@/components/common/text-input/input";
 import { Button } from '@/components/common/button/button';
 import { fetchApi } from '@/components/mixins/request';
@@ -11,7 +12,7 @@ interface PropTypes {
   profile: any;
 }
 
-const TambahUserForm = ({ dataOPD, profile }: PropTypes) => {
+const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
   const router = useRouter();
   const [namaOPD, setNamaOPD] = useState<string>('');
   const [kodeOPD, setKodeOPD] = useState<string>('');
@@ -19,6 +20,8 @@ const TambahUserForm = ({ dataOPD, profile }: PropTypes) => {
   const [user, setUser] = useState<any>([]);
   const [role, setRole] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [payload, setPayload] = useState<any>([]);
 
   useEffect(() => {
     if (profile.role == 2) {
@@ -81,15 +84,15 @@ const TambahUserForm = ({ dataOPD, profile }: PropTypes) => {
   const listRoleAdmin: any = [
     {
       label: 'Admin OPD',
-      value: 1
-    },
-    {
-      label: 'Verifikator',
       value: 2
     },
     {
-      label: 'User',
+      label: 'Verifikator',
       value: 3
+    },
+    {
+      label: 'User',
+      value: 4
     }
   ]
 
@@ -114,7 +117,7 @@ const TambahUserForm = ({ dataOPD, profile }: PropTypes) => {
       pangkat: user.pangkat,
       nama_pangkat: user.namaPangkat,
       jabatan: user.jabatan,
-      role: 1,
+      role: role,
       kode_opd: kodeOPD,
     }
 
@@ -156,7 +159,7 @@ const TambahUserForm = ({ dataOPD, profile }: PropTypes) => {
 
   return (
     <div className="relative py-6">
-      <div className="form-wrapper-general px-4">
+      <div className={`form-wrapper-general px-4 ${!isEdit ? 'block' : 'hidden'}`}>
         {user.length == 0 ? (
           <div className="px-8 flex flex-col space-y-7 mt-4">
             {profile.role == 1 && (
@@ -291,24 +294,43 @@ const TambahUserForm = ({ dataOPD, profile }: PropTypes) => {
               </div>
             </Button>
           </div>
-          <div className="w-[8em]">
-            <Button
-              variant="xl"
-              className="button-container mb-2 mt-5"
-              loading={loading}
-              rounded
-              disabled={role == 0}
-              onClick={handleSubmit}
-            >
-              <div className="flex justify-center items-center text-white font-Nunito">
-                <span className="button-text">Tambah</span>
-              </div>
-            </Button>
+          <div className='flex gap-4'>
+            <div className="w-[8em]">
+              <Button
+                variant="warning"
+                className="button-container mb-2 mt-5"
+                loading={loading}
+                rounded
+                disabled={user.length == 0}
+                onClick={() => setIsEdit(true)}
+              >
+                <div className="flex justify-center items-center text-white font-Nunito">
+                  <span className="button-text">Edit</span>
+                </div>
+              </Button>
+            </div>
+            <div className="w-[8em]">
+              <Button
+                variant="xl"
+                className="button-container mb-2 mt-5"
+                loading={loading}
+                rounded
+                disabled={role == 0}
+                onClick={handleSubmit}
+              >
+                <div className="flex justify-center items-center text-white font-Nunito">
+                  <span className="button-text">Tambah</span>
+                </div>
+              </Button>
+            </div>
           </div>
         </div>
+      </div>
+      <div className={`${isEdit ? 'block' : 'hidden'}`}>
+        <EditForm dataOPD={dataOPD} profile={profile} />
       </div>
     </div>
   )
 }
 
-export default TambahUserForm
+export default RegistrasiForm

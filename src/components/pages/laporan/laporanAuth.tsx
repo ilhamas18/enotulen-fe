@@ -165,7 +165,7 @@ const LaporanNotulenAuth = ({ data, profile }: LaporanNotulenAuthType) => {
         "width": 170,
         "headerAlign": "center",
         "align": "center"
-      }
+      },
     ],
     "rows": data,
     "initialState": {

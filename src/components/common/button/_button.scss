@@ -24,6 +24,15 @@
     }
   }
 
+  &.btn-warning {
+    background-color: #eab308;
+    border: none;
+
+    &:hover {
+      background-color: #facc15;
+    }
+  }
+
   &.btn-black {
     background-color: #000;
     border: none;
@@ -46,7 +55,7 @@
   &.btn-secondary-axis {
     background-color: white;
     border: 1px solid #753C94;
-    color:#753C94;
+    color: #753C94;
 
     &:hover {
       box-shadow: 0 0 5px #5ddcff, 0 0 10px #753C94;

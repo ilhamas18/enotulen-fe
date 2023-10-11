@@ -152,7 +152,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         <Link
                           href="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4
-                          ${pathname.includes("master") && "bg-graydark dark:bg-meta-4"}`
+                          ${pathname.includes("master") || pathname === "/auth/registrasi" && "bg-graydark dark:bg-meta-4"}`
                           }
                           onClick={(e) => {
                             e.preventDefault();
@@ -179,7 +179,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <Link
                                 href="/master/data-user"
                                 className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white
-                                  ${pathname.includes("/master/data-user") && "text-white"}`}
+                                  ${pathname === "/master/data-user" || pathname === "/auth/registrasi" && "text-white"}`}
                               >Data User</Link>
                             </li>
                             <li>

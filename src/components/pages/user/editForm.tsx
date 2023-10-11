@@ -52,6 +52,16 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   const [listUser, setListUser] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
+  useEffect(() => {
+    if (profile.role == 2) {
+      const val = {
+        label: dataOPD[0]?.label,
+        value: dataOPD[0]?.value
+      }
+      handleChangeOPD(val)
+    }
+  }, []);
+
   const handleChangeOPD = async (val: any) => {
     setLoading(true);
 
@@ -406,7 +416,7 @@ interface PropTypes {
   profile: any;
 }
 
-const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
+const EditForm = ({ dataOPD, profile }: PropTypes) => {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -474,4 +484,4 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
   )
 }
 
-export default RegistrasiForm
+export default EditForm

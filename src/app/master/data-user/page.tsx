@@ -25,6 +25,21 @@ const DataUser = () => {
     fetchPegawai();
   }, []);
 
+  const listRole: any = [
+    {
+      role: 'ADMIN KOTA'
+    },
+    {
+      role: 'ADMIN OPD'
+    },
+    {
+      role: 'VERIFIKATOR'
+    },
+    {
+      role: 'USER'
+    }
+  ]
+
   const fetchPegawai = async () => {
     setLoading(true);
     const response = await fetchApi({
@@ -56,7 +71,7 @@ const DataUser = () => {
             nip: el.nip,
             pangkat: el.nama_pangkat + ' ' + (el.pangkat),
             opd: el.Perangkat_Daerah.nama_opd,
-            role: el.role
+            role: listRole[el.role - 1].role
           })
         })
         setDataPegawai(temp);
@@ -65,7 +80,7 @@ const DataUser = () => {
     }
   }
 
-  const handleAddUser = () => router.push('/master/data-user/tambah');
+  const handleAddUser = () => router.push('/auth/registrasi');
 
   const gradientStyle = {
     width: '100%',
