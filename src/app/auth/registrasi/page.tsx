@@ -70,7 +70,6 @@ const TambahUser = () => {
     background: 'linear-gradient(to right, #00bcd4, #2196f3)',
   };
 
-
   return (
     <div className='form-user-container'>
       <Breadcrumb pageName='Pegawai / Tambah' />

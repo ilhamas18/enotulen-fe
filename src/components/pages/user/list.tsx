@@ -71,8 +71,7 @@ const DataListUser = ({ dataPegawai }: PropTypes) => {
   const dispatch = useDispatch();
 
   const handleOnCellClick = (params: any) => {
-    // dispatch(setOPD(params.row));
-    router.push(`/master/data-opd/tambah/${params.row.kode_opd}`)
+    router.push(`/master/data-user/edit/${params.row.nip}`)
   }
 
   return (

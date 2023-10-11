@@ -14,8 +14,7 @@ interface PropTypes {
 
 const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
   const router = useRouter();
-  const [namaOPD, setNamaOPD] = useState<string>('');
-  const [kodeOPD, setKodeOPD] = useState<string>('');
+  const [OPD, setOPD] = useState<any>([]);
   const [listUser, setListUser] = useState<any>([]);
   const [user, setUser] = useState<any>([]);
   const [role, setRole] = useState<number>(0);
@@ -39,8 +38,7 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
 
   const handleChangeOPD = async (val: any) => {
     setLoading(true);
-    setNamaOPD(val.target.value.label);
-    setKodeOPD(val.target.value.value);
+    setOPD(val.target.value);
     const response = await fetchApi({
       url: `/pegawai/syncDataPegawai/${val.target.value.value}`,
       method: 'get',
@@ -118,7 +116,7 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
       nama_pangkat: user.namaPangkat,
       jabatan: user.jabatan,
       role: role,
-      kode_opd: kodeOPD,
+      kode_opd: OPD.value,
     }
 
     const response = await fetchApi({
@@ -252,7 +250,7 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
               <div className='md:w-[5%]'>:</div>
               <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                 <div className="flex border border-light-gray rounded-lg w-full py-3 px-4">
-                  {namaOPD}
+                  {OPD.label}
                 </div>
               </div>
             </div>
@@ -327,7 +325,7 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
         </div>
       </div>
       <div className={`${isEdit ? 'block' : 'hidden'}`}>
-        <EditForm dataOPD={dataOPD} profile={profile} />
+        <EditForm opd={OPD} user={user} type="add" />
       </div>
     </div>
   )

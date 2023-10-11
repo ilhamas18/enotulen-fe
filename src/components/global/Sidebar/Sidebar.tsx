@@ -179,7 +179,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <Link
                                 href="/master/data-user"
                                 className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white
-                                  ${pathname === "/master/data-user" || pathname === "/auth/registrasi" && "text-white"}`}
+                                  ${pathname.includes("/master/data-user") || pathname === "/auth/registrasi" ? "text-white" : ""}`}
                               >Data User</Link>
                             </li>
                             <li>

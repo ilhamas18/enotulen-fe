@@ -22,8 +22,8 @@ interface FormValues {
 interface OtherProps {
   title?: string;
   ref?: any;
-  dataOPD?: any;
-  profile?: any;
+  opd?: any;
+  user?: any;
 }
 
 interface MyFormProps extends OtherProps {
@@ -45,96 +45,24 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     isValid,
     dirty,
     ref,
-    dataOPD,
-    profile
   } = props;
 
+  const router = useRouter();
   const [listUser, setListUser] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (profile.role == 2) {
-      const val = {
-        label: dataOPD[0]?.label,
-        value: dataOPD[0]?.value
-      }
-      handleChangeOPD(val)
-    }
-  }, []);
-
-  const handleChangeOPD = async (val: any) => {
-    setLoading(true);
-
-    handleChange({
-      target: { name: "opd", value: val },
-    });
-
-    const response = await fetchApi({
-      url: `/pegawai/syncDataPegawai/${val.value}`,
-      method: 'get',
-      type: 'auth'
-    })
-
-    if (!response.success) {
-      if (response.data.code == 500) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Koneksi bermasalah!',
-        })
-      }
-      setLoading(false);
-    } else {
-      const { data } = response.data;
-      let temp: any = [];
-      data.forEach((el: any) => {
-        temp.push({
-          label: el.nama,
-          value: el.nip,
-          data: {
-            nama: el.nama,
-            nip: el.nip,
-            pangkat: el.pangkat,
-            namaPangkat: el.namapangkat,
-            jabatan: el.jabatan
-          }
-        })
-      })
-      setListUser(temp);
-      setLoading(false);
-    }
-  }
-
-  const handleChangeUser = (val: any) => {
-    handleChange({
-      target: { name: "nama", value: val.data.nama },
-    });
-    handleChange({
-      target: { name: "nip", value: val.data.nip },
-    });
-    handleChange({
-      target: { name: "pangkat", value: val.data.pangkat },
-    });
-    handleChange({
-      target: { name: "namaPangkat", value: val.data.namaPangkat },
-    });
-    handleChange({
-      target: { name: "jabatan", value: val.data.jabatan },
-    });
-  }
 
   const listRoleAdmin: any = [
     {
       label: 'Admin OPD',
-      value: 1
-    },
-    {
-      label: 'Verifikator',
       value: 2
     },
     {
-      label: 'User',
+      label: 'Verifikator',
       value: 3
+    },
+    {
+      label: 'User',
+      value: 5
     }
   ]
 
@@ -148,202 +76,163 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
       value: 4
     }
   ]
+  console.log(values.role);
 
-  const handleCancel = () => {
-    handleChange({
-      target: { name: "nama", value: "" },
-    });
-  }
+
+  const handleCancel = () => router.push('/master/data-user');
 
   return (
     <div className='relative py-6'>
       <form className='form-wrapper-general px-4'>
-        {values.nama.length == 0 ? (
-          <div className="px-8 flex flex-col space-y-7 mt-4">
-            {profile.role == 1 && (
+        <div className='flex flex-col gap-4 p-6'>
+          <div className='body flex flex-row md:flex-row flex-col items-center justify-between'>
+            <div className="text-label md:w-[20%] w-full md:text-left text-center">
+              Nama Lengkap
+            </div>
+            <div className='md:w-[5%]'>:</div>
+            <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+              <TextInput
+                type="text"
+                id="nama"
+                name="nama"
+                touched={touched.nama}
+                label="Nama Lengkap"
+                change={handleChange}
+                value={values?.nama}
+                handleBlur={handleBlur}
+                errors={errors.nama}
+              />
+            </div>
+          </div>
+          <div className='body flex flex-row md:flex-row flex-col items-center justify-between'>
+            <div className="text-label md:w-[20%] w-full md:text-left text-center">
+              NIP
+            </div>
+            <div className='md:w-[5%]'>:</div>
+            <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+              <TextInput
+                type="text"
+                id="nip"
+                name="nip"
+                touched={touched.nip}
+                label="NIP"
+                change={handleChange}
+                value={values?.nip}
+                handleBlur={handleBlur}
+                errors={errors.nip}
+              />
+            </div>
+          </div>
+          <div className='body flex flex-row md:flex-row flex-col items-center justify-between'>
+            <div className="text-label md:w-[20%] w-full md:text-left text-center">
+              Pangkat
+            </div>
+            <div className='md:w-[5%]'>:</div>
+            <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+              <TextInput
+                type="text"
+                id="pangkat"
+                name="pangkat"
+                touched={touched.pangkat}
+                label="Pangkat"
+                change={handleChange}
+                value={values?.pangkat}
+                handleBlur={handleBlur}
+                errors={errors.pangkat}
+              />
+            </div>
+          </div>
+          <div className='body flex flex-row md:flex-row flex-col items-center justify-between'>
+            <div className="text-label md:w-[20%] w-full md:text-left text-center">
+              Nama Pangkat
+            </div>
+            <div className='md:w-[5%]'>:</div>
+            <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+              <TextInput
+                type="text"
+                id="namaPangkat"
+                name="namaPangkat"
+                touched={touched.namaPangkat}
+                label="Nama Pangkat"
+                change={handleChange}
+                value={values?.namaPangkat}
+                handleBlur={handleBlur}
+                errors={errors.namaPangkat}
+              />
+            </div>
+          </div>
+          <div className='body flex flex-row md:flex-row flex-col items-center justify-between'>
+            <div className="text-label md:w-[20%] w-full md:text-left text-center">
+              Jabatan
+            </div>
+            <div className='md:w-[5%]'>:</div>
+            <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+              <TextInput
+                type="text"
+                id="jabatan"
+                name="jabatan"
+                touched={touched.jabatan}
+                label="Jabatan"
+                change={handleChange}
+                value={values?.jabatan}
+                handleBlur={handleBlur}
+                errors={errors.jabatan}
+              />
+            </div>
+          </div>
+          <div className='body flex flex-row md:flex-row flex-col items-center justify-between'>
+            <div className="text-label md:w-[20%] w-full md:text-left text-center">
+              OPD
+            </div>
+            <div className='md:w-[5%]'>:</div>
+            <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+              <div className="flex border border-light-gray rounded-lg w-full py-3 px-4">
+                {values.opd.label}
+              </div>
+            </div>
+          </div>
+          <div className='body flex flex-row md:flex-row flex-col items-center justify-between'>
+            <div className="text-label md:w-[20%] w-full md:text-left text-center">
+              Pilih Role
+            </div>
+            <div className='md:w-[5%]'>:</div>
+            <div className="md:mt-0 mt-2 md:w-[75%] w-full">
               <div className="data flex flex-row">
                 <TextInput
                   type="dropdown"
-                  id="opd"
-                  name="opd"
-                  label="Nama OPD"
-                  placeholder="Ketik dan Cari Perangkat Daerah"
-                  options={dataOPD}
+                  id="role"
+                  name="role"
+                  label="Nama Role"
+                  errors={errors.role}
+                  value={values.role}
+                  placeholder="Pilih Role"
+                  options={listRoleAdmin}
                   change={(selectedOption: any) => {
-                    handleChangeOPD(selectedOption)
+                    handleChange({
+                      target: { name: "role", value: selectedOption },
+                    });
                   }}
                 />
               </div>
-            )}
-            {loading ? (
-              <div>Sedang memuat data pegawai . . .</div>
-            ) : (
-              <div className={`${listUser.length != 0 ? 'block' : 'hidden'}`}>
-                <TextInput
-                  type="dropdown"
-                  id="user"
-                  name="user"
-                  label="Nama User"
-                  placeholder="Ketik dan Cari Pegawai"
-                  options={listUser}
-                  change={(selectedOption: any) => {
-                    handleChangeUser(selectedOption)
-                  }}
-                />
-              </div>
-            )}
+            </div>
           </div>
-        ) : (
-          <>
-            <div className='flex flex-col gap-4 p-6'>
-              <div className='body flex flex-row md:flex-row flex-col items-center justify-between'>
-                <div className="text-label md:w-[20%] w-full md:text-left text-center">
-                  Nama Lengkap
-                </div>
-                <div className='md:w-[5%]'>:</div>
-                <div className="md:mt-0 mt-2 md:w-[75%] w-full">
-                  <TextInput
-                    type="text"
-                    id="nama"
-                    name="nama"
-                    touched={touched.nama}
-                    label="Nama Lengkap"
-                    change={handleChange}
-                    value={values?.nama}
-                    handleBlur={handleBlur}
-                    errors={errors.nama}
-                  />
-                </div>
+        </div>
+        <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
+          <div className="w-[8em] absolute bottom-8 right-8 mt-14">
+            <Button
+              variant="xl"
+              className="button-container"
+              rounded
+              disabled={values.role == null}
+              type='button'
+              onClick={handleSubmit}
+            >
+              <div className="flex justify-center items-center text-white">
+                <span className="button-text">Edit</span>
               </div>
-              <div className='body flex flex-row md:flex-row flex-col items-center justify-between'>
-                <div className="text-label md:w-[20%] w-full md:text-left text-center">
-                  NIP
-                </div>
-                <div className='md:w-[5%]'>:</div>
-                <div className="md:mt-0 mt-2 md:w-[75%] w-full">
-                  <TextInput
-                    type="text"
-                    id="nip"
-                    name="nip"
-                    touched={touched.nip}
-                    label="NIP"
-                    change={handleChange}
-                    value={values?.nip}
-                    handleBlur={handleBlur}
-                    errors={errors.nip}
-                  />
-                </div>
-              </div>
-              <div className='body flex flex-row md:flex-row flex-col items-center justify-between'>
-                <div className="text-label md:w-[20%] w-full md:text-left text-center">
-                  Pangkat
-                </div>
-                <div className='md:w-[5%]'>:</div>
-                <div className="md:mt-0 mt-2 md:w-[75%] w-full">
-                  <TextInput
-                    type="text"
-                    id="pangkat"
-                    name="pangkat"
-                    touched={touched.pangkat}
-                    label="Pangkat"
-                    change={handleChange}
-                    value={values?.pangkat}
-                    handleBlur={handleBlur}
-                    errors={errors.pangkat}
-                  />
-                </div>
-              </div>
-              <div className='body flex flex-row md:flex-row flex-col items-center justify-between'>
-                <div className="text-label md:w-[20%] w-full md:text-left text-center">
-                  Nama Pangkat
-                </div>
-                <div className='md:w-[5%]'>:</div>
-                <div className="md:mt-0 mt-2 md:w-[75%] w-full">
-                  <TextInput
-                    type="text"
-                    id="namaPangkat"
-                    name="namaPangkat"
-                    touched={touched.namaPangkat}
-                    label="Nama Pangkat"
-                    change={handleChange}
-                    value={values?.namaPangkat}
-                    handleBlur={handleBlur}
-                    errors={errors.namaPangkat}
-                  />
-                </div>
-              </div>
-              <div className='body flex flex-row md:flex-row flex-col items-center justify-between'>
-                <div className="text-label md:w-[20%] w-full md:text-left text-center">
-                  Jabatan
-                </div>
-                <div className='md:w-[5%]'>:</div>
-                <div className="md:mt-0 mt-2 md:w-[75%] w-full">
-                  <TextInput
-                    type="text"
-                    id="jabatan"
-                    name="jabatan"
-                    touched={touched.jabatan}
-                    label="Jabatan"
-                    change={handleChange}
-                    value={values?.jabatan}
-                    handleBlur={handleBlur}
-                    errors={errors.jabatan}
-                  />
-                </div>
-              </div>
-              <div className='body flex flex-row md:flex-row flex-col items-center justify-between'>
-                <div className="text-label md:w-[20%] w-full md:text-left text-center">
-                  OPD
-                </div>
-                <div className='md:w-[5%]'>:</div>
-                <div className="md:mt-0 mt-2 md:w-[75%] w-full">
-                  <div className="flex border border-light-gray rounded-lg w-full py-3 px-4">
-                    {values.opd?.label}
-                  </div>
-                </div>
-              </div>
-              <div className='body flex flex-row md:flex-row flex-col items-center justify-between'>
-                <div className="text-label md:w-[20%] w-full md:text-left text-center">
-                  Pilih Role
-                </div>
-                <div className='md:w-[5%]'>:</div>
-                <div className="md:mt-0 mt-2 md:w-[75%] w-full">
-                  <div className="data flex flex-row">
-                    <TextInput
-                      type="dropdown"
-                      id="role"
-                      name="role"
-                      label="Nama Role"
-                      errors={errors.role}
-                      placeholder="Pilih Role"
-                      options={profile.role == 1 ? listRoleAdmin : listRoleAdminOPD}
-                      change={(selectedOption: any) => {
-                        handleChange({
-                          target: { name: "role", value: selectedOption },
-                        });
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
-              <div className="w-[8em] absolute bottom-8 right-8">
-                <Button
-                  variant="xl"
-                  className="button-container mb-2 mt-5"
-                  rounded
-                  type='button'
-                  onClick={handleSubmit}
-                >
-                  <div className="flex justify-center items-center text-white">
-                    <span className="button-text">Tambah</span>
-                  </div>
-                </Button>
-              </div>
-            </div>
-          </>
-        )}
+            </Button>
+          </div>
+        </div>
       </form>
       {values.nama.length != 0 && (
         <div className="w-[8em]">
@@ -364,16 +253,35 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   )
 }
 
-function CreateForm({ handleSubmit, dataOPD, profile }: MyFormProps) {
+function CreateForm({ handleSubmit, opd, user }: MyFormProps) {
+  const listRole: any = [
+    {
+      label: 'Admin',
+      value: 1
+    },
+    {
+      label: 'Admin OPD',
+      value: 2
+    },
+    {
+      label: 'Verifikator',
+      value: 3
+    },
+    {
+      label: 'User',
+      value: 5
+    }
+  ]
+
   const FormWithFormik = withFormik({
     mapPropsToValues: () => ({
-      nama: "",
-      nip: "",
-      pangkat: "",
-      namaPangkat: "",
-      jabatan: "",
-      role: null,
-      opd: null
+      nama: user.length != 0 ? user.nama : "",
+      nip: user.length != 0 ? user.nip : "",
+      pangkat: user.length != 0 ? user.pangkat : "",
+      namaPangkat: user.length != 0 ? user.namaPangkat : "",
+      jabatan: user.length != 0 ? user.jabatan : "",
+      role: user.role !== null ? listRole[user.role - 1] : null,
+      opd: opd.length != 0 ? opd : ""
     }),
     validationSchema: Yup.object().shape({
       nama: Yup.string()
@@ -395,28 +303,20 @@ function CreateForm({ handleSubmit, dataOPD, profile }: MyFormProps) {
         })
         .required("Role harus diisi!")
         .nullable(),
-      opd: Yup.object()
-        .shape({
-          label: Yup.string(),
-          value: Yup.string(),
-        })
-        .required("OPD harus diisi!")
-        .nullable(),
     }),
     handleSubmit,
   })(FormField);
 
-  return (
-    <FormWithFormik dataOPD={dataOPD} profile={profile} />
-  )
+  return <FormWithFormik />
 }
 
 interface PropTypes {
-  dataOPD: any;
-  profile: any;
+  opd: any;
+  user?: any;
+  type?: string;
 }
 
-const EditForm = ({ dataOPD, profile }: PropTypes) => {
+const EditForm = ({ opd, user, type }: PropTypes) => {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -431,6 +331,7 @@ const EditForm = ({ dataOPD, profile }: PropTypes) => {
       jabatan: values.jabatan,
       role: values.role.value,
       kode_opd: values.opd.value,
+      status: 'editted'
     }
 
     const response = await fetchApi({
@@ -447,14 +348,12 @@ const EditForm = ({ dataOPD, profile }: PropTypes) => {
           title: "Oops...",
           text: "User telah ditambahkan",
         });
-        // setUser([]);
       } else {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
           text: 'Koneksi bermasalah',
         })
-        // setUser([]);
       }
     } else {
       Swal.fire({
@@ -464,7 +363,6 @@ const EditForm = ({ dataOPD, profile }: PropTypes) => {
         showConfirmButton: false,
         timer: 1500,
       });
-      // setUser([]);
       router.push("/master/data-user");
     }
   }
@@ -474,11 +372,7 @@ const EditForm = ({ dataOPD, profile }: PropTypes) => {
       {loading ? (
         <Loading loading={loading} setLoading={setLoading} />
       ) : (
-        <CreateForm
-          handleSubmit={handleSubmit}
-          dataOPD={dataOPD}
-          profile={profile}
-        />
+        <CreateForm handleSubmit={handleSubmit} opd={opd} user={user} />
       )}
     </div>
   )
