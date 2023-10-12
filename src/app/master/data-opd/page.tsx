@@ -77,7 +77,6 @@ const DataMasterOPD = () => {
       denyButtonText: `Batal`,
     }).then(async (result) => {
       if (result.isConfirmed) {
-        console.log('start')
         setLoading(true);
         const response = await fetchApi({
           url: '/opd/syncOPD',
@@ -85,7 +84,6 @@ const DataMasterOPD = () => {
           type: 'auth'
         })
         if (!response.success) {
-          console.log('not success', response.data)
           Swal.fire({
             icon: 'error',
             title: 'Oops...',
@@ -96,7 +94,6 @@ const DataMasterOPD = () => {
         } 
         else {
           setLoading(false);
-          console.log('success', response)
           Swal.fire({
             position: 'top-end',
             icon: 'success',
