@@ -78,6 +78,30 @@ const LaporanNotulenAuth = ({ data, profile }: LaporanNotulenAuthType) => {
         },
       },
     },
+    '& .super-app-theme--editted': {
+      backgroundColor: getBackgroundColor(
+        theme.palette.warning.main,
+        theme.palette.mode,
+      ),
+      '&:hover': {
+        backgroundColor: getHoverBackgroundColor(
+          theme.palette.warning.main,
+          theme.palette.mode,
+        ),
+      },
+      '&.Mui-selected': {
+        backgroundColor: getSelectedBackgroundColor(
+          theme.palette.warning.main,
+          theme.palette.mode,
+        ),
+        '&:hover': {
+          backgroundColor: getSelectedHoverBackgroundColor(
+            theme.palette.warning.main,
+            theme.palette.mode,
+          ),
+        },
+      },
+    },
   }));
 
   const dataRows: any = {

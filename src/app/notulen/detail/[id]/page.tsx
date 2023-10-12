@@ -25,7 +25,7 @@ const NotulenDetail = ({ params }: { params: { id: number } }) => {
       method: "get",
       type: "auth"
     })
-    
+
     if (!response.success) {
       setLoading(false);
       Swal.fire({

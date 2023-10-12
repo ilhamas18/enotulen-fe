@@ -302,7 +302,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
 
       setUploadMsgUndangan("Upload berhasil");
       handleChange({
-        target: { name: "suratUndangan", value: fileUrl.name },
+        target: { name: "suratUndangan", value: { name: fileUrl.name, value: data.data } },
       });
     } else {
       setUploadMsgUndangan("Upload gagal");
@@ -310,7 +310,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   };
 
   const handleUploadDaftarHadir = async (event: any) => {
-    let url = `${process.env.BASE_URL}/notulen/uploadFile`;
+    let url = `${process.env.BASE_URL}/upload/daftarhadir`;
     event.preventDefault();
     const fileUrl = event.target.files[0];
 
@@ -320,7 +320,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     });
 
     let fd = new FormData();
-    fd.append("file", fileUrl);
+    fd.append("daftarhadir", fileUrl);
     const body: any = fd;
 
     const response: any = await axios.post(url, body, {
@@ -340,7 +340,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
 
       setUploadMsgDaftarHadir("Upload berhasil");
       handleChange({
-        target: { name: "daftarHadir", value: fileUrl.name },
+        target: { name: "daftarHadir", value: { name: fileUrl.name, value: data.data } },
       });
     } else {
       setUploadMsgUndangan("Upload gagal");
@@ -348,7 +348,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   };
 
   const handleUploadSPJ = async (event: any) => {
-    let url = `${process.env.BASE_URL}/notulen/uploadFile`;
+    let url = `${process.env.BASE_URL}/upload/spj`;
     event.preventDefault();
     const fileUrl = event.target.files[0];
 
@@ -358,7 +358,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     });
 
     let fd = new FormData();
-    fd.append("file", fileUrl);
+    fd.append("spj", fileUrl);
     const body: any = fd;
 
     const response: any = await axios.post(url, body, {
@@ -378,7 +378,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
 
       setUploadMsgSPJ("Upload berhasil");
       handleChange({
-        target: { name: "spj", value: fileUrl.name },
+        target: { name: "spj", value: { name: fileUrl.name, value: data.data } },
       });
     } else {
       setUploadMsgUndangan("Upload gagal");
@@ -386,7 +386,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   };
 
   const handleUploadFoto = async (event: any) => {
-    let url = `${process.env.BASE_URL}/notulen/uploadFile`;
+    let url = `${process.env.BASE_URL}/upload/foto`;
     event.preventDefault();
     const fileUrl = event.target.files[0];
 
@@ -396,7 +396,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     });
 
     let fd = new FormData();
-    fd.append("file", fileUrl);
+    fd.append("foto", fileUrl);
     const body: any = fd;
 
     const response: any = await axios.post(url, body, {
@@ -416,15 +416,15 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
 
       setUploadMsgFoto("Upload berhasil");
       handleChange({
-        target: { name: "foto", value: fileUrl.name },
+        target: { name: "foto", value: { name: fileUrl.name, value: data.data } },
       });
     } else {
-      setUploadMsgUndangan("Upload gagal");
+      setUploadMsgFoto("Upload gagal");
     }
   };
 
   const handleUploadFilePendukung = async (event: any) => {
-    let url = `${process.env.BASE_URL}/notulen/uploadFile`;
+    let url = `${process.env.BASE_URL}/upload/pendukung`;
     event.preventDefault();
     const fileUrl = event.target.files[0];
 
@@ -434,7 +434,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     });
 
     let fd = new FormData();
-    fd.append("file", fileUrl);
+    fd.append("pendukung", fileUrl);
     const body: any = fd;
 
     const response: any = await axios.post(url, body, {
@@ -454,7 +454,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
 
       setUploadMsgPendukung("Upload berhasil");
       handleChange({
-        target: { name: "pendukung", value: fileUrl.name },
+        target: { name: "pendukung", value: { name: fileUrl.name, value: data.data } },
       });
     } else {
       setUploadMsgUndangan("Upload gagal");
@@ -470,6 +470,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   };
 
   const handleCancel = () => router.push('/notulen/laporan');
+  console.log(values);
 
   return (
     <React.Fragment>
@@ -762,17 +763,9 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-2">
                     <div>Surat Undangan</div>
-                    <Link
-                      href={`${process.env.BASEURL}/notulen/getFile/${values.suratUndangan}`}
-                      passHref
-                      legacyBehavior
-                    >
-                      <a target="_blank">
-                        <td className="text-blue-500 underline">
-                          {values.suratUndangan}
-                        </td>
-                      </a>
-                    </Link>
+                    <button className="download-click text-xl-base">
+                      {values.suratUndangan.name}
+                    </button>
                   </div>
                   <div onClick={() => handleDeleteFile(values.suratUndangan)}>
                     <IoMdClose size={20} />
@@ -805,17 +798,9 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-2">
                     <div>Daftar Hadir</div>
-                    <Link
-                      href={`${process.env.BASEURL}/notulen/getFile/${values.daftarHadir}`}
-                      passHref
-                      legacyBehavior
-                    >
-                      <a target="_blank">
-                        <td className="text-blue-500 underline">
-                          {values.daftarHadir}
-                        </td>
-                      </a>
-                    </Link>
+                    <button className="download-click text-xl-base">
+                      {values.daftarHadir.name}
+                    </button>
                   </div>
                   <div onClick={() => handleDeleteFile(values.daftarHadir)}>
                     <IoMdClose size={20} />
@@ -845,17 +830,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-2">
                     <div>SPJ</div>
-                    <Link
-                      href={`${process.env.BASEURL}/notulen/getFile/${values.spj}`}
-                      passHref
-                      legacyBehavior
-                    >
-                      <a target="_blank">
-                        <td className="text-blue-500 underline">{values.spj}</td>
-                      </a>
-                    </Link>
+                    <button className="download-click text-xl-base">
+                      {values.spj.name}
+                    </button>
                   </div>
-                  <div onClick={() => handleDeleteFile(values.spj)}>
+                  <div onClick={() => handleDeleteFile(values.daftarHadir)}>
                     <IoMdClose size={20} />
                   </div>
                 </div>
@@ -883,15 +862,9 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-2">
                     <div>Foto</div>
-                    <Link
-                      href={`${process.env.BASEURL}/notulen/getFile/${values.foto}`}
-                      passHref
-                      legacyBehavior
-                    >
-                      <a target="_blank">
-                        <td className="text-blue-500 underline">{values.foto}</td>
-                      </a>
-                    </Link>
+                    <button className="download-click text-xl-base">
+                      {values.foto.name}
+                    </button>
                   </div>
                   <div onClick={() => handleDeleteFile(values.foto)}>
                     <IoMdClose size={20} />
@@ -921,17 +894,9 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-2">
                     <div>File Pendukung</div>
-                    <Link
-                      href={`${process.env.BASEURL}/notulen/getFile/${values.pendukung}`}
-                      passHref
-                      legacyBehavior
-                    >
-                      <a target="_blank">
-                        <td className="text-blue-500 underline">
-                          {values.pendukung}
-                        </td>
-                      </a>
-                    </Link>
+                    <button className="download-click text-xl-base">
+                      {values.pendukung.name}
+                    </button>
                   </div>
                   <div onClick={() => handleDeleteFile(values.pendukung)}>
                     <IoMdClose size={20} />

@@ -43,6 +43,19 @@ export const getShortDate = (input: any) => {
   return formattedDate
 }
 
+export const getShortDate2 = (input: any) => {
+  const parsedDate = new Date(input);
+
+  // Extract the day, month, and year from the parsed date
+  const day = parsedDate.getDate();
+  const month = parsedDate.getMonth() + 1; // Months are 0-based (0 = January, 1 = February, etc.)
+  const year = parsedDate.getFullYear();
+
+  // Format the date as "9/10/2023"
+  const formattedDate = `${month}/${day}/${year}`;
+  return formattedDate
+}
+
 export const getStartMonthDate = () => {
   const currentDate = new Date();
   currentDate.setDate(1); // Set the day to 1 to get the first date of the current month

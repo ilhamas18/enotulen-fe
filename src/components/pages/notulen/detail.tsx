@@ -47,14 +47,6 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
 
   const handlePrint = () => router.push(`${pathname}/cetak`);
 
-  const downloadFile = async (key: string) => {
-    await fetchApi({
-      url: `/notulen/getFile/${key}`,
-      method: "get",
-      type: "auth",
-    });
-  };
-
   const handleChange = (data: any) => {
     setTagging(data.target.value);
   };
@@ -96,8 +88,9 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
     setStatus(val);
   };
 
-  const handleDownloadFile = async (val: any) => {
-    router.push(`${process.env.BASE_URL}/notulen/getFile/${val}`)
+  const handleDownloadFile = async (val: any, e: any) => {
+    e.preventDefault()
+    router.push(`${process.env.BASE_URL}/notulen/getFile?pathname=${val}`)
   }
 
   return (
@@ -326,8 +319,8 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
             <div className="md:mt-0 mt-2 md:w-[75%] w-full">
               <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4 hover:cursor-pointer">
                 {data.link_img_surat_undangan !== null ? (
-                  <button onClick={() => handleDownloadFile(data.link_img_surat_undangan)}>
-                    {data.link_img_surat_undangan}
+                  <button onClick={(e: any) => handleDownloadFile(data.link_img_surat_undangan?.value, e)}>
+                    {data.link_img_surat_undangan?.name}
                   </button>
                 ) : (
                   <div>-</div>
@@ -340,17 +333,9 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
             <div className="md:mt-0 mt-2 md:w-[75%] w-full">
               <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
                 {data.link_img_daftar_hadir !== null ? (
-                  <Link
-                    href={`localhost:8080/notulen/getFile/${data.link_img_daftar_hadir}`}
-                    passHref
-                    legacyBehavior
-                  >
-                    <a target="_blank">
-                      <td className="text-blue-500 underline">
-                        {data.link_img_daftar_hadir}
-                      </td>
-                    </a>
-                  </Link>
+                  <button onClick={(e: any) => handleDownloadFile(data.link_img_daftar_hadir?.value, e)}>
+                    {data.link_img_daftar_hadir?.name}
+                  </button>
                 ) : (
                   <div>-</div>
                 )}
@@ -362,9 +347,9 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
             <div className="md:mt-0 mt-2 md:w-[75%] w-full">
               <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
                 {data.link_img_spj !== null ? (
-                  <div onClick={() => downloadFile(data.link_img_spj)}>
+                  <div onClick={(e: any) => handleDownloadFile(data.link_img_spj?.value, e)}>
                     <div className="text-blue-500 underline">
-                      {data.link_img_spj}
+                      {data.link_img_spj?.name}
                     </div>
                   </div>
                 ) : (
@@ -378,17 +363,11 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
             <div className="md:mt-0 mt-2 md:w-[75%] w-full">
               <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
                 {data.link_img_foto !== null ? (
-                  <Link
-                    href={`localhost:8080/notulen/getFile/${data.link_img_foto}`}
-                    passHref
-                    legacyBehavior
-                  >
-                    <a target="_blank">
-                      <td className="text-blue-500 underline">
-                        {data.link_img_foto}
-                      </td>
-                    </a>
-                  </Link>
+                  <div onClick={(e: any) => handleDownloadFile(data.link_img_foto?.value, e)}>
+                    <div className="text-blue-500 underline">
+                      {data.link_img_foto?.name}
+                    </div>
+                  </div>
                 ) : (
                   <div>-</div>
                 )}
@@ -400,9 +379,9 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
             <div className="md:mt-0 mt-2 md:w-[75%] w-full">
               <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
                 {data.link_pendukung !== null ? (
-                  <div onClick={() => downloadFile(data.link_img_pendukung)}>
+                  <div onClick={(e: any) => handleDownloadFile(data.link_img_pendukung?.value, e)}>
                     <div className="text-blue-500 underline">
-                      {data.link_img_pendukung}
+                      {data.link_img_pendukung?.name}
                     </div>
                   </div>
                 ) : (
@@ -460,7 +439,7 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
           )}
         </div>
       </div> */}
-      <div className={`${data.status === '-' ? 'block' : 'hidden'} flex justify-between`}>
+      <div className={`${data.status === '-' || data.status === 'editted' ? 'block' : 'hidden'} flex justify-between`}>
         <div className={`${profile.role == 3 ? "block" : "hidden"}`}>
           <div>
             <Button

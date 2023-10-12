@@ -36,9 +36,10 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 interface LaporanNotulenProps {
   data: any;
   loading: boolean;
+  profile: any;
 }
 
-const LaporanNotulen = ({ data, loading }: LaporanNotulenProps) => {
+const LaporanNotulen = ({ data, loading, profile }: LaporanNotulenProps) => {
   const router = useRouter();
 
   const handleClickDetail = (id: number) => router.push(`/notulen/detail/${id}`);
@@ -54,6 +55,11 @@ const LaporanNotulen = ({ data, loading }: LaporanNotulenProps) => {
               <StyledTableCell align="center">Waktu</StyledTableCell>
               <StyledTableCell align="center">Acara</StyledTableCell>
               <StyledTableCell align="center">Lokasi</StyledTableCell>
+              {profile.role == 1 ? (
+                <StyledTableCell align="center">OPD Pembuat</StyledTableCell>
+              ) : profile.role == 2 || profile.role == 3 ? (
+                <StyledTableCell align="center">Nama Pembuat</StyledTableCell>
+              ) : null}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -76,6 +82,11 @@ const LaporanNotulen = ({ data, loading }: LaporanNotulenProps) => {
                   <StyledTableCell align="center" className='dark:text-white' style={{ width: '40px' }}>{getTime(row.waktu)}</StyledTableCell>
                   <StyledTableCell align="center" className='dark:text-white'>{row.acara}</StyledTableCell>
                   <StyledTableCell align="center" className='dark:text-white'>{row.lokasi}</StyledTableCell>
+                  {profile.role == 1 ? (
+                    <StyledTableCell align="center" className='dark:text-white'>{row.Perangkat_Daerah.nama_opd}</StyledTableCell>
+                  ) : profile.role == 2 || profile.role == 3 ? (
+                    <StyledTableCell align="center" className='dark:text-white'>{row.Pegawai.nama}</StyledTableCell>
+                  ) : null}
                   {/* <StyledTableCell align="center" className='dark:text-white'>
                     <div className='flex gap-2'>
                       <button onClick={() => handleClickDetail(row.id)}>

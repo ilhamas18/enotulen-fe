@@ -5,29 +5,37 @@ import { fetchApi } from '@/components/mixins/request';
 import LaporanNotulen from '@/components/pages/laporan/laporanNotulen';
 import withAuth from '@/components/hocs/withAuth'
 import Swal from 'sweetalert2';
+import { shallowEqual, useSelector } from 'react-redux';
+import { State } from '@/store/reducer';
 
 function Home() {
   const [notulens, setNotulens] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const { profile } = useSelector(
+    (state: State) => ({
+      profile: state.profile.profile,
+    }),
+    shallowEqual
+  );
 
   useEffect(() => {
     fetchData();
   }, [])
 
   const currentDate = new Date();
-  const currentMonth = currentDate.toLocaleString('id-ID', { month: 'long' });
-  const currentMonthInNumber = currentDate.getMonth() + 1;
+  const currentShortMonth = currentDate.getMonth() + 1;
+  const currentMonth = currentDate.toLocaleString("id-ID", { month: "long", });
   const currentYear = currentDate.getFullYear();
-
 
   const fetchData = async () => {
     setLoading(true)
     const response = await fetchApi({
-      url: `/notulen/getAllNotulens`,
+      url: `/notulen/getAuthNotulen/${profile.Perangkat_Daerah.kode_opd}/${profile.nip}/${currentShortMonth}/${currentYear}`,
       method: "get",
       type: "auth",
     })
-    
+
     if (!response.success) {
       setLoading(false);
       Swal.fire({
@@ -45,8 +53,8 @@ function Home() {
   }
   return (
     <div className="list-notulen-container">
-       <div className="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% ..."></div>
-       <LaporanNotulen data={notulens} loading={loading} />
+      <div className="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% ..."></div>
+      <LaporanNotulen data={notulens} loading={loading} profile={profile} />
     </div>
   )
 }

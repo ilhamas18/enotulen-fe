@@ -11,7 +11,7 @@ import { AiFillPlusCircle } from "react-icons/ai";
 import { fetchApi } from "@/components/mixins/request";
 import Swal from "sweetalert2";
 import DateRangePicker from "../laporan/x-modal/XDateRangePicker";
-import { formatDate, getTime } from "@/components/hooks/formatDate";
+import { formatDate, getShortDate, getShortDate2, getTime } from "@/components/hooks/formatDate";
 import Select from "react-select";
 import Loading from "@/components/global/Loading/loading";
 import { AiOutlineClose } from "react-icons/ai";
@@ -55,6 +55,7 @@ interface OtherProps {
   pelapor?: any;
   atasan?: any;
   sasaran?: any;
+  dibuatTanggal?: any;
 }
 
 interface MyFormProps extends OtherProps {
@@ -306,7 +307,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
 
       setUploadMsgUndangan("Upload berhasil");
       handleChange({
-        target: { name: "suratUndangan", value: fileUrl.name },
+        target: { name: "suratUndangan", value: { name: fileUrl.name, value: data.data } },
       });
     } else {
       setUploadMsgUndangan("Upload gagal");
@@ -314,7 +315,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   };
 
   const handleUploadDaftarHadir = async (event: any) => {
-    let url = `${process.env.BASE_URL}/notulen/uploadFile`;
+    let url = `${process.env.BASE_URL}/upload/daftarhadir`;
     event.preventDefault();
     const fileUrl = event.target.files[0];
 
@@ -324,7 +325,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     });
 
     let fd = new FormData();
-    fd.append("file", fileUrl);
+    fd.append("daftarhadir", fileUrl);
     const body: any = fd;
 
     const response: any = await axios.post(url, body, {
@@ -344,7 +345,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
 
       setUploadMsgDaftarHadir("Upload berhasil");
       handleChange({
-        target: { name: "daftarHadir", value: fileUrl.name },
+        target: { name: "daftarHadir", value: { name: fileUrl.name, value: data.data } },
       });
     } else {
       setUploadMsgUndangan("Upload gagal");
@@ -352,7 +353,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   };
 
   const handleUploadSPJ = async (event: any) => {
-    let url = `${process.env.BASE_URL}/notulen/uploadFile`;
+    let url = `${process.env.BASE_URL}/upload/spj`;
     event.preventDefault();
     const fileUrl = event.target.files[0];
 
@@ -362,7 +363,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     });
 
     let fd = new FormData();
-    fd.append("file", fileUrl);
+    fd.append("spj", fileUrl);
     const body: any = fd;
 
     const response: any = await axios.post(url, body, {
@@ -382,7 +383,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
 
       setUploadMsgSPJ("Upload berhasil");
       handleChange({
-        target: { name: "spj", value: fileUrl.name },
+        target: { name: "spj", value: { name: fileUrl.name, value: data.data } },
       });
     } else {
       setUploadMsgUndangan("Upload gagal");
@@ -390,7 +391,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   };
 
   const handleUploadFoto = async (event: any) => {
-    let url = `${process.env.BASE_URL}/notulen/uploadFile`;
+    let url = `${process.env.BASE_URL}/upload/foto`;
     event.preventDefault();
     const fileUrl = event.target.files[0];
 
@@ -400,7 +401,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     });
 
     let fd = new FormData();
-    fd.append("file", fileUrl);
+    fd.append("foto", fileUrl);
     const body: any = fd;
 
     const response: any = await axios.post(url, body, {
@@ -420,15 +421,15 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
 
       setUploadMsgFoto("Upload berhasil");
       handleChange({
-        target: { name: "foto", value: fileUrl.name },
+        target: { name: "foto", value: { name: fileUrl.name, value: data.data } },
       });
     } else {
-      setUploadMsgUndangan("Upload gagal");
+      setUploadMsgFoto("Upload gagal");
     }
   };
 
   const handleUploadFilePendukung = async (event: any) => {
-    let url = `${process.env.BASE_URL}/notulen/uploadFile`;
+    let url = `${process.env.BASE_URL}/upload/pendukung`;
     event.preventDefault();
     const fileUrl = event.target.files[0];
 
@@ -438,7 +439,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     });
 
     let fd = new FormData();
-    fd.append("file", fileUrl);
+    fd.append("pendukung", fileUrl);
     const body: any = fd;
 
     const response: any = await axios.post(url, body, {
@@ -458,22 +459,26 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
 
       setUploadMsgPendukung("Upload berhasil");
       handleChange({
-        target: { name: "pendukung", value: fileUrl.name },
+        target: { name: "pendukung", value: { name: fileUrl.name, value: data.data } },
       });
     } else {
       setUploadMsgUndangan("Upload gagal");
     }
   };
 
-  const handleDeleteFile = async (key: string) => {
-    await fetchApi({
-      method: "delete",
-      url: `/notulen//deleteFile/${key}`,
-      type: "auth",
+  const handleDeleteFile = async (key: string, type: string, e: any) => {
+    e.preventDefault();
+    router.push(`${process.env.BASE_URL}/notulen/deleteFile?pathname=${key}`)
+    handleChange({
+      target: { name: type, value: null },
     });
   };
 
   const handleCancel = () => router.push('/notulen/laporan');
+
+  const handleDownloadFile = async (val: any, e: any) => {
+    router.push(`${process.env.BASE_URL}/notulen/getFile?pathname=${val}`)
+  }
 
   return (
     <React.Fragment>
@@ -523,7 +528,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                     id="jam"
                     name="jam"
                     touched={touched.rangeTanggal}
-                    label="Masukkan Jam"
+                    label="Edit Jam"
                     change={(e: any) => {
                       handleChange({
                         target: { name: "jam", value: e.$d },
@@ -716,24 +721,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   }}
                 />
               </div>
-              <div className="data flex flex-row w-full mt-2">
-                <div className="flex flex-col gap-3">
-                  <div>Masukkan tanggal pembuatan notulen :</div>
-                  <TextInput
-                    type="date-picker"
-                    id="dibuatTanggal"
-                    name="dibuatTanggal"
-                    touched={touched.dibuatTanggal}
-                    change={(e: any) => {
-                      handleChange({
-                        target: { name: "dibuatTanggal", value: e.$d },
-                      });
-                    }}
-                    value={values.dibuatTanggal}
-                    errors={errors.dibuatTanggal}
-                  />
-                </div>
-              </div>
               <div className="data flex flex-row">
                 <TextInput
                   type="dropdown"
@@ -776,19 +763,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-2">
                     <div>Surat Undangan</div>
-                    <Link
-                      href={`${process.env.BASEURL}/notulen/getFile/${values.suratUndangan}`}
-                      passHref
-                      legacyBehavior
-                    >
-                      <a target="_blank">
-                        <td className="text-blue-500 underline">
-                          {values.suratUndangan}
-                        </td>
-                      </a>
-                    </Link>
+                    <div className="download-click text-xl-base" onClick={(e: any) => handleDownloadFile(values.suratUndangan.value, e)}>
+                      {values.suratUndangan.name}
+                    </div>
                   </div>
-                  <div onClick={() => handleDeleteFile(values.suratUndangan)}>
+                  <div onClick={(e: any) => handleDeleteFile(values.suratUndangan.value, 'suratUndangan', e)}>
                     <IoMdClose size={20} />
                   </div>
                 </div>
@@ -819,19 +798,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-2">
                     <div>Daftar Hadir</div>
-                    <Link
-                      href={`${process.env.BASEURL}/notulen/getFile/${values.daftarHadir}`}
-                      passHref
-                      legacyBehavior
-                    >
-                      <a target="_blank">
-                        <td className="text-blue-500 underline">
-                          {values.daftarHadir}
-                        </td>
-                      </a>
-                    </Link>
+                    <div className="download-click text-xl-base" onClick={(e: any) => handleDownloadFile(values.daftarHadir.value, e)}>
+                      {values.daftarHadir.name}
+                    </div>
                   </div>
-                  <div onClick={() => handleDeleteFile(values.daftarHadir)}>
+                  <div onClick={(e: any) => handleDeleteFile(values.daftarHadir.value, 'daftarHadir', e)}>
                     <IoMdClose size={20} />
                   </div>
                 </div>
@@ -859,17 +830,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-2">
                     <div>SPJ</div>
-                    <Link
-                      href={`${process.env.BASEURL}/notulen/getFile/${values.spj}`}
-                      passHref
-                      legacyBehavior
-                    >
-                      <a target="_blank">
-                        <td className="text-blue-500 underline">{values.spj}</td>
-                      </a>
-                    </Link>
+                    <div className="download-click text-xl-base" onClick={(e: any) => handleDownloadFile(values.spj.value, e)}>
+                      {values.spj.name}
+                    </div>
                   </div>
-                  <div onClick={() => handleDeleteFile(values.spj)}>
+                  <div onClick={(e: any) => handleDeleteFile(values.spj.value, 'spj', e)}>
                     <IoMdClose size={20} />
                   </div>
                 </div>
@@ -897,17 +862,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-2">
                     <div>Foto</div>
-                    <Link
-                      href={`${process.env.BASEURL}/notulen/getFile/${values.foto}`}
-                      passHref
-                      legacyBehavior
-                    >
-                      <a target="_blank">
-                        <td className="text-blue-500 underline">{values.foto}</td>
-                      </a>
-                    </Link>
+                    <div className="download-click text-xl-base" onClick={(e: any) => handleDownloadFile(values.foto.value, e)}>
+                      {values.foto.name}
+                    </div>
                   </div>
-                  <div onClick={() => handleDeleteFile(values.foto)}>
+                  <div onClick={(e: any) => handleDeleteFile(values.foto.value, 'foto', e)}>
                     <IoMdClose size={20} />
                   </div>
                 </div>
@@ -935,19 +894,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-2">
                     <div>File Pendukung</div>
-                    <Link
-                      href={`${process.env.BASEURL}/notulen/getFile/${values.pendukung}`}
-                      passHref
-                      legacyBehavior
-                    >
-                      <a target="_blank">
-                        <td className="text-blue-500 underline">
-                          {values.pendukung}
-                        </td>
-                      </a>
-                    </Link>
+                    <div className="download-click text-xl-base" onClick={(e: any) => handleDownloadFile(values.pendukung.value, e)}>
+                      {values.pendukung.name}
+                    </div>
                   </div>
-                  <div onClick={() => handleDeleteFile(values.pendukung)}>
+                  <div onClick={(e: any) => handleDeleteFile(values.pendukung.value, 'pendukung', e)}>
                     <IoMdClose size={20} />
                   </div>
                 </div>
@@ -963,7 +914,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   onClick={handleSubmit}
                 >
                   <div className="flex justify-center items-center text-white font-Nunito">
-                    <span className="button-text">Tambah</span>
+                    <span className="button-text">Edit</span>
                   </div>
                 </Button>
               </div>
@@ -998,7 +949,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   );
 };
 
-function CreateForm({ handleSubmit, dataNotulen, pelapor, atasan, sasaran }: MyFormProps) {
+function CreateForm({ handleSubmit, dataNotulen, pelapor, atasan, sasaran, dibuatTanggal }: MyFormProps) {
   const FormWithFormik = withFormik({
     mapPropsToValues: () => ({
       tagging: [],
@@ -1025,51 +976,51 @@ function CreateForm({ handleSubmit, dataNotulen, pelapor, atasan, sasaran }: MyF
       spj: dataNotulen.link_img_spj !== null ? dataNotulen.link_img_spj : null,
       foto: dataNotulen.link_img_foto !== null ? dataNotulen.link_img_foto : null,
       pendukung: dataNotulen.link_img_pendukung !== null ? dataNotulen.link_img_pendukung : null,
-      dibuatTanggal: null
+      dibuatTanggal: dibuatTanggal !== null ? dibuatTanggal : null
     }),
     validationSchema: Yup.object().shape({
-      rangeTanggal: Yup.array()
-        .required("Harap isi tanggal pelaksanaan !"),
-      jam: Yup.mixed()
-        .nullable()
-        .required("Waktu tidak boleh kosong !"),
-      pendahuluan: Yup.string()
-        .required("Harap isi pendahuluan !")
-        .min(4, "Minimal 4 karakter"),
-      pimpinanRapat: Yup.string()
-        .required("Harap isi nama pimpinan rapat !"),
-      pesertaArray: Yup.array()
-        .required("Harap isi peserta !"),
-      isiRapat: Yup.mixed()
-        .nullable(),
-      tindakLanjut: Yup.mixed()
-        .nullable(),
-      lokasi: Yup.string()
-        .required("Lokasi tidak boleh kosong !"),
-      acara: Yup.string()
-        .required("Acara tidak boleh kosong !"),
-      pelapor: Yup.object()
-        .shape({
-          label: Yup.string(),
-          value: Yup.number(),
-        })
-        .required("Bagian dibutuhkan")
-        .nullable(),
-      atasan: Yup.object()
-        .shape({
-          label: Yup.string(),
-          value: Yup.number(),
-        })
-        .required("Bagian dibutuhkan")
-        .nullable(),
-      sasaran: Yup.object()
-        .shape({
-          label: Yup.string(),
-          value: Yup.number(),
-        })
-        .required("Bagian dibutuhkan")
-        .nullable(),
-      dibuatTanggal: Yup.mixed().nullable().required("Tanggal tidak boleh kosong !"),
+      // rangeTanggal: Yup.array()
+      //   .required("Harap isi tanggal pelaksanaan !"),
+      // jam: Yup.mixed()
+      //   .nullable()
+      //   .required("Waktu tidak boleh kosong !"),
+      // pendahuluan: Yup.string()
+      //   .required("Harap isi pendahuluan !")
+      //   .min(4, "Minimal 4 karakter"),
+      // pimpinanRapat: Yup.string()
+      //   .required("Harap isi nama pimpinan rapat !"),
+      // pesertaArray: Yup.array()
+      //   .required("Harap isi peserta !"),
+      // isiRapat: Yup.mixed()
+      //   .nullable(),
+      // tindakLanjut: Yup.mixed()
+      //   .nullable(),
+      // lokasi: Yup.string()
+      //   .required("Lokasi tidak boleh kosong !"),
+      // acara: Yup.string()
+      //   .required("Acara tidak boleh kosong !"),
+      // pelapor: Yup.object()
+      //   .shape({
+      //     label: Yup.string(),
+      //     value: Yup.number(),
+      //   })
+      //   .required("Bagian dibutuhkan")
+      //   .nullable(),
+      // atasan: Yup.object()
+      //   .shape({
+      //     label: Yup.string(),
+      //     value: Yup.number(),
+      //   })
+      //   .required("Bagian dibutuhkan")
+      //   .nullable(),
+      // sasaran: Yup.object()
+      //   .shape({
+      //     label: Yup.string(),
+      //     value: Yup.number(),
+      //   })
+      //   .required("Bagian dibutuhkan")
+      //   .nullable(),
+      // dibuatTanggal: Yup.mixed().nullable().required("Tanggal tidak boleh kosong !"),
     }),
     handleSubmit,
   })(FormField);
@@ -1085,6 +1036,7 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
   const [pelapor, setNamaPelapor] = useState<any>(null);
   const [atasan, setAtasan] = useState<any>(null);
   const [sasaran, setSasaran] = useState<any>(null);
+  const [dibuatTanggal, setDibuatTanggal] = useState<any>(null);
 
   const { profile } = useSelector(
     (state: State) => ({
@@ -1120,7 +1072,38 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
         jabatan: dataNotulen.atasan.jabatan
       },
     })
-  }, [])
+
+    formattedDate();
+  }, []);
+
+  const formattedDate = () => {
+    let tempDate: any = dataNotulen.hari + '/' + dataNotulen.bulan + '/' + dataNotulen.tahun;
+    const dateParts = tempDate.split('/');
+    const month = parseInt(dateParts[0], 10); // Months are 0-based (0 = January, 1 = February, etc.)
+    const day = parseInt(dateParts[1], 10);
+    const year = parseInt(dateParts[2], 10);
+
+    // Create a Date object with the parsed values
+    const formattedDate = new Date(year, month, day);
+
+    // Define a formatting option for the date
+    const options: any = {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZoneName: 'long',
+      timeZone: 'Asia/Jakarta' // Set the desired time zone
+    };
+
+    // Format the date using the Intl.DateTimeFormat API
+    const formatter = new Intl.DateTimeFormat('en-US', options);
+    const formattedDateString = formatter.format(formattedDate);
+    setDibuatTanggal(formattedDateString);
+  }
 
   const handleSubmit = async (values: FormValues) => {
     const payload = {
@@ -1135,11 +1118,11 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
       acara: values.acara,
       pelapor: values.pelapor.data,
       atasan: values.atasan.data,
-      sasaran: values.sasaran.value,
-      status: "-",
-      hari: new Date(values.dibuatTanggal).getDate(),
-      bulan: new Date(values.dibuatTanggal).getMonth() + 1,
-      tahun: new Date(values.dibuatTanggal).getFullYear(),
+      sasaran: dataNotulen.sasaran,
+      status: "editted",
+      hari: dataNotulen.hari,
+      bulan: dataNotulen.bulan,
+      tahun: dataNotulen.tahun,
       link_img_surat_undangan: values.suratUndangan,
       link_img_daftar_hadir: values.daftarHadir,
       link_img_spj: values.spj,
@@ -1151,11 +1134,12 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
     };
 
     const response = await fetchApi({
-      url: `/notulen/addNotulen`,
-      method: "post",
+      url: `/notulen/editNotulen/${dataNotulen.id}`,
+      method: "put",
       body: payload,
       type: "auth",
     });
+    console.log(response, '<<<');
 
     if (!response.success) {
       if (response.data.code == 500) {
@@ -1190,6 +1174,7 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
           pelapor={pelapor}
           atasan={atasan}
           sasaran={sasaran}
+          dibuatTanggal={dibuatTanggal}
         />
       )}
     </div>
