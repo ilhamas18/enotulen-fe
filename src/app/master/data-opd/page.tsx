@@ -27,7 +27,7 @@ const DataMasterOPD = () => {
   }, []);
 
   const fetchOPD = async () => {
-    setLoading(false);
+    setLoading(true);
     const response = await fetchApi({
       url: `/opd/getAllOPD`,
       method: "get",
@@ -77,23 +77,26 @@ const DataMasterOPD = () => {
       denyButtonText: `Batal`,
     }).then(async (result) => {
       if (result.isConfirmed) {
+        console.log('start')
         setLoading(true);
         const response = await fetchApi({
           url: '/opd/syncOPD',
-          method: 'get',
+          method: 'post',
           type: 'auth'
         })
-        fetchOPD();
         if (!response.success) {
-          if (response.data.code == 500) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Koneksi bermasalah!',
-            })
-          }
+          console.log('not success', response.data)
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: response.data.message,
+          })
           setLoading(false);
-        } else {
+          fetchOPD();
+        } 
+        else {
+          setLoading(false);
+          console.log('success', response)
           Swal.fire({
             position: 'top-end',
             icon: 'success',
@@ -101,7 +104,7 @@ const DataMasterOPD = () => {
             showConfirmButton: false,
             timer: 1500
           })
-          setLoading(false);
+          fetchOPD();
         }
       } else if (result.isDenied) {
         Swal.fire('Changes are not saved', '', 'info')
