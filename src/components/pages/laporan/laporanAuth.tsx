@@ -7,6 +7,7 @@ import { Box } from '@mui/material';
 import { fetchApi } from '@/components/mixins/request';
 import Swal from 'sweetalert2';
 import { darken, lighten, styled } from '@mui/material/styles';
+import XAddTagging from './x-modal/XAddTagging';
 
 interface LaporanNotulenAuthType {
   data: any,
@@ -15,9 +16,16 @@ interface LaporanNotulenAuthType {
 
 const LaporanNotulenAuth = ({ data, profile }: LaporanNotulenAuthType) => {
   const router = useRouter();
+  const [openAddTagging, setOpenAddTagging] = useState<boolean>(false);
+  const [idNotulen, setIdNotulen] = useState<number>(0);
+
+  const handleAddTagging = (params: any) => {
+    setIdNotulen(params.row.index)
+    setOpenAddTagging(true)
+  }
 
   const handleOnCellClick = (params: any) => {
-    router.push(`/notulen/detail/${params.row.index}`)
+    router.push(`/notulen/detail/${params.row.index}`);
   }
 
   const getBackgroundColor = (color: string, mode: string) =>
@@ -163,7 +171,7 @@ const LaporanNotulenAuth = ({ data, profile }: LaporanNotulenAuthType) => {
         "align": "center"
       },
       {
-        "field": "daftarHadiir",
+        "field": "daftarHadir",
         "headerName": "Daftar Hadir",
         "width": 170,
         "headerAlign": "center",
@@ -211,7 +219,7 @@ const LaporanNotulenAuth = ({ data, profile }: LaporanNotulenAuthType) => {
       <Box sx={{ height: 400, width: '100%' }}>
         <StyledDataGrid
           {...dataRows}
-          onCellClick={handleOnCellClick}
+          onCellClick={profile.role == 2 ? handleAddTagging : handleOnCellClick}
           getRowClassName={(params) => `super-app-theme--${params.row.status}`}
           initialState={{
             pagination: {
@@ -222,6 +230,8 @@ const LaporanNotulenAuth = ({ data, profile }: LaporanNotulenAuthType) => {
           }}
         />
       </Box>
+
+      <XAddTagging openAddTagging={openAddTagging} setOpenAddTagging={setOpenAddTagging} idNotulen={idNotulen} />
     </div>
   )
 }

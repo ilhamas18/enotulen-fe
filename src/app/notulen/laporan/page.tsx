@@ -56,6 +56,8 @@ const Laporan = () => {
         const { data } = response.data;
         const temp: any = [];
         data.map((el: any, i: number) => {
+          console.log(el, "<<< el");
+
           temp.push({
             id: i + 1,
             index: el.id,
@@ -73,7 +75,7 @@ const Laporan = () => {
             daftarHadir: el.link_img_daftar_hadir !== null ? "Ada" : "-",
             undangan: el.link_img_surat_undangan !== null ? "Ada" : "-",
             spj: el.link_img_spj !== null ? "Ada" : "-",
-            lainLain: el.link_pendukung !== null ? "Ada" : "-",
+            lainLain: el.link_img_pendukung !== null ? "Ada" : "-",
           });
         });
         setNotulens(temp);
