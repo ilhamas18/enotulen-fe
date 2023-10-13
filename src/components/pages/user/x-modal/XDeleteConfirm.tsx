@@ -36,7 +36,7 @@ const XDeleteConfirm = ({
         <div className='relative'>
           <div className='text-center font-medium text-title-xsm'>Apakah Anda Yakin Hapus Data Pegawai ?</div>
           <div className='text-center font-medium md:text-xsm text-xsm2 mt-6 mb-4 text-danger'>Menghapus data pegawai dapat mengakibatkan data notulen yang dibuat oleh {user.nama} akan hilang !</div>
-          <div className='mt-5 mb-2 flex'>
+          {/* <div className='mt-5 mb-2 flex'>
             <div>
               <TextInput
                 type="checkbox"
@@ -52,8 +52,8 @@ const XDeleteConfirm = ({
                 Saya telah menyetujui
               </p>
             </div>
-          </div>
-          <div className='mt-[5em] flex justify-between'>
+          </div> */}
+          <div className='mt-[2em] flex justify-between'>
             <div className="btn-cancel">
               <Button
                 variant="error"
