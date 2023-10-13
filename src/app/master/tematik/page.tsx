@@ -45,11 +45,10 @@ const TambahTematik = () => {
 
   const [tagging, setTagging] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [flagFilled, setFlagFilled] = useState<boolean>(false);
 
   useEffect(() => {
     fetchTagging();
-  }, [flagFilled]);
+  }, []);
 
   const fetchTagging = async () => {
     const response = await fetchApi({
@@ -75,8 +74,8 @@ const TambahTematik = () => {
 
   return (
     <div className="px-4">
-      {profile.role == 1 && <TematikForm setFlagFilled={setFlagFilled} />}
-      
+      {profile.role == 1 && <TematikForm fetchTagging={fetchTagging} />}
+
       <div className='body table w-full'>
         {loading ? (
           <Loading loading={loading} setLoading={setLoading} />

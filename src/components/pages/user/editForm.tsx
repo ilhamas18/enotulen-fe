@@ -8,6 +8,9 @@ import Swal from 'sweetalert2';
 import { withFormik, FormikProps, FormikBag } from "formik";
 import * as Yup from "yup";
 import Loading from '@/components/global/Loading/loading';
+import { shallowEqual, useSelector } from 'react-redux';
+import { State } from '@/store/reducer';
+import XDeleteConfirm from './x-modal/XDeleteConfirm';
 
 interface FormValues {
   nama: string;
@@ -50,6 +53,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   const router = useRouter();
   const [listUser, setListUser] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [openConfirmDelete, setXConfirmDelete] = useState<boolean>(false);
+
+  const { profile } = useSelector((state: State) => ({
+    profile: state.profile.profile
+  }), shallowEqual)
 
   const listRoleAdmin: any = [
     {
@@ -76,8 +84,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
       value: 4
     }
   ]
-  console.log(values.role);
-
 
   const handleCancel = () => router.push('/master/data-user');
 
@@ -206,7 +212,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   errors={errors.role}
                   value={values.role}
                   placeholder="Pilih Role"
-                  options={listRoleAdmin}
+                  options={profile.role == 1 ? listRoleAdmin : listRoleAdminOPD}
                   change={(selectedOption: any) => {
                     handleChange({
                       target: { name: "role", value: selectedOption },
@@ -218,7 +224,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
           </div>
         </div>
         <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
-          <div className="w-[8em] absolute bottom-8 right-8 mt-14">
+          <div className="w-[8em] absolute bottom-10 right-8">
             <Button
               variant="xl"
               className="button-container"
@@ -235,21 +241,38 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
         </div>
       </form>
       {values.nama.length != 0 && (
-        <div className="w-[8em]">
-          <Button
-            variant="xl"
-            type="secondary"
-            className="button-container mb-4 mt-2 ml-8"
-            rounded
-            onClick={() => handleCancel()}
-          >
-            <div className="flex justify-center items-center text-[#002DBB] font-Nunito">
-              <span className="button-text">Batal</span>
-            </div>
-          </Button>
+        <div className='flex justify-between mr-8'>
+          <div className="w-[8em]">
+            <Button
+              variant="xl"
+              type="secondary"
+              className="button-container mb-4 mt-2 ml-8"
+              rounded
+              onClick={() => handleCancel()}
+            >
+              <div className="flex justify-center items-center text-[#002DBB] font-Nunito">
+                <span className="button-text">Batal</span>
+              </div>
+            </Button>
+          </div>
+          <div className="w-[8em] mr-[10em] mt-2 md:block hidden">
+            <Button
+              variant="error"
+              className="button-container"
+              rounded
+              type='button'
+              onClick={() => setXConfirmDelete(true)}
+            >
+              <div className="flex justify-center items-center text-white">
+                <span className="button-text">Hapus</span>
+              </div>
+            </Button>
+          </div>
         </div>
       )}
-    </div>
+
+      <XDeleteConfirm openConfirmDelete={openConfirmDelete} setXConfirmDelete={setXConfirmDelete} user={profile} />
+    </div >
   )
 }
 
@@ -335,8 +358,8 @@ const EditForm = ({ opd, user, type }: PropTypes) => {
     }
 
     const response = await fetchApi({
-      url: '/pegawai/addPegawai',
-      method: 'post',
+      url: `/pegawai/editPegawai/${user.nip}`,
+      method: 'put',
       type: 'auth',
       body: payload
     })
@@ -359,7 +382,7 @@ const EditForm = ({ opd, user, type }: PropTypes) => {
       Swal.fire({
         position: "center",
         icon: "success",
-        title: "User berhasil ditambahkan",
+        title: "Berhasil update data user",
         showConfirmButton: false,
         timer: 1500,
       });

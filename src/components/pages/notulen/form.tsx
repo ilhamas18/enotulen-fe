@@ -120,6 +120,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     fetchDataAtasan();
     fetchDataSasaran();
   }, []);
+  console.log(values, '>>>>');
 
   const fetchDataPegawai = async () => {
     setLoading(true);
@@ -470,7 +471,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   };
 
   const handleCancel = () => router.push('/notulen/laporan');
-  console.log(values);
 
   return (
     <React.Fragment>
@@ -1040,6 +1040,8 @@ const AddNotulenForm = () => {
   const router = useRouter();
 
   const handleSubmit = async (values: FormValues) => {
+    console.log('masoooook');
+
     const payload = {
       tanggal: values.rangeTanggal,
       waktu: values.jam,
@@ -1057,6 +1059,7 @@ const AddNotulenForm = () => {
       hari: new Date(values.dibuatTanggal).getDate(),
       bulan: new Date(values.dibuatTanggal).getMonth() + 1,
       tahun: new Date(values.dibuatTanggal).getFullYear(),
+      id_sasaran: values.sasaran.value,
       link_img_surat_undangan: values.suratUndangan,
       link_img_daftar_hadir: values.daftarHadir,
       link_img_spj: values.spj,
@@ -1075,7 +1078,13 @@ const AddNotulenForm = () => {
     });
 
     if (!response.success) {
-      if (response.data.code == 500) {
+      if (response.data.code == 400) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Periksa kembali data Notulen!",
+        });
+      } else if (response.data.code == 500) {
         Swal.fire({
           icon: "error",
           title: "Oops...",
@@ -1085,14 +1094,13 @@ const AddNotulenForm = () => {
       setLoading(false);
     } else {
       Swal.fire({
-        position: "top-end",
+        position: "center",
         icon: "success",
-        title: "Your work has been saved",
+        title: "Berhasil menambahkan notulen",
         showConfirmButton: false,
         timer: 1500,
       });
       router.push("/notulen/laporan");
-      setLoading(false);
     }
   };
 

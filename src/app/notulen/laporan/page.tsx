@@ -86,7 +86,7 @@ const Laporan = () => {
 
   const gradientStyle = {
     width: "100%",
-    background: "linear-gradient(to right, #00bcd4, #2196f3)",
+    background: "linear-gradient(to right, #4fd1c5, #4299e1)",
   };
 
   return (
@@ -106,7 +106,7 @@ const Laporan = () => {
       {loading ? (
         <Loading loading={loading} setLoading={setLoading} />
       ) : (
-        <LaporanNotulenAuth data={notulens} profile={profile} />
+        <LaporanNotulenAuth data={notulens} profile={profile} fetchData={fetchData} />
       )}
     </div>
   );

@@ -94,7 +94,7 @@ const ListOPD = ({ data }: PropTypes) => {
   }
 
   return (
-    <div style={{ height: 400, width: '100%' }} className='bg-white dark:bg-meta-4 dark:text-white'>
+    <div style={{ height: 500, width: '100%' }} className='bg-white dark:bg-meta-4 dark:text-white'>
       <div className="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% ..."></div>
       <Box sx={{
         height: 500,

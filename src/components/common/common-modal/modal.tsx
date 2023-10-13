@@ -73,7 +73,7 @@ export const CommonModal = ({
                 exit={{
                   scale: 0
                 }}
-                className={`modal-content-wrapper bg:meta-1 w-[420px] mx:auto ${type === "xl" ? 'xl' : 'axis'}`}
+                className={`modal-content-wrapper w-[580px] ${type === "xl" ? 'xl' : 'axis'}`}
               >
                 <motion.div
                   className="modal-content grow"

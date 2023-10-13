@@ -117,30 +117,6 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
       </div>
       <div className={`detail-wrap bg-white dark:bg-meta-4 rounded-lg p-8 ${!isOpenEdit ? 'block' : 'hidden'}`}>
         <div className="flex flex-col gap-4">
-          <div className={`body flex flex-row md:flex-row flex-col items-center justify-between ${profile.role == 2 ? 'block' : 'hidden'}`}>
-            <div className="text-label md:w-[20%] w-full md:text-left text-center">
-              Pilih Tagging
-            </div>
-            <div className="md:mt-4 mt-2 md:w-[75%]">
-              <div className="data flex flex-row mb-8 w-full">
-                <div className="data flex flex-row bg-white w-full">
-                  <Select
-                    isMulti
-                    name="tagging"
-                    options={listTagging}
-                    className="basic-multi-select w-full bg-white"
-                    classNamePrefix="select"
-                    defaultValue={data.tagging}
-                    onChange={(selectedOption: any) => {
-                      handleChange({
-                        target: { name: "tagging", value: selectedOption },
-                      });
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
           <div className="body flex flex-row md:flex-row flex-col items-center justify-between">
             <div className="text-label md:w-[20%] w-full md:text-left text-center">
               Pembuat Notulen

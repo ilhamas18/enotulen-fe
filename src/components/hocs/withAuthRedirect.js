@@ -20,7 +20,6 @@ export default function withAuthRedirect({ WrappedComponent, expectedAuth }) {
     const router = useRouter()
     const { isLoading, isAuthenticated } = useAuth();
     const [isLoadPage, setIsLoadPage] = useState(false);
-    console.log(expectedAuth, isAuthenticated);
 
     useEffect(() => {
       setTimeout(() => {
@@ -36,7 +35,7 @@ export default function withAuthRedirect({ WrappedComponent, expectedAuth }) {
     if (isLoadPage) {
       if (typeof window !== "undefined" && expectedAuth !== isAuthenticated) {
         router.push("/auth/login")
-      } 
+      }
     }
     return <WrappedComponent {...props} />
   }

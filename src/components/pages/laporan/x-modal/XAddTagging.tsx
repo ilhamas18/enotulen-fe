@@ -14,13 +14,15 @@ import { GrClose } from 'react-icons/gr';
 interface PropTypes {
   openAddTagging: boolean,
   setOpenAddTagging: any,
-  idNotulen: number;
+  notulen: any;
+  fetchData?: any;
 }
 
 const XAddTagging = ({
   openAddTagging,
   setOpenAddTagging,
-  idNotulen
+  notulen,
+  fetchData
 }: PropTypes) => {
   const router = useRouter();
   const [reason, setReason] = useState<string>('');
@@ -68,12 +70,9 @@ const XAddTagging = ({
     }
   }
 
-  const handleChangeAgree = (e: any) => {
-    setAgree(e.target.checked)
-  }
-
   const onClose = () => {
     setOpenAddTagging(false);
+    setIsAddTagging(false);
     setAgree(false);
   }
 
@@ -81,51 +80,52 @@ const XAddTagging = ({
     setTagging(data.target.value);
   };
 
-  const handleSeeDetail = () => router.push(`/notulen/detail/${idNotulen}`);
+  const handleSeeDetail = () => router.push(`/notulen/detail/${notulen.index}`);
 
   const handleSubmit = async () => {
-    // setLoading(true);
-    // const payload = {
-    //   status: status,
-    //   keterangan: reason
-    // };
+    const payload = {
+      tagging: tagging,
+    };
 
-    // const response = await fetchApi({
-    //   url: `/notulen/updateStatus/${data.id}`,
-    //   method: "put",
-    //   body: payload,
-    //   type: "auth",
-    // });
+    const response = await fetchApi({
+      url: `/notulen/addTagging/${notulen.index}`,
+      method: "put",
+      body: payload,
+      type: "auth",
+    });
 
-    // if (!response.success) {
-    //   setLoading(false);
-    //   if (response.data.code == 500) {
-    //     Swal.fire({
-    //       icon: "error",
-    //       title: "Oops...",
-    //       text: "Koneksi bermasalah!",
-    //     });
-    //   }
-    // } else {
-    //   setLoading(false);
-    //   Swal.fire({
-    //     position: "center",
-    //     icon: "success",
-    //     title: `Status ${status}`,
-    //     showConfirmButton: false,
-    //     timer: 1500,
-    //   });
-    //   router.push("/notulen/laporan");
-    // }
-  }
+    if (!response.success) {
+      if (response.data.code == 500) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Koneksi bermasalah!",
+        });
+      }
+    } else {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Tagging berhasil ditambahkan",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      fetchData();
+      onClose();
+    }
+  };
 
   return (
-    <CommonModal isOpen={openAddTagging} onClose={setOpenAddTagging}>
+    <CommonModal isOpen={openAddTagging} onClose={setOpenAddTagging} animate={true}>
       {!isAddTagging ? (
-        <div className="relative items-center justify-center pt-2">
+        <div className="relative items-center flex flex-col justify-between space-y-4 gap-4 pt-2">
           <div className='w-[100%]'>
-            <div className='absolute right-4 top-0' onClick={onClose}>
-              <GrClose size={18} />
+            <div className='flex items-center justify-between bg-meta-6'>
+              <div></div>
+              <div className='text-center font-medium md:text-xsm text-xsm2 py-2'>{notulen.acara}</div>
+              <div className='mr-2 p-1 bg-white' onClick={onClose}>
+                <GrClose size={17} />
+              </div>
             </div>
             <div className="btn my-6 flex items-center justify-between">
               <div className="btn-cancel">
@@ -159,49 +159,53 @@ const XAddTagging = ({
           </div>
         </div>
       ) : (
-        <div className='flex flex-col py-3'>
-          <div className="data flex flex-row bg-white w-full">
-            <Select
-              isMulti
-              name="tagging"
-              options={listTagging}
-              className="basic-multi-select w-full bg-white"
-              classNamePrefix="select"
-              defaultValue={tagging}
-              onChange={(selectedOption: any) => {
-                handleChange({
-                  target: { name: "tagging", value: selectedOption },
-                });
-              }}
-            />
-          </div>
-          <div className='mt-3 flex justify-between'>
-            <div className="btn-cancel">
-              <Button
-                variant="xl"
-                type="secondary"
-                className="button-container mb-2 mt-5"
-                rounded
-                onClick={onClose}
-                loading={loading}
-              >
-                <div className="flex px-6 text-[#002DBB] font-Nunito">
-                  <span className="button-text text-xl-base">Batal</span>
-                </div>
-              </Button>
+        <div className='flex flex-col w-full py-3'>
+          <div className='relative'>
+            <div className='text-center font-medium md:text-xsm text-xsm2 mb-6'>Masukkan Tagging</div>
+            <div className="data flex flex-row fixed z-999 bg-white w-[520px]">
+              <Select
+                isMulti
+                name="tagging"
+                options={listTagging}
+                className="basic-multi-select bg-white w-full"
+                classNamePrefix="select"
+                defaultValue={tagging}
+                onChange={(selectedOption: any) => {
+                  handleChange({
+                    target: { name: "tagging", value: selectedOption },
+                  });
+                }}
+              />
             </div>
-            <div className="btn-cancell">
-              <Button
-                variant="xl"
-                className="button-container mb-2 mt-5"
-                rounded
-                onClick={() => setIsAddTagging(true)}
-                loading={loading}
-              >
-                <div className="flex px-6 text-white font-Nunito">
-                  <span className="button-text">Tambah Tagging</span>
-                </div>
-              </Button>
+            <div className='mt-[5em] flex justify-between'>
+              <div className="btn-cancel">
+                <Button
+                  variant="xl"
+                  type="secondary"
+                  className="button-container mb-2 mt-5"
+                  rounded
+                  onClick={onClose}
+                  loading={loading}
+                >
+                  <div className="flex px-6 text-[#002DBB] font-Nunito">
+                    <span className="button-text text-xl-base">Batal</span>
+                  </div>
+                </Button>
+              </div>
+              <div className="btn-cancell">
+                <Button
+                  variant="xl"
+                  className="button-container mb-2 mt-5"
+                  rounded
+                  disabled={tagging.length == 0}
+                  onClick={handleSubmit}
+                  loading={loading}
+                >
+                  <div className="flex px-6 text-white font-Nunito">
+                    <span className="button-text">Tambah</span>
+                  </div>
+                </Button>
+              </div>
             </div>
           </div>
         </div>

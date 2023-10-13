@@ -16,7 +16,7 @@ const NotulenDetail = ({ params }: { params: { id: number } }) => {
 
   useEffect(() => {
     fetchData();
-    fetchTagging();
+    // fetchTagging();
   }, [])
 
   const fetchData = async () => {

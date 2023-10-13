@@ -66,36 +66,40 @@ const LaporanNotulen = ({ data, loading, profile }: LaporanNotulenProps) => {
             {loading ? (
               <div className='mt-6 text-center'>Sedang memuat data . . .</div>
             ) : (
-              data.map((row: any, i: number) => (
-                <StyledTableRow key={i}>
-                  <StyledTableCell align="center" className='dark:text-white' style={{ width: '40px' }}>{i + 1}</StyledTableCell>
-                  <StyledTableCell align="center" className='dark:text-white' style={{ width: '40px' }}>
-                    <div className='flex gap-2'>
-                      {row.tanggal[0]?.startDate !== null && <span>{getShortDate(row.tanggal[0]?.startDate)}</span>}
-                      {row.tanggal[0]?.endDate !== null && row.tanggal[0]?.endDate !== row.tanggal[0]?.startDate && (
-                        <>
-                          <span>-</span>
-                          <span> {getShortDate(row.tanggal[0]?.endDate)}</span>
-                        </>
-                      )}
-                    </div></StyledTableCell>
-                  <StyledTableCell align="center" className='dark:text-white' style={{ width: '40px' }}>{getTime(row.waktu)}</StyledTableCell>
-                  <StyledTableCell align="center" className='dark:text-white'>{row.acara}</StyledTableCell>
-                  <StyledTableCell align="center" className='dark:text-white'>{row.lokasi}</StyledTableCell>
-                  {profile.role == 1 ? (
-                    <StyledTableCell align="center" className='dark:text-white'>{row.Perangkat_Daerah.nama_opd}</StyledTableCell>
-                  ) : profile.role == 2 || profile.role == 3 ? (
-                    <StyledTableCell align="center" className='dark:text-white'>{row.Pegawai.nama}</StyledTableCell>
-                  ) : null}
-                  {/* <StyledTableCell align="center" className='dark:text-white'>
-                    <div className='flex gap-2'>
-                      <button onClick={() => handleClickDetail(row.id)}>
-                        <FaEdit size={18} />
-                      </button>
-                    </div>
-                  </StyledTableCell> */}
-                </StyledTableRow>
-              ))
+              data.length == 0 ? (
+                <div className='text-center my-6 text-xsm'>Data Notulen Kosong</div>
+              ) : (
+                data.map((row: any, i: number) => (
+                  <StyledTableRow key={i}>
+                    <StyledTableCell align="center" className='dark:text-white' style={{ width: '40px' }}>{i + 1}</StyledTableCell>
+                    <StyledTableCell align="center" className='dark:text-white' style={{ width: '40px' }}>
+                      <div className='flex gap-2'>
+                        {row.tanggal[0]?.startDate !== null && <span>{getShortDate(row.tanggal[0]?.startDate)}</span>}
+                        {row.tanggal[0]?.endDate !== null && row.tanggal[0]?.endDate !== row.tanggal[0]?.startDate && (
+                          <>
+                            <span>-</span>
+                            <span> {getShortDate(row.tanggal[0]?.endDate)}</span>
+                          </>
+                        )}
+                      </div></StyledTableCell>
+                    <StyledTableCell align="center" className='dark:text-white' style={{ width: '40px' }}>{getTime(row.waktu)}</StyledTableCell>
+                    <StyledTableCell align="center" className='dark:text-white'>{row.acara}</StyledTableCell>
+                    <StyledTableCell align="center" className='dark:text-white'>{row.lokasi}</StyledTableCell>
+                    {profile.role == 1 ? (
+                      <StyledTableCell align="center" className='dark:text-white'>{row.Perangkat_Daerah.nama_opd}</StyledTableCell>
+                    ) : profile.role == 2 || profile.role == 3 ? (
+                      <StyledTableCell align="center" className='dark:text-white'>{row.Pegawai.nama}</StyledTableCell>
+                    ) : null}
+                    {/* <StyledTableCell align="center" className='dark:text-white'>
+                      <div className='flex gap-2'>
+                        <button onClick={() => handleClickDetail(row.id)}>
+                          <FaEdit size={18} />
+                        </button>
+                      </div>
+                    </StyledTableCell> */}
+                  </StyledTableRow>
+                ))
+              )
             )}
           </TableBody>
         </Table>

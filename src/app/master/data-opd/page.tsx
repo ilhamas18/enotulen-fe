@@ -12,6 +12,7 @@ import { BsPeopleFill } from "react-icons/bs";
 import ListOPD from '@/components/pages/opd/listOPD';
 import { FaSync } from 'react-icons/fa';
 import withAuth from '@/components/hocs/withAuth';
+import Loading from '@/components/global/Loading/loading';
 
 const DataMasterOPD = () => {
   const router = useRouter();
@@ -134,6 +135,7 @@ const DataMasterOPD = () => {
         </div>
         <ListOPD data={listOPD} />
       </div>
+      <Loading loading={loading} setLoading={setLoading} />
     </div>
   )
 }

@@ -100,10 +100,10 @@ function CreateForm({ handleSubmit }: MyFormProps) {
 }
 
 interface PropTypes {
-  setFlagFilled: any;
+  fetchTagging: any;
 }
 
-const TematikForm = ({ setFlagFilled }: PropTypes) => {
+const TematikForm = ({ fetchTagging }: PropTypes) => {
   const handleSubmit = async (values: FormValues) => {
     const payload = {
       nama_tagging: values.namaTagging
@@ -132,7 +132,7 @@ const TematikForm = ({ setFlagFilled }: PropTypes) => {
         showConfirmButton: false,
         timer: 1500
       })
-      setFlagFilled(true);
+      fetchTagging();
     }
   }
 

@@ -12,15 +12,16 @@ import XAddTagging from './x-modal/XAddTagging';
 interface LaporanNotulenAuthType {
   data: any,
   profile: any,
+  fetchData?: any
 }
 
-const LaporanNotulenAuth = ({ data, profile }: LaporanNotulenAuthType) => {
+const LaporanNotulenAuth = ({ data, profile, fetchData }: LaporanNotulenAuthType) => {
   const router = useRouter();
   const [openAddTagging, setOpenAddTagging] = useState<boolean>(false);
-  const [idNotulen, setIdNotulen] = useState<number>(0);
+  const [notulen, setNotulen] = useState<number>(0);
 
   const handleAddTagging = (params: any) => {
-    setIdNotulen(params.row.index)
+    setNotulen(params.row)
     setOpenAddTagging(true)
   }
 
@@ -231,7 +232,12 @@ const LaporanNotulenAuth = ({ data, profile }: LaporanNotulenAuthType) => {
         />
       </Box>
 
-      <XAddTagging openAddTagging={openAddTagging} setOpenAddTagging={setOpenAddTagging} idNotulen={idNotulen} />
+      <XAddTagging
+        openAddTagging={openAddTagging}
+        setOpenAddTagging={setOpenAddTagging}
+        notulen={notulen}
+        fetchData={fetchData}
+      />
     </div>
   )
 }

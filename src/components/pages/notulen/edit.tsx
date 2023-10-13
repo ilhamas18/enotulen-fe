@@ -123,7 +123,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   useEffect(() => {
     fetchDataPegawai();
     fetchDataAtasan();
-    fetchDataSasaran();
+    if (profile.role == 4) fetchDataSasaran();
   }, []);
 
   const fetchDataPegawai = async () => {
@@ -218,6 +218,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
       type: 'auth',
       body: payload
     })
+    console.log(response, ">>>>");
 
     if (!response.success) {
       Swal.fire({

@@ -71,7 +71,8 @@ const DataUser = () => {
             nip: el.nip,
             pangkat: el.nama_pangkat + ' ' + (el.pangkat),
             opd: el.Perangkat_Daerah.nama_opd,
-            role: listRole[el.role - 1].role
+            role: listRole[el.role - 1].role,
+            status: el.status
           })
         })
         setDataPegawai(temp);

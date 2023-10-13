@@ -23,9 +23,6 @@ module.exports = {
   },
   reactStrictMode: false,
   swcMinify: true,
-  images: {
-    domains: ["images.pexels.com", "staticxl.ext.xlaxiata.co.id","g20-indonesia.s3.ap-southeast-1.amazonaws.com"],
-  },
   async headers() {
     return [
       {
