@@ -94,7 +94,7 @@ const Laporan = () => {
       <Breadcrumb pageName="Laporan" />
       <div className="bg-white dark:bg-meta-4 shadow-card flex flex-col gap-2 py-4 text-center font-bold text-title-sm rounded rounded-lg border-none">
         <div>DAFTAR LAPORAN NOTULEN</div>
-        {profile.role == 2 || profile.role == 3 ? <div>{profile.Perangkat_Daerah.nama_opd}</div> : null}
+        {profile.role == 2 || profile.role == 3 ? <div>{profile.Perangkat_Daerah?.nama_opd}</div> : null}
         <div>Bulan {currentMonth} {currentYear}</div>
       </div>
       <div style={gradientStyle} className="mt-10">

@@ -19,7 +19,6 @@ import { deleteCookie } from "cookies-next";
 interface FormValues {
   nip: string,
   password: string,
-  consent: boolean
 }
 
 interface OtherProps {
@@ -54,13 +53,14 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
         <div className="px-8 font-Nunito flex flex-col space-y-7 mt-4">
           <div className="data flex flex-row">
             <TextInput
-              type="text"
+              type="tel"
               id="nip"
               name="nip"
               label="NIP/NIPPPK"
               max={18}
+              touched={touched.nip}
               errors={errors.nip}
-              value={values.nip.toString()}
+              value={values.nip}
               change={handleChange}
             />
           </div>
@@ -70,35 +70,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               id="password"
               name="password"
               label="Password"
+              touched={touched.password}
               errors={errors.password}
               value={values.password}
               change={handleChange}
             />
-          </div>
-        </div>
-        <div className="flex flex-row pt-2 px-8 items-center">
-          <div>
-            <TextInput
-              type="checkbox"
-              name="consent"
-              id="consent"
-              placeholder="Masukkan consent"
-              value={values.consent}
-              change={handleChange}
-            />
-          </div>
-          <div>
-            {errors.consent ? (
-              <p className="ml-2 mt-[9px] flex justify-center text-red-info text-Nunito text-xs text-[#fc4c00]">
-                Anda harus menyetujui memberikan NIP untuk keperluan
-                verifikasi data
-              </p>
-            ) : (
-              <p className="ml-2 mt-[9px] flex justify-center mt-md-1 text-[#68788A] text-Nunito text-xs">
-                Dengan menekan Lanjut, saya setuju memberikan NIP
-                untuk keperluan verifikasi data
-              </p>
-            )}
           </div>
         </div>
       </form>
@@ -127,7 +103,6 @@ function CreateForm({ handleSubmit }: MyFormProps) {
     mapPropsToValues: () => ({
       nip: "",
       password: "",
-      consent: false,
     }),
     validationSchema: Yup.object().shape({
       nip: Yup.string()
@@ -137,13 +112,6 @@ function CreateForm({ handleSubmit }: MyFormProps) {
       password: Yup.string()
         .required("Bagian dibutuhkan")
         .min(8, "Kata sandi terlalu pendek - minimal harus 8 karakter"),
-      consent: Yup.bool()
-        .required("You have to agree with our Terms and Conditions!")
-        .test(
-          "consent",
-          "You have to agree with our Terms and Conditions!",
-          (value) => value === true
-        ),
     }),
     handleSubmit
   })(FormField)

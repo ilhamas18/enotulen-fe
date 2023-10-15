@@ -218,7 +218,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
       type: 'auth',
       body: payload
     })
-    console.log(response, ">>>>");
 
     if (!response.success) {
       Swal.fire({
@@ -473,6 +472,16 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     handleChange({
       target: { name: type, value: null },
     });
+    setProgressUndangan({ started: false, pc: 0 });
+    setProgressDaftarHadir({ started: false, pc: 0 });
+    setProgressSPJ({ started: false, pc: 0 });
+    setProgressFoto({ started: false, pc: 0 });
+    setProgressPendukung({ started: false, pc: 0 });
+    setUploadMsgUndangan('');
+    setUploadMsgDaftarHadir('');
+    setUploadMsgSPJ('');
+    setUploadMsgFoto('');
+    setUploadMsgPendukung('');
   };
 
   const handleCancel = () => router.push('/notulen/laporan');
@@ -980,48 +989,48 @@ function CreateForm({ handleSubmit, dataNotulen, pelapor, atasan, sasaran, dibua
       dibuatTanggal: dibuatTanggal !== null ? dibuatTanggal : null
     }),
     validationSchema: Yup.object().shape({
-      // rangeTanggal: Yup.array()
-      //   .required("Harap isi tanggal pelaksanaan !"),
-      // jam: Yup.mixed()
-      //   .nullable()
-      //   .required("Waktu tidak boleh kosong !"),
-      // pendahuluan: Yup.string()
-      //   .required("Harap isi pendahuluan !")
-      //   .min(4, "Minimal 4 karakter"),
-      // pimpinanRapat: Yup.string()
-      //   .required("Harap isi nama pimpinan rapat !"),
-      // pesertaArray: Yup.array()
-      //   .required("Harap isi peserta !"),
-      // isiRapat: Yup.mixed()
-      //   .nullable(),
-      // tindakLanjut: Yup.mixed()
-      //   .nullable(),
-      // lokasi: Yup.string()
-      //   .required("Lokasi tidak boleh kosong !"),
-      // acara: Yup.string()
-      //   .required("Acara tidak boleh kosong !"),
-      // pelapor: Yup.object()
-      //   .shape({
-      //     label: Yup.string(),
-      //     value: Yup.number(),
-      //   })
-      //   .required("Bagian dibutuhkan")
-      //   .nullable(),
-      // atasan: Yup.object()
-      //   .shape({
-      //     label: Yup.string(),
-      //     value: Yup.number(),
-      //   })
-      //   .required("Bagian dibutuhkan")
-      //   .nullable(),
-      // sasaran: Yup.object()
-      //   .shape({
-      //     label: Yup.string(),
-      //     value: Yup.number(),
-      //   })
-      //   .required("Bagian dibutuhkan")
-      //   .nullable(),
-      // dibuatTanggal: Yup.mixed().nullable().required("Tanggal tidak boleh kosong !"),
+      rangeTanggal: Yup.array()
+        .required("Harap isi tanggal pelaksanaan !"),
+      jam: Yup.mixed()
+        .nullable()
+        .required("Waktu tidak boleh kosong !"),
+      pendahuluan: Yup.string()
+        .required("Harap isi pendahuluan !")
+        .min(4, "Minimal 4 karakter"),
+      pimpinanRapat: Yup.string()
+        .required("Harap isi nama pimpinan rapat !"),
+      pesertaArray: Yup.array()
+        .required("Harap isi peserta !"),
+      isiRapat: Yup.mixed()
+        .nullable(),
+      tindakLanjut: Yup.mixed()
+        .nullable(),
+      lokasi: Yup.string()
+        .required("Lokasi tidak boleh kosong !"),
+      acara: Yup.string()
+        .required("Acara tidak boleh kosong !"),
+      pelapor: Yup.object()
+        .shape({
+          label: Yup.string(),
+          value: Yup.number(),
+        })
+        .required("Bagian dibutuhkan")
+        .nullable(),
+      atasan: Yup.object()
+        .shape({
+          label: Yup.string(),
+          value: Yup.number(),
+        })
+        .required("Bagian dibutuhkan")
+        .nullable(),
+      sasaran: Yup.object()
+        .shape({
+          label: Yup.string(),
+          value: Yup.number(),
+        })
+        .required("Bagian dibutuhkan")
+        .nullable(),
+      dibuatTanggal: Yup.mixed().nullable().required("Tanggal tidak boleh kosong !"),
     }),
     handleSubmit,
   })(FormField);
@@ -1107,6 +1116,8 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
   }
 
   const handleSubmit = async (values: FormValues) => {
+    console.log('masoook');
+
     const payload = {
       tanggal: values.rangeTanggal,
       waktu: values.jam,
@@ -1119,7 +1130,7 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
       acara: values.acara,
       pelapor: values.pelapor.data,
       atasan: values.atasan.data,
-      sasaran: dataNotulen.sasaran,
+      sasaran: dataNotulen.id_sasaran,
       status: "editted",
       hari: dataNotulen.hari,
       bulan: dataNotulen.bulan,

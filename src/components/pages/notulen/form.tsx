@@ -120,7 +120,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     fetchDataAtasan();
     fetchDataSasaran();
   }, []);
-  console.log(values, '>>>>');
 
   const fetchDataPegawai = async () => {
     setLoading(true);
@@ -227,7 +226,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
       let temp: any = [];
       data.data.sasaran_asn.map((el: any) => {
         temp.push({
-          label: el.sasaran,
+          label: el.sasaran + ' ' + '/' + ' ' + 2023,
           value: el.id_sasaran
         })
       })
@@ -462,15 +461,29 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     }
   };
 
-  const handleDeleteFile = async (key: string) => {
-    await fetchApi({
-      method: "delete",
-      url: `/notulen//deleteFile/${key}`,
-      type: "auth",
+  const handleDeleteFile = async (key: string, type: string, e: any) => {
+    e.preventDefault();
+    router.push(`${process.env.BASE_URL}/notulen/deleteFile?pathname=${key}`)
+    handleChange({
+      target: { name: type, value: null },
     });
+    setProgressUndangan({ started: false, pc: 0 });
+    setProgressDaftarHadir({ started: false, pc: 0 });
+    setProgressSPJ({ started: false, pc: 0 });
+    setProgressFoto({ started: false, pc: 0 });
+    setProgressPendukung({ started: false, pc: 0 });
+    setUploadMsgUndangan('');
+    setUploadMsgDaftarHadir('');
+    setUploadMsgSPJ('');
+    setUploadMsgFoto('');
+    setUploadMsgPendukung('');
   };
 
   const handleCancel = () => router.push('/notulen/laporan');
+
+  const handleDownloadFile = async (val: any, e: any) => {
+    router.push(`${process.env.BASE_URL}/notulen/getFile?pathname=${val}`)
+  }
 
   return (
     <React.Fragment>
@@ -763,11 +776,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-2">
                     <div>Surat Undangan</div>
-                    <button className="download-click text-xl-base">
+                    <div className="download-click text-xl-base" onClick={(e: any) => handleDownloadFile(values.suratUndangan.value, e)}>
                       {values.suratUndangan.name}
-                    </button>
+                    </div>
                   </div>
-                  <div onClick={() => handleDeleteFile(values.suratUndangan)}>
+                  <div onClick={(e: any) => handleDeleteFile(values.suratUndangan.value, 'suratUndangan', e)}>
                     <IoMdClose size={20} />
                   </div>
                 </div>
@@ -798,11 +811,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-2">
                     <div>Daftar Hadir</div>
-                    <button className="download-click text-xl-base">
+                    <div className="download-click text-xl-base" onClick={(e: any) => handleDownloadFile(values.daftarHadir.value, e)}>
                       {values.daftarHadir.name}
-                    </button>
+                    </div>
                   </div>
-                  <div onClick={() => handleDeleteFile(values.daftarHadir)}>
+                  <div onClick={(e: any) => handleDeleteFile(values.daftarHadir.value, 'daftarHadir', e)}>
                     <IoMdClose size={20} />
                   </div>
                 </div>
@@ -830,11 +843,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-2">
                     <div>SPJ</div>
-                    <button className="download-click text-xl-base">
+                    <div className="download-click text-xl-base" onClick={(e: any) => handleDownloadFile(values.spj.value, e)}>
                       {values.spj.name}
-                    </button>
+                    </div>
                   </div>
-                  <div onClick={() => handleDeleteFile(values.daftarHadir)}>
+                  <div onClick={(e: any) => handleDeleteFile(values.spj.value, 'spj', e)}>
                     <IoMdClose size={20} />
                   </div>
                 </div>
@@ -862,11 +875,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-2">
                     <div>Foto</div>
-                    <button className="download-click text-xl-base">
+                    <div className="download-click text-xl-base" onClick={(e: any) => handleDownloadFile(values.foto.value, e)}>
                       {values.foto.name}
-                    </button>
+                    </div>
                   </div>
-                  <div onClick={() => handleDeleteFile(values.foto)}>
+                  <div onClick={(e: any) => handleDeleteFile(values.foto.value, 'foto', e)}>
                     <IoMdClose size={20} />
                   </div>
                 </div>
@@ -894,11 +907,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-2">
                     <div>File Pendukung</div>
-                    <button className="download-click text-xl-base">
+                    <div className="download-click text-xl-base" onClick={(e: any) => handleDownloadFile(values.pendukung.value, e)}>
                       {values.pendukung.name}
-                    </button>
+                    </div>
                   </div>
-                  <div onClick={() => handleDeleteFile(values.pendukung)}>
+                  <div onClick={(e: any) => handleDeleteFile(values.pendukung.value, 'pendukung', e)}>
                     <IoMdClose size={20} />
                   </div>
                 </div>
@@ -992,9 +1005,9 @@ function CreateForm({ handleSubmit }: MyFormProps) {
       pesertaArray: Yup.array()
         .required("Harap isi peserta !"),
       isiRapat: Yup.mixed()
-        .nullable(),
+        .required("Harap isi rapat !"),
       tindakLanjut: Yup.mixed()
-        .nullable(),
+        .required("Harap isi tindak lanjut !"),
       lokasi: Yup.string()
         .required("Lokasi tidak boleh kosong !"),
       acara: Yup.string()
@@ -1040,8 +1053,6 @@ const AddNotulenForm = () => {
   const router = useRouter();
 
   const handleSubmit = async (values: FormValues) => {
-    console.log('masoooook');
-
     const payload = {
       tanggal: values.rangeTanggal,
       waktu: values.jam,

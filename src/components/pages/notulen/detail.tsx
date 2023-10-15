@@ -89,7 +89,6 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
   };
 
   const handleDownloadFile = async (val: any, e: any) => {
-    e.preventDefault()
     router.push(`${process.env.BASE_URL}/notulen/getFile?pathname=${val}`)
   }
 

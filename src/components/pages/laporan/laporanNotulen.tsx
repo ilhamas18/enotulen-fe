@@ -86,7 +86,7 @@ const LaporanNotulen = ({ data, loading, profile }: LaporanNotulenProps) => {
                     <StyledTableCell align="center" className='dark:text-white'>{row.acara}</StyledTableCell>
                     <StyledTableCell align="center" className='dark:text-white'>{row.lokasi}</StyledTableCell>
                     {profile.role == 1 ? (
-                      <StyledTableCell align="center" className='dark:text-white'>{row.Perangkat_Daerah.nama_opd}</StyledTableCell>
+                      <StyledTableCell align="center" className='dark:text-white'>{row.Perangkat_Daerah?.nama_opd}</StyledTableCell>
                     ) : profile.role == 2 || profile.role == 3 ? (
                       <StyledTableCell align="center" className='dark:text-white'>{row.Pegawai.nama}</StyledTableCell>
                     ) : null}

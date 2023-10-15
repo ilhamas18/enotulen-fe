@@ -255,7 +255,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               </div>
             </Button>
           </div>
-          <div className="w-[8em] mr-[10em] mt-2 md:block hidden">
+          {/* <div className="w-[8em] mr-[10em] mt-2 md:block hidden">
             <Button
               variant="error"
               className="button-container"
@@ -267,7 +267,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <span className="button-text">Hapus</span>
               </div>
             </Button>
-          </div>
+          </div> */}
         </div>
       )}
 

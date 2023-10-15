@@ -25,6 +25,7 @@ const NotulenDetail = ({ params }: { params: { id: number } }) => {
       method: "get",
       type: "auth"
     })
+    console.log(response, '<<<< res');
 
     if (!response.success) {
       setLoading(false);

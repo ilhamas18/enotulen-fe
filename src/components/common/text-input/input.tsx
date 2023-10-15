@@ -9,6 +9,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { DesktopDateTimePicker } from '@mui/x-date-pickers/DesktopDateTimePicker';
+import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai"
 
 interface type {
   id: string;
@@ -53,10 +54,11 @@ const TextInput = ({
   onClick,
 }: type) => {
   const [active, setActive] = useState<boolean>(false);
+  const [iconAye, setIconAye] = useState(false)
 
   return (
     <div className="form">
-      {type === "text" || type === "number" || type === "password" || type === "tel" || type === "date" ? (
+      {type === "text" || type === "number" || type === "tel" || type === "date" ? (
         <input
           type={type}
           onKeyPress={(event) => {
@@ -105,6 +107,56 @@ const TextInput = ({
           onClick={onClick}
         />
       ) : null}
+      {type === "password" && (
+        <>
+          <input
+            type={iconAye ? "text" : "password"}
+            id={id}
+            name={name}
+            maxLength={max}
+            value={value ?? ""}
+            className={`dark:bg-white
+              ${variant == "secondary" ? "form__input_secondary" : "form__input"} 
+              ${errors ? "error" : ""} 
+              ${center ? "center text-center tracking-widests font-Bold" : ""} `
+            }
+            pattern="[a-zA-Z0-9.,\s]+"
+            onFocus={(e) => {
+              setActive(true);
+            }}
+            placeholder={`${placeholder ? placeholder : " "}`}
+            autoComplete="off"
+            onPaste={(e: any) => {
+              if (hideCopy) {
+                e.preventDefault();
+                return false;
+              }
+            }}
+            onCopy={(e: any) => {
+              if (hideCopy) {
+                e.preventDefault();
+                return false;
+              }
+            }}
+            onBlur={handleBlur}
+            min={0}
+            onChange={change}
+            disabled={disabled}
+            onClick={onClick}
+          />
+          <div
+            className={`${type === 'password' ? 'block' : 'hidden'} flex absolute top-3 right-2`}
+            onClick={() => setIconAye(!iconAye)}
+            role="presentation"
+          >
+            {iconAye ? (
+              <AiFillEyeInvisible size={20} />
+            ) : (
+              <AiFillEye size={20} />
+            )}
+          </div>
+        </>
+      )}
       {type === "text-area" && (
         <textarea
           id={id}

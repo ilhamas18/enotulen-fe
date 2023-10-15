@@ -77,7 +77,7 @@ function Home() {
       <div className='md:w-[30%] w-full md:absolute md:right-0 md:top-[10em] bg-white'>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
-            <DatePicker label={'"month" and "year"'} views={['month', 'year']} onChange={handleDatePicked} />
+            <DatePicker label={'"Bulan" & "Tahun"'} views={['month', 'year']} onChange={handleDatePicked} />
           </DemoContainer>
         </LocalizationProvider>
       </div>
