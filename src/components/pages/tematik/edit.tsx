@@ -16,6 +16,7 @@ interface OtherProps {
   title?: string;
   ref?: any;
   handleCancel?: any;
+  tagging: any;
 }
 
 interface MyFormProps extends OtherProps {
@@ -42,7 +43,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   return (
     <React.Fragment>
       <div className="form-container bg-white rounded-lg">
-        <div className="w-full py-3 bg-meta-6 font-bold text-center text-white uppercase">Form Tambah Tagging</div>
+        <div className="w-full py-3 bg-meta-6 font-bold text-center text-white uppercase">Form Edit Tagging</div>
         <form className="form-wrapper-general relative p-6">
           <div className="data flex flex-row w-full">
             <TextInput
@@ -65,7 +66,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 onClick={handleSubmit}
               >
                 <div className="flex justify-center items-center text-white font-Nunito">
-                  <span className="button-text">Tambah</span>
+                  <span className="button-text">Edit</span>
                 </div>
               </Button>
             </div>
@@ -89,10 +90,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   )
 }
 
-function CreateForm({ handleSubmit, handleCancel }: MyFormProps) {
+
+function CreateForm({ handleSubmit, handleCancel, tagging }: MyFormProps) {
   const FormWithFormik = withFormik({
     mapPropsToValues: () => ({
-      namaTagging: ''
+      namaTagging: tagging.length != 0 ? tagging.nama_tagging : ''
     }),
     validationSchema: Yup.object().shape({
       namaTagging: Yup.string()
@@ -105,21 +107,20 @@ function CreateForm({ handleSubmit, handleCancel }: MyFormProps) {
 }
 
 interface PropTypes {
-  profile: any;
-  openAdd: boolean;
-  setOpenAdd?: any;
+  tagging: any;
+  openEdit: boolean;
+  setopenEdit?: any;
 }
 
-const TematikForm = ({ profile, openAdd, setOpenAdd }: PropTypes) => {
+const TematikEditForm = ({ tagging, openEdit, setopenEdit }: PropTypes) => {
   const handleSubmit = async (values: FormValues) => {
     const payload = {
-      nama_tagging: values.namaTagging,
-      kode_opd: profile.Perangkat_Daerah.kode_opd
+      nama_tagging: values.namaTagging
     }
 
     const response = await fetchApi({
-      url: `/tagging/addTagging`,
-      method: 'post',
+      url: `/tagging/editTagging/${tagging.id}`,
+      method: 'put',
       body: payload,
       type: "auth"
     })
@@ -136,21 +137,21 @@ const TematikForm = ({ profile, openAdd, setOpenAdd }: PropTypes) => {
       Swal.fire({
         position: 'top-end',
         icon: 'success',
-        title: 'Data tagging berhasil tersimpan',
+        title: 'Data tagging berhasil diupdate',
         showConfirmButton: false,
         timer: 1500
       })
-      setOpenAdd(false);
+      setopenEdit(false);
     }
   }
 
-  const handleCancel = () => setOpenAdd(false);
+  const handleCancel = () => setopenEdit(false);
 
   return (
-    <CommonModal isOpen={openAdd} onClose={setOpenAdd} animate={true}>
-      <CreateForm handleSubmit={handleSubmit} handleCancel={handleCancel} />
+    <CommonModal isOpen={openEdit} onClose={setopenEdit} animate={true}>
+      <CreateForm handleSubmit={handleSubmit} handleCancel={handleCancel} tagging={tagging} />
     </CommonModal>
   )
 }
 
-export default TematikForm
+export default TematikEditForm;

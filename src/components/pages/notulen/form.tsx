@@ -1026,13 +1026,6 @@ function CreateForm({ handleSubmit }: MyFormProps) {
         })
         .required("Bagian dibutuhkan")
         .nullable(),
-      sasaran: Yup.object()
-        .shape({
-          label: Yup.string(),
-          value: Yup.number(),
-        })
-        .required("Bagian dibutuhkan")
-        .nullable(),
       dibuatTanggal: Yup.mixed().nullable().required("Tanggal tidak boleh kosong !"),
     }),
     handleSubmit,
