@@ -70,9 +70,9 @@ export const CommonModal = ({
                     duration: 0.3
                   }
                 }}
-                exit={{
-                  scale: 0
-                }}
+                // exit={{
+                //   scale: 0
+                // }}
                 className={`modal-content-wrapper w-[580px] ${type === "xl" ? 'xl' : 'axis'}`}
               >
                 <motion.div
@@ -89,10 +89,10 @@ export const CommonModal = ({
                       duration: 0.3
                     }
                   }}
-                  exit={{
-                    x: 100,
-                    opacity: 0
-                  }}
+                // exit={{
+                //   x: 100,
+                //   opacity: 0
+                // }}
                 >
                   {children}
                 </motion.div>

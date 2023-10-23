@@ -42,7 +42,7 @@ const XAddTagging = ({
 
   const fetchTagging = async () => {
     const response = await fetchApi({
-      url: '/tagging/getAllTagging',
+      url: `/tagging/getAllTagging/${profile.Perangkat_Daerah.kode_opd}`,
       method: 'get',
       type: 'auth'
     })

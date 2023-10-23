@@ -23,6 +23,7 @@ interface MyFormProps extends OtherProps {
     values: FormValues,
     formikBag: FormikBag<object, FormValues>
   ) => void;
+  handleCancel: () => void;
 }
 
 const FormField = (props: OtherProps & FormikProps<FormValues>) => {
@@ -101,7 +102,7 @@ function CreateForm({ handleSubmit, handleCancel }: MyFormProps) {
     handleSubmit,
   })(FormField)
 
-  return <FormWithFormik handleCancel={handleCancel} />
+  return <FormWithFormik />
 }
 
 interface PropTypes {

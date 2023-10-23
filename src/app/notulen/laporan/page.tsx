@@ -56,7 +56,6 @@ const Laporan = () => {
         const { data } = response.data;
         const temp: any = [];
         data.map((el: any, i: number) => {
-          console.log(el, "<<< el");
 
           temp.push({
             id: i + 1,
