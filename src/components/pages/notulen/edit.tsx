@@ -4,15 +4,13 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import TextInput from "@/components/common/text-input/input";
 import { Button } from "@/components/common/button/button";
-import Link from "next/link";
 import dynamic from "next/dynamic";
-import EditorJS, { OutputData } from "@editorjs/editorjs";
+import SignatureCanvas from 'react-signature-canvas';
 import { AiFillPlusCircle } from "react-icons/ai";
 import { fetchApi } from "@/components/mixins/request";
 import Swal from "sweetalert2";
 import DateRangePicker from "../laporan/x-modal/XDateRangePicker";
 import { formatDate, getShortDate, getShortDate2, getTime } from "@/components/hooks/formatDate";
-import Select from "react-select";
 import Loading from "@/components/global/Loading/loading";
 import { AiOutlineClose } from "react-icons/ai";
 import { withFormik, FormikProps, FormikBag } from "formik";
@@ -37,14 +35,13 @@ interface FormValues {
   tindakLanjut: any;
   lokasi: string;
   acara: string;
-  pelapor: any;
   atasan: any;
-  sasaran: any
   suratUndangan: any;
   daftarHadir: any;
   spj: any;
   foto: any;
   pendukung: any;
+  signature: string;
   dibuatTanggal: any;
 }
 
@@ -52,9 +49,7 @@ interface OtherProps {
   title?: string;
   ref?: any;
   dataNotulen?: any;
-  pelapor?: any;
   atasan?: any;
-  sasaran?: any;
   dibuatTanggal?: any;
 }
 
@@ -87,7 +82,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   const [idPesertaRapat, setIdPesertaRapat] = useState<number>(1);
   const [dataPegawai, setDataPegawai] = useState<any>([]);
   const [dataAtasan, setDataAtasan] = useState<any>([]);
-  const [dataSasaran, setDataSasaran] = useState<any>([]);
+  const [sign, setSign] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
 
   const [uploadMsgUndangan, setUploadMsgUndangan] = useState<string>("");
@@ -123,7 +118,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   useEffect(() => {
     fetchDataPegawai();
     fetchDataAtasan();
-    if (profile.role == 4) fetchDataSasaran();
   }, []);
 
   const fetchDataPegawai = async () => {
@@ -205,39 +199,25 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     }
   };
 
-  const fetchDataSasaran = async () => {
-    setLoading(true);
-    const payload = {
-      nip: profile.nip,
-      tahun: 2023
-    }
+  const handleClear = (e: any) => {
+    e.preventDefault();
+    sign.clear()
+    handleChange({
+      target: { name: "signature", value: '' },
+    });
+  }
 
-    const response = await fetchApi({
-      url: '/notulen/syncSasaran',
-      method: 'post',
-      type: 'auth',
-      body: payload
-    })
+  const handleGenerate = (e: any) => {
+    e.preventDefault();
+    handleChange({
+      target: { name: "signature", value: sign.getTrimmedCanvas().toDataURL('image/png') },
+    });
+  }
 
-    if (!response.success) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Gagal memuat data sasaran!",
-      });
-      setLoading(false);
-    } else {
-      const { data } = response.data;
-      let temp: any = [];
-      data.data.sasaran_asn.map((el: any) => {
-        temp.push({
-          label: el.sasaran,
-          value: el.id_sasaran
-        })
-      })
-      setDataSasaran(temp);
-      setLoading(false);
-    }
+  const handleDeleteSignature = () => {
+    handleChange({
+      target: { name: "signature", value: '' },
+    });
   }
 
   const handleOpenAddPeserta = (e: any) => {
@@ -694,26 +674,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               <div className="data flex flex-row">
                 <TextInput
                   type="dropdown"
-                  id="pelapor"
-                  name="pelapor"
-                  label="Nama Pelapor"
-                  touched={touched.pelapor}
-                  errors={errors.pelapor}
-                  value={values.pelapor}
-                  placeholder="Ketik dan pilih pelapor"
-                  options={dataPegawai}
-                  handleBlur={handleBlur}
-                  setValueSelected={handleChange}
-                  change={(selectedOption: any) => {
-                    handleChange({
-                      target: { name: "pelapor", value: selectedOption },
-                    });
-                  }}
-                />
-              </div>
-              <div className="data flex flex-row">
-                <TextInput
-                  type="dropdown"
                   id="atasan"
                   name="atasan"
                   label="Nama Atasan"
@@ -727,25 +687,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   change={(selectedOption: any) => {
                     handleChange({
                       target: { name: "atasan", value: selectedOption },
-                    });
-                  }}
-                />
-              </div>
-              <div className="data flex flex-row">
-                <TextInput
-                  type="dropdown"
-                  id="sasaran"
-                  name="sasaran"
-                  label="Nama sasaran"
-                  touched={touched.sasaran}
-                  errors={errors.sasaran}
-                  placeholder="Ketik dan pilih Sasaran"
-                  options={dataSasaran}
-                  handleBlur={handleBlur}
-                  setValueSelected={handleChange}
-                  change={(selectedOption: any) => {
-                    handleChange({
-                      target: { name: "sasaran", value: selectedOption },
                     });
                   }}
                 />
@@ -914,6 +855,26 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 </div>
               )}
             </div>
+            <div className="signature px-8 mt-6">
+              {values.signature === '' ? (
+                <>
+                  <div className="text-title-xsm2 mb-2">Bubuhkan Tanda tangan</div>
+                  <div className="md:w-[500px] w-full md:h-[200px] h-[130px] border-2 border-light-gray rounded rounded-lg">
+                    <SignatureCanvas
+                      canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
+                      ref={(data: any) => setSign(data)}
+                    />
+                  </div>
+                  <button style={{ height: "30px", width: "60px" }} onClick={(e: any) => handleClear(e)}>Clear</button>
+                  <button style={{ height: "30px", width: "60px" }} onClick={(e: any) => handleGenerate(e)}>Save</button>
+                </>
+              ) : (
+                <div className="flex md:flex-row md:items-center md:justify-between flex-col mb-2 md:mb-0">
+                  <img src={values.signature} />
+                  <div className="text-danger text-title-xsm2 hover:cursor-pointer" onClick={handleDeleteSignature}>Hapus</div>
+                </div>
+              )}
+            </div>
             <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
               <div className="w-[8em] absolute bottom-6 right-8">
                 <Button
@@ -959,7 +920,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   );
 };
 
-function CreateForm({ handleSubmit, dataNotulen, pelapor, atasan, sasaran, dibuatTanggal }: MyFormProps) {
+function CreateForm({ handleSubmit, dataNotulen, atasan, dibuatTanggal }: MyFormProps) {
   const FormWithFormik = withFormik({
     mapPropsToValues: () => ({
       tagging: [],
@@ -978,14 +939,13 @@ function CreateForm({ handleSubmit, dataNotulen, pelapor, atasan, sasaran, dibua
       tindakLanjut: dataNotulen.tindak_lanjut !== null ? JSON.parse(dataNotulen.tindak_lanjut) : null,
       lokasi: dataNotulen.lokasi !== "" ? dataNotulen.lokasi : "",
       acara: dataNotulen.acara !== "" ? dataNotulen.acara : "",
-      pelapor: dataNotulen.pelapor !== null ? pelapor : null,
       atasan: dataNotulen.atasan !== null ? atasan : null,
-      sasaran: dataNotulen.sasaran !== null ? sasaran : null,
       suratUndangan: dataNotulen.link_img_surat_undangan !== null ? dataNotulen.link_img_surat_undangan : null,
       daftarHadir: dataNotulen.link_img_daftar_hadir !== null ? dataNotulen.link_img_daftar_hadir : null,
       spj: dataNotulen.link_img_spj !== null ? dataNotulen.link_img_spj : null,
       foto: dataNotulen.link_img_foto !== null ? dataNotulen.link_img_foto : null,
       pendukung: dataNotulen.link_img_pendukung !== null ? dataNotulen.link_img_pendukung : null,
+      signature: dataNotulen.signature !== null ? dataNotulen.signature : null,
       dibuatTanggal: dibuatTanggal !== null ? dibuatTanggal : null
     }),
     validationSchema: Yup.object().shape({
@@ -1009,25 +969,7 @@ function CreateForm({ handleSubmit, dataNotulen, pelapor, atasan, sasaran, dibua
         .required("Lokasi tidak boleh kosong !"),
       acara: Yup.string()
         .required("Acara tidak boleh kosong !"),
-      pelapor: Yup.object()
-        .shape({
-          label: Yup.string(),
-          value: Yup.number(),
-        })
-        .required("Bagian dibutuhkan")
-        .nullable(),
       atasan: Yup.object()
-        .shape({
-          label: Yup.string(),
-          value: Yup.number(),
-        })
-        .required("Bagian dibutuhkan")
-        .nullable(),
-      sasaran: Yup.object()
-        .shape({
-          label: Yup.string(),
-          value: Yup.number(),
-        })
         .required("Bagian dibutuhkan")
         .nullable(),
       dibuatTanggal: Yup.mixed().nullable().required("Tanggal tidak boleh kosong !"),
@@ -1043,9 +985,7 @@ interface PropTypes {
 }
 
 const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
-  const [pelapor, setNamaPelapor] = useState<any>(null);
   const [atasan, setAtasan] = useState<any>(null);
-  const [sasaran, setSasaran] = useState<any>(null);
   const [dibuatTanggal, setDibuatTanggal] = useState<any>(null);
 
   const { profile } = useSelector(
@@ -1059,18 +999,6 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
   const router = useRouter();
 
   useEffect(() => {
-    setNamaPelapor({
-      label: dataNotulen.pelapor.nama,
-      value: dataNotulen.pelapor.nip,
-      data: {
-        nama: dataNotulen.pelapor.nama,
-        nip: dataNotulen.pelapor.nip,
-        pangkat: dataNotulen.pelapor.pangkat,
-        namaPangkat: dataNotulen.pelapor.nama_pangkat,
-        jabatan: dataNotulen.pelapor.jabatan
-      },
-    });
-
     setAtasan({
       label: dataNotulen.atasan.nama,
       value: dataNotulen.atasan.nip,
@@ -1092,7 +1020,6 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
     const month = parseInt(dateParts[0], 10); // Months are 0-based (0 = January, 1 = February, etc.)
     const day = parseInt(dateParts[1], 10);
     const year = parseInt(dateParts[2], 10);
-
     // Create a Date object with the parsed values
     const formattedDate = new Date(year, month, day);
 
@@ -1116,8 +1043,7 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
   }
 
   const handleSubmit = async (values: FormValues) => {
-    console.log('masoook');
-
+    setLoading(true);
     const payload = {
       tanggal: values.rangeTanggal,
       waktu: values.jam,
@@ -1128,9 +1054,7 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
       tindak_lanjut: JSON.stringify(values.tindakLanjut),
       lokasi: values.lokasi,
       acara: values.acara,
-      pelapor: values.pelapor.data,
       atasan: values.atasan.data,
-      sasaran: dataNotulen.id_sasaran,
       status: "editted",
       hari: dataNotulen.hari,
       bulan: dataNotulen.bulan,
@@ -1140,6 +1064,7 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
       link_img_spj: values.spj,
       link_img_foto: values.foto,
       link_img_pendukung: values.pendukung,
+      signature: values.signature,
       kode_opd: profile.Perangkat_Daerah.kode_opd,
       nip_pegawai: profile.nip,
       nip_atasan: values.atasan.value
@@ -1151,27 +1076,32 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
       body: payload,
       type: "auth",
     });
-    console.log(response, '<<<');
 
     if (!response.success) {
-      if (response.data.code == 500) {
+      if (response.data.code == 400) {
+        setLoading(false);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Periksa kembali data Notulen!",
+        });
+      } else if (response.data.code == 500) {
+        setLoading(false);
         Swal.fire({
           icon: "error",
           title: "Oops...",
           text: "Koneksi bermasalah!",
         });
       }
-      setLoading(false);
     } else {
       Swal.fire({
-        position: "top-end",
+        position: "center",
         icon: "success",
-        title: "Your work has been saved",
+        title: "Notulen berhasil di edit",
         showConfirmButton: false,
         timer: 1500,
       });
       router.push("/notulen/laporan");
-      setLoading(false);
     }
   };
 
@@ -1183,9 +1113,7 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
         <CreateForm
           handleSubmit={handleSubmit}
           dataNotulen={dataNotulen}
-          pelapor={pelapor}
           atasan={atasan}
-          sasaran={sasaran}
           dibuatTanggal={dibuatTanggal}
         />
       )}

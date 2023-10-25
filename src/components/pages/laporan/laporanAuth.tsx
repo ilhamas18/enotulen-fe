@@ -4,10 +4,9 @@ import { useRouter } from 'next/navigation';
 import { getTime, getShortDate } from '@/components/hooks/formatDate';
 import { DataGrid, GridColDef, GridCellParams } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
-import { fetchApi } from '@/components/mixins/request';
-import Swal from 'sweetalert2';
 import { darken, lighten, styled } from '@mui/material/styles';
 import XAddTagging from './x-modal/XAddTagging';
+import XAddSasaran from './x-modal/XAddSasaran';
 
 interface LaporanNotulenAuthType {
   data: any,
@@ -18,11 +17,17 @@ interface LaporanNotulenAuthType {
 const LaporanNotulenAuth = ({ data, profile, fetchData }: LaporanNotulenAuthType) => {
   const router = useRouter();
   const [openAddTagging, setOpenAddTagging] = useState<boolean>(false);
+  const [openAddSasaran, setOpenAddSasaran] = useState<boolean>(false);
   const [notulen, setNotulen] = useState<number>(0);
 
   const handleAddTagging = (params: any) => {
     setNotulen(params.row)
     setOpenAddTagging(true)
+  }
+
+  const handleAddSasaran = (params: any) => {
+    setNotulen(params.row);
+    setOpenAddSasaran(true);
   }
 
   const handleOnCellClick = (params: any) => {
@@ -151,6 +156,13 @@ const LaporanNotulenAuth = ({ data, profile, fetchData }: LaporanNotulenAuthType
         "align": "center"
       },
       {
+        "field": "sasaran",
+        "headerName": "Sasaran",
+        "width": 280,
+        "headerAlign": "center",
+        "align": "center"
+      },
+      {
         "field": "lokasi",
         "headerName": "Lokasi",
         "width": 230,
@@ -162,7 +174,12 @@ const LaporanNotulenAuth = ({ data, profile, fetchData }: LaporanNotulenAuthType
         "headerName": "Status",
         "width": 180,
         "headerAlign": "center",
-        "align": "center"
+        "align": "center",
+        "valueOptions": [
+          "Ditolek",
+          "Disetujui",
+          "editted",
+        ],
       },
       {
         "field": "foto",
@@ -220,7 +237,7 @@ const LaporanNotulenAuth = ({ data, profile, fetchData }: LaporanNotulenAuthType
       <Box sx={{ height: 400, width: '100%' }}>
         <StyledDataGrid
           {...dataRows}
-          onCellClick={profile.role == 2 ? handleAddTagging : handleOnCellClick}
+          onCellClick={profile.role == 1 || profile.role == 2 ? handleAddTagging : profile.role == 3 || profile.role == 4 ? handleAddSasaran : handleOnCellClick}
           getRowClassName={(params) => `super-app-theme--${params.row.status}`}
           initialState={{
             pagination: {
@@ -232,12 +249,22 @@ const LaporanNotulenAuth = ({ data, profile, fetchData }: LaporanNotulenAuthType
         />
       </Box>
 
-      <XAddTagging
-        openAddTagging={openAddTagging}
-        setOpenAddTagging={setOpenAddTagging}
-        notulen={notulen}
-        fetchData={fetchData}
-      />
+      {openAddTagging && (
+        <XAddTagging
+          openAddTagging={openAddTagging}
+          setOpenAddTagging={setOpenAddTagging}
+          notulen={notulen}
+          fetchData={fetchData}
+        />
+      )}
+      {openAddSasaran && (
+        <XAddSasaran
+          openAddSasaran={openAddSasaran}
+          setOpenAddSasaran={setOpenAddSasaran}
+          notulen={notulen}
+          fetchData={fetchData}
+        />
+      )}
     </div>
   )
 }

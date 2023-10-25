@@ -20,12 +20,12 @@ const NotulenDetail = ({ params }: { params: { id: number } }) => {
   }, [])
 
   const fetchData = async () => {
+    setLoading(true);
     const response = await fetchApi({
       url: `/notulen/getNotulenDetail/${id}`,
       method: "get",
       type: "auth"
     })
-    console.log(response, '<<<< res');
 
     if (!response.success) {
       setLoading(false);
@@ -34,6 +34,7 @@ const NotulenDetail = ({ params }: { params: { id: number } }) => {
         title: 'Oops...',
         text: 'Koneksi bermasalah!',
       })
+      setLoading(false);
     } else {
       if (response.data.code == 200) {
         const { data } = response.data;
@@ -43,43 +44,13 @@ const NotulenDetail = ({ params }: { params: { id: number } }) => {
     }
   }
 
-  const fetchTagging = async () => {
-    const response = await fetchApi({
-      url: '/tagging/getAllTagging',
-      method: 'get',
-      type: 'auth'
-    })
-
-    if (!response.success) {
-      setLoading(false);
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Koneksi bermasalah!',
-      })
-    } else {
-      if (response.data.code == 200) {
-        const { data } = response.data;
-        let temp: any = [];
-        data.forEach((el: any) => {
-          temp.push({
-            label: el.nama_tagging,
-            value: el.id
-          })
-        })
-        setListTagging(temp);
-        setLoading(false);
-      }
-    }
-  }
-
   return (
     <div className="detail-notulen-container">
       <Breadcrumb pageName="Laporan / Detail" />
       <div className="bg-white dark:bg-meta-4 flex flex-col gap-2 shadow-lg py-4 text-center font-bold text-title-sm rounded rounded-lg border-none">
-        <div>Laporan Notulen</div>
-        <div>{notulenDetail?.Pegawai?.Perangkat_Daerah?.nama_opd}</div>
-        <div className='text-title-xsm'>PEMERINTAH KOTA MADIUN</div>
+        <div className='uppercase'>Laporan Notulen</div>
+        <div className='text-title-xsm2'>{notulenDetail?.Pegawai?.nama}</div>
+        {/* <div className='text-title-xsm'>PEMERINTAH KOTA MADIUN</div> */}
       </div>
       {loading ? (
         <Loading loading={loading} setLoading={setLoading} />

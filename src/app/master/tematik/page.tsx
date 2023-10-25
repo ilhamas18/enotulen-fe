@@ -12,13 +12,14 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import withAuth from "@/components/hocs/withAuth"
 import TematikForm from "@/components/pages/tematik/form";
+import TematikDetail from '@/components/pages/tematik/detail';
 import TematikEditForm from '@/components/pages/tematik/edit';
 import Swal from 'sweetalert2';
 import { fetchApi } from '@/components/mixins/request';
 import Loading from '@/components/global/Loading/loading';
 import { shallowEqual, useSelector } from 'react-redux';
 import { State } from '@/store/reducer';
-import { FaEdit } from 'react-icons/fa';
+import { FaEdit, FaRegEye } from 'react-icons/fa';
 import { MdDelete } from 'react-icons/md';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -49,6 +50,7 @@ const TambahTematik = () => {
   const [listTagging, setListTagging] = useState<any>([]);
   const [tagging, setTagging] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [openSee, setOpenSee] = useState<boolean>(false);
   const [openAdd, setOpenAdd] = useState<boolean>(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
 
@@ -78,7 +80,7 @@ const TambahTematik = () => {
     }
   }
 
-  const handleEdit = async (id: number) => {
+  const handleDetail = async (id: number) => {
     setLoading(true);
     const response = await fetchApi({
       url: `/tagging/getOneTagging/${id}`,
@@ -95,8 +97,32 @@ const TambahTematik = () => {
       setLoading(false);
     } else {
       setTagging(response.data.data);
-      setOpenEdit(true);
+      setOpenSee(true);
       setLoading(false);
+    }
+  }
+
+  const handleEdit = async (id: number) => {
+    setLoading(true);
+    const response = await fetchApi({
+      url: `/tagging/getOneTagging/${id}`,
+      method: 'get',
+      type: "auth"
+    })
+
+    if (!response.success) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Koneksi bermasalah!',
+      })
+      setLoading(false);
+    } else {
+      if (response.data.code == 200) {
+        setTagging(response.data.data);
+        setOpenEdit(true);
+        setLoading(false);
+      }
     }
   }
 
@@ -144,7 +170,8 @@ const TambahTematik = () => {
   return (
     <div className="px-4">
       <TematikForm profile={profile} openAdd={openAdd} setOpenAdd={setOpenAdd} />
-      <TematikEditForm tagging={tagging} openEdit={openEdit} setopenEdit={setOpenEdit} />
+      {openEdit && <TematikEditForm dataTagging={tagging} openEdit={openEdit} setopenEdit={setOpenEdit} />}
+      <TematikDetail dataTagging={tagging} openDetail={openSee} setOpenDetail={setOpenSee} />
 
       <div className='body table md:w-full w-screen relative'>
         {loading ? (
@@ -158,6 +185,8 @@ const TambahTematik = () => {
                   <TableRow>
                     <StyledTableCell align="center">No</StyledTableCell>
                     <StyledTableCell align="center">Tagging</StyledTableCell>
+                    {profile.role == 1 && <StyledTableCell align="center">OPD</StyledTableCell>}
+                    <StyledTableCell align="center">Notulen</StyledTableCell>
                     <StyledTableCell align="center">Aksi</StyledTableCell>
                   </TableRow>
                 </TableHead>
@@ -169,10 +198,13 @@ const TambahTematik = () => {
                       <StyledTableRow key={i}>
                         <StyledTableCell align="center">{i + 1}</StyledTableCell>
                         <StyledTableCell align="center">{row.nama_tagging}</StyledTableCell>
+                        {profile.role == 1 && <StyledTableCell align="center">{row.Perangkat_Daerah.nama_opd}</StyledTableCell>}
+                        <StyledTableCell align="center">{row.Notulens.length} Notulen</StyledTableCell>
                         <StyledTableCell align="center">
-                          <div className='flex space-x-6 items-center justify-center'>
+                          <div className='flex space-x-4 items-center justify-center'>
+                            <div onClick={() => handleDetail(row.id)}><FaRegEye size={20} /></div>
                             <div onClick={() => handleEdit(row.id)}><FaEdit size={20} /></div>
-                            <div onClick={() => handleDelete(row.id, row.nama_tagging)}><MdDelete size={20} /></div>
+                            {row.kode_opd === profile.Perangkat_Daerah.kode_opd && <div onClick={() => handleDelete(row.id, row.nama_tagging)}><MdDelete size={20} /></div>}
                           </div>
                         </StyledTableCell>
                       </StyledTableRow>

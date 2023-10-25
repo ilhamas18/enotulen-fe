@@ -11,10 +11,16 @@ import { ImTable2 } from "react-icons/im";
 import withAuth from "@/components/hocs/withAuth";
 import { shallowEqual, useSelector } from "react-redux";
 import { State } from "@/store/reducer";
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Loading from "@/components/global/Loading/loading";
+import { ImCross } from 'react-icons/im';
 
 const Laporan = () => {
   const [notulens, setNotulens] = useState<any>([]);
+  const [month, setMonth] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const { profile } = useSelector(
@@ -26,23 +32,27 @@ const Laporan = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
 
-  const currentDate = new Date();
-  const currentShortMonth = currentDate.getMonth() + 1;
-  const currentMonth = currentDate.toLocaleString("id-ID", { month: "long", });
-  const currentYear = currentDate.getFullYear();
+    if (month === null) {
+      const currentDate = new Date();
+      const currentShortMonth = currentDate.getMonth() + 1;
+      const currentMonth = month !== null ? month.toLocaleString("id-ID", { month: "long", }) : currentDate.toLocaleString("id-ID", { month: "long", });
+      const currentYear = currentDate.getFullYear();
+
+      setMonth({ month: currentShortMonth, year: currentYear })
+    }
+  }, [month]);
+
 
   const fetchData = async () => {
     setLoading(true);
     // let response;
     // if (profile.role == 4) {
     const response = await fetchApi({
-      url: `/notulen/getAuthNotulen/${profile.Perangkat_Daerah.kode_opd}/${profile.nip}/${currentShortMonth}/${currentYear}`,
+      url: `/notulen/getAuthNotulen/${profile.Perangkat_Daerah.kode_opd}/${profile.nip}/${month.month}/${month.year}`,
       method: "get",
       type: "auth",
     });
-    // }
 
     if (!response.success) {
       setLoading(false);
@@ -54,13 +64,14 @@ const Laporan = () => {
     } else {
       if (response.data.code == 200) {
         const { data } = response.data;
+
         const temp: any = [];
         data.map((el: any, i: number) => {
-
           temp.push({
             id: i + 1,
+            id_notulen: el.id,
             index: el.id,
-            tagging: el.tagging !== null ? el.tagging.map((el: any) => el.label) : "-",
+            tagging: el.Taggings.length !== 0 ? el.Taggings.map((el: any) => el.nama_tagging) : "-",
             tanggal: el.tanggal[0]?.startDate !== el.tanggal[0]?.endDate
               ? getShortDate(el.tanggal[0]?.startDate) +
               " - " +
@@ -68,13 +79,14 @@ const Laporan = () => {
               : getShortDate(el.tanggal[0]?.startDate),
             waktu: getTime(el.waktu) + " WIB",
             acara: el.acara,
+            sasaran: el.Sasarans.length !== 0 ? el.Sasarans.map((data: any) => data.sasaran) : "-",
             lokasi: el.lokasi,
             status: el.status,
-            foto: el.link_img_foto !== null ? "Ada" : "-",
-            daftarHadir: el.link_img_daftar_hadir !== null ? "Ada" : "-",
-            undangan: el.link_img_surat_undangan !== null ? "Ada" : "-",
-            spj: el.link_img_spj !== null ? "Ada" : "-",
-            lainLain: el.link_img_pendukung !== null ? "Ada" : "-",
+            foto: el.link_img_foto !== null ? "V" : "X",
+            daftarHadir: el.link_img_daftar_hadir !== null ? "V" : "X",
+            undangan: el.link_img_surat_undangan !== null ? "V" : "X",
+            spj: el.link_img_spj !== null ? "V" : "X",
+            lainLain: el.link_img_pendukung !== null ? "V" : "X",
           });
         });
         setNotulens(temp);
@@ -88,15 +100,35 @@ const Laporan = () => {
     background: "linear-gradient(to right, #4fd1c5, #4299e1)",
   };
 
+  const handleDatePicked = (val: any) => {
+    let temp: any = {
+      month: val.$M + 1,
+      year: val.$y
+    }
+    setMonth(temp)
+  }
+
   return (
-    <div className="list-notulen-container">
+    <div className="list-notulen-container relative">
       <Breadcrumb pageName="Laporan" />
       <div className="bg-white dark:bg-meta-4 shadow-card flex flex-col gap-2 py-4 text-center font-bold text-title-sm rounded rounded-lg border-none">
         <div>DAFTAR LAPORAN NOTULEN</div>
+        {profile.role == 1 && <div>PEMERINTAH KOTA MADIUN</div>}
         {profile.role == 2 || profile.role == 3 ? <div>{profile.Perangkat_Daerah?.nama_opd}</div> : null}
-        <div>Bulan {currentMonth} {currentYear}</div>
+        {/* <div>Bulan {currentMonth}</div> */}
       </div>
-      <div style={gradientStyle} className="mt-10">
+      {/* <div className='md:w-[30%] w-full md:absolute md:right-0 md:top-[10em] top-[13em] bg-white'> */}
+      <div className="flex md:justify-between justify-center">
+        <div></div>
+        <div className="bg-white mt-10">
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
+              <DatePicker label={'"Bulan" & "Tahun"'} views={['month', 'year']} onChange={handleDatePicked} />
+            </DemoContainer>
+          </LocalizationProvider>
+        </div>
+      </div>
+      <div style={gradientStyle} className="md:mt-[1em]">
         <div className="px-4 flex text-white py-4 space-x-6 font-bold items-center">
           <ImTable2 size={20} />
           <div className="text-title-xsm">Notulen</div>

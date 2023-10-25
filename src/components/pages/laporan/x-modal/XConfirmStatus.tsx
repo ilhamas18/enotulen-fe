@@ -6,6 +6,7 @@ import { CommonModal } from '@/components/common/common-modal/modal';
 import TextInput from '@/components/common/text-input/input';
 import { Button } from '@/components/common/button/button';
 import { fetchApi } from '@/components/mixins/request';
+import SignatureCanvas from 'react-signature-canvas';
 import Swal from 'sweetalert2';
 import { State } from '@/store/reducer';
 
@@ -27,11 +28,30 @@ const XConfirmStatus = ({
   const router = useRouter();
   const [reason, setReason] = useState<string>('');
   const [agree, setAgree] = useState<boolean>(false);
+  const [sign, setSign] = useState<any>();
+  const [signature, setSignature] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
   const { profile } = useSelector((state: State) => ({
     profile: state.profile.profile
   }), shallowEqual);
+
+  const handleClear = (e: any) => {
+    e.preventDefault();
+    sign.clear()
+    handleChange({
+      target: { name: "signature", value: '' },
+    });
+  }
+
+  const handleGenerate = (e: any) => {
+    e.preventDefault();
+    setSignature(sign.getTrimmedCanvas().toDataURL('image/png'));
+  }
+
+  const handleDeleteSignature = () => {
+    setSignature('');
+  }
 
   const handleChangeAgree = (e: any) => {
     setAgree(e.target.checked)
@@ -48,7 +68,8 @@ const XConfirmStatus = ({
     setLoading(true);
     const payload = {
       status: status,
-      keterangan: reason
+      keterangan: reason,
+      signature_atasan: signature
     };
 
     const response = await fetchApi({
@@ -66,9 +87,16 @@ const XConfirmStatus = ({
           title: "Oops...",
           text: "Koneksi bermasalah!",
         });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Tanda tangan terlalu besar. Mohon Ulangi Lagi!",
+        });
       }
     } else {
       setLoading(false);
+      setOpenConfirmSubmit(false);
       Swal.fire({
         position: "center",
         icon: "success",
@@ -132,7 +160,7 @@ const XConfirmStatus = ({
             <div className="flex items-center justify-center">
               <img src='/illustrator/ok.svg' className="md:w-[160px] w-[100px] my-6" alt="Ok" />
             </div>
-            <div className="font-Nunito-Bold md:text-xl text-md text-center">Yakin Menyetujui data ?</div>
+            <div className="font-Nunito-Bold md:text-xl text-md text-center font-medium">Yakin Menyetujui Notulen ?</div>
             <div className="mt-6 w-full">
               <TextInput
                 type="text-area"
@@ -143,7 +171,27 @@ const XConfirmStatus = ({
                 change={(e: any) => setReason(e.target.value)}
               />
             </div>
-            <div className="flex flex-row py-6 px-8 flex justify-center items-center">
+            <div className="signature mt-4">
+              {signature === '' ? (
+                <>
+                  <div className="text-title-xsm2 mb-2">Tanda tangan</div>
+                  <div className="w-full md:h-[200px] h-[130px] border-2 border-light-gray rounded rounded-lg">
+                    <SignatureCanvas
+                      canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
+                      ref={(data: any) => setSign(data)}
+                    />
+                  </div>
+                  <button style={{ height: "30px", width: "60px" }} onClick={(e: any) => handleClear(e)}>Clear</button>
+                  <button style={{ height: "30px", width: "60px" }} onClick={(e: any) => handleGenerate(e)}>Save</button>
+                </>
+              ) : (
+                <div className="flex md:flex-row md:items-center md:justify-between flex-col mb-2 md:mb-0">
+                  <img src={signature} />
+                  <div className="text-danger text-title-xsm2 hover:cursor-pointer" onClick={handleDeleteSignature}>Hapus</div>
+                </div>
+              )}
+            </div>
+            <div className="flex flex-row py-6 flex">
               <div>
                 <TextInput
                   type="checkbox"

@@ -250,7 +250,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             <Link
                               href="/notulen/form"
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${pathname === '/notulen/form' && "text-white"
-                                } ${profile.role == 4 ? 'block' : 'hidden'}`}
+                                } ${profile.role == 4 || profile.role == 3 ? 'block' : 'hidden'}`}
                             >
                               Input Notulen
                             </Link>

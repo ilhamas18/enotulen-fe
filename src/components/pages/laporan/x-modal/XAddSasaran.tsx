@@ -13,69 +13,78 @@ import { GrClose } from 'react-icons/gr';
 import { AiOutlineClose } from 'react-icons/ai';
 
 interface PropTypes {
-  openAddTagging: boolean,
-  setOpenAddTagging: any,
+  openAddSasaran: boolean,
+  setOpenAddSasaran: any,
   notulen: any;
   fetchData?: any;
 }
 
-const XAddTagging = ({
-  openAddTagging,
-  setOpenAddTagging,
+const XAddSasaran = ({
+  openAddSasaran,
+  setOpenAddSasaran,
   notulen,
   fetchData
 }: PropTypes) => {
   const router = useRouter();
-  const [reason, setReason] = useState<string>('');
-  const [agree, setAgree] = useState<boolean>(false);
-  const [listTagging, setListTagging] = useState<any>([]);
-  const [dataTagging, setDataTagging] = useState<any>([]);
-  const [tagging, setTagging] = useState<any>([]);
-  const [idTagging, setIdTagging] = useState<any>([]);
-  const [isOnFocus, setIsOnFocus] = useState<boolean>(false);
+  const [listSasaran, setListSasaran] = useState<any>([]);
+  const [sasaran, setSasaran] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [isAddTagging, setIsAddTagging] = useState<boolean>(false);
+  const [isAddSasaran, setIsAddSasaran] = useState<boolean>(false);
+  const [dataSasaran, setDataSasaran] = useState<any>([]);
+  const [idSasaran, setIdSasaran] = useState<any>([]);
+  const [isOnFocus, setIsOnFocus] = useState<boolean>(false);
 
   const { profile } = useSelector((state: State) => ({
     profile: state.profile.profile
   }), shallowEqual);
 
   useEffect(() => {
-    fetchDataTagging();
-    fetchTagging();
-  }, []);
+    fetchDataSasaran();
+    fetchSasaran();
+  }, [])
 
-  const fetchDataTagging = async () => {
+  const fetchDataSasaran = async () => {
+    setLoading(true);
+    const payload = {
+      nip: profile.nip,
+      tahun: 2023
+    }
+
     const response = await fetchApi({
-      url: `/tagging/getAllTagging/${profile.Perangkat_Daerah.kode_opd}`,
-      method: 'get',
-      type: 'auth'
+      url: '/notulen/syncSasaran',
+      method: 'post',
+      type: 'auth',
+      body: payload
     })
 
     if (!response.success) {
-      setLoading(false);
       Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Koneksi bermasalah!',
-      })
+        icon: "error",
+        title: "Oops...",
+        text: "Gagal memuat data sasaran!",
+      });
+      setLoading(false);
     } else {
-      if (response.data.code == 200) {
-        const { data } = response.data;
-        let temp: any = [];
-        data.forEach((el: any) => {
-          temp.push({
-            label: el.nama_tagging,
-            value: el.id
-          })
+      const { data } = response.data;
+
+      let temp: any = [];
+      data.data.sasaran_asn.map((el: any) => {
+        temp.push({
+          label: el.sasaran + ' ' + '/' + ' ' + 2023,
+          value: el.id_sasaran,
+          data: {
+            label: el.sasaran,
+            value: el.id_sasaran,
+            nama_pembuat: data.data.nama_asn
+          }
         })
-        setListTagging(temp);
-        setLoading(false);
-      }
+      })
+      setListSasaran(temp);
+      setLoading(false);
     }
   }
 
-  const fetchTagging = async () => {
+  const fetchSasaran = async () => {
     setLoading(true);
     const response = await fetchApi({
       url: `/notulen/getNotulenDetail/${notulen.id_notulen}`,
@@ -94,55 +103,43 @@ const XAddTagging = ({
     } else {
       if (response.data.code == 200) {
         const { data } = response.data;
-        console.log(data.Taggings.filter((el: any) => el.kode_opd === profile.Perangkat_Daerah.kode_opd));
-
-        setDataTagging(data?.Taggings)
+        setDataSasaran(data?.Sasarans)
         setLoading(false);
       }
     }
   }
 
+  const handleChange = (data: any) => {
+    setSasaran(data.target.value);
+  };
+
   const onClose = () => {
-    setOpenAddTagging(false);
-    setIsAddTagging(false);
-    setAgree(false);
+    setOpenAddSasaran(false);
+    setIsAddSasaran(false);
+    setSasaran([]);
   }
 
-  const handleChange = (data: any) => {
-    setTagging(data.target.value);
-  };
 
   const handleSeeDetail = () => router.push(`/notulen/detail/${notulen.index}`);
 
-  const handleDeleteTagging = (e: any, id: number) => {
-    e.preventDefault();
-    const newArray = dataTagging.filter(
-      (item: any) => item.id != id
-    )
-    setDataTagging(newArray);
-
-    let temp: any = idTagging;
-    temp.push(id);
-    setIdTagging(temp);
-  }
-
   const handleSubmit = async () => {
     setLoading(true);
-
-    if (tagging.length != 0) {
-      let payload: any = [];
-      tagging.forEach((el: any) => {
+    if (sasaran.length != 0) {
+      let payload: any = []
+      sasaran.forEach((el: any) => {
         payload.push({
+          id_sasaran: el.value,
           id_notulen: notulen.id_notulen,
-          id_tagging: el.value
+          sasaran: el.data.label,
+          nama_pembuat: el.data.nama_pembuat
         })
       })
 
       const response = await fetchApi({
-        url: '/notulen/addTagging',
+        url: `/notulen/addSasaran`,
         method: "post",
         body: payload,
-        type: "auth"
+        type: "auth",
       });
 
       if (!response.success) {
@@ -156,13 +153,12 @@ const XAddTagging = ({
         }
         setLoading(false);
       } else {
-        if (idTagging != 0) {
+        if (idSasaran != 0) {
           const payload2 = {
-            id_tagging: idTagging
+            id_sasaran: idSasaran
           }
-
           const response2 = await fetchApi({
-            url: '/notulen/deleteTagging',
+            url: '/notulen/deleteSasaran',
             method: "delete",
             body: payload2,
             type: "auth",
@@ -179,33 +175,32 @@ const XAddTagging = ({
             Swal.fire({
               position: "center",
               icon: "success",
-              title: "Tagging berhasil diupdate",
+              title: "Sasaran berhasil diupdate",
               showConfirmButton: false,
               timer: 1500,
             });
-            fetchTagging();
+            fetchData();
             onClose();
           }
         } else {
           Swal.fire({
             position: "center",
             icon: "success",
-            title: "Tagging berhasil ditambahkan",
+            title: "Sasaran berhasil ditambahkan",
             showConfirmButton: false,
             timer: 1500,
           });
-          fetchTagging();
+          fetchData();
           onClose();
         }
       }
     } else {
-      if (idTagging != 0) {
+      if (idSasaran != 0) {
         const payload2 = {
-          id_tagging: idTagging
+          id_sasaran: idSasaran
         }
-
         const response2 = await fetchApi({
-          url: '/notulen/deleteTagging',
+          url: '/notulen/deleteSasaran',
           method: "delete",
           body: payload2,
           type: "auth",
@@ -222,11 +217,11 @@ const XAddTagging = ({
           Swal.fire({
             position: "center",
             icon: "success",
-            title: "Tagging berhasil diupdate",
+            title: "Sasaran berhasil diupdate",
             showConfirmButton: false,
             timer: 1500,
           });
-          fetchTagging();
+          fetchData();
           onClose();
         }
       } else {
@@ -235,9 +230,21 @@ const XAddTagging = ({
     }
   };
 
+  const handleDeleteSasaran = (e: any, id: number) => {
+    e.preventDefault();
+    const newArray = dataSasaran.filter(
+      (item: any) => item.id_sasaran !== id
+    );
+    setDataSasaran(newArray)
+
+    let temp: any = idSasaran;
+    temp.push(id);
+    setIdSasaran(temp);
+  }
+
   return (
-    <CommonModal isOpen={openAddTagging} onClose={setOpenAddTagging} animate={true}>
-      {!isAddTagging ? (
+    <CommonModal isOpen={openAddSasaran} onClose={setOpenAddSasaran} animate={true}>
+      {!isAddSasaran ? (
         <div className="relative items-center flex flex-col justify-between space-y-4 gap-4 pt-2">
           <div className='w-[100%]'>
             <div className='flex items-center justify-between bg-meta-6'>
@@ -267,11 +274,11 @@ const XAddTagging = ({
                   variant="xl"
                   className="button-container mb-2 mt-5"
                   rounded
-                  onClick={() => setIsAddTagging(true)}
+                  onClick={() => setIsAddSasaran(true)}
                   loading={loading}
                 >
                   <div className="flex px-6 text-white font-Nunito">
-                    <span className="button-text">Tambah Tagging</span>
+                    <span className="button-text">Update Sasaran / Rencana Kenerja</span>
                   </div>
                 </Button>
               </div>
@@ -281,16 +288,17 @@ const XAddTagging = ({
       ) : (
         <div className='flex flex-col w-full py-3'>
           <div className='relative'>
-            <div className='text-center font-medium md:text-xsm text-title-xsm mb-6'>Masukkan Tagging</div>
+            <div className='text-center font-medium md:text-title-xsm text-title-xsm2 mb-6 bg-meta-6 py-2'>Masukkan Sasaran</div>
             <div className={`${isOnFocus ? 'data flex flex-row fixed z-999 bg-white w-[520px]' : 'data flex flex-row w-full'}`}>
               <Select
                 isMulti
                 name="tagging"
-                options={listTagging}
+                options={listSasaran}
                 className="basic-multi-select bg-white w-full"
                 classNamePrefix="select"
                 onFocus={() => setIsOnFocus(true)}
                 onBlur={() => setIsOnFocus(false)}
+                // defaultValue={notulen.sasaran}
                 onChange={(selectedOption: any) => {
                   handleChange({
                     target: { name: "tagging", value: selectedOption },
@@ -300,29 +308,27 @@ const XAddTagging = ({
             </div>
             <div>
               <ul className="mt-[5em] ml-4">
-                {dataTagging?.length > 0 && dataTagging?.map((el: any, i: number) => (
+                {dataSasaran?.length > 0 && dataSasaran?.map((el: any, i: number) => (
                   <li className="font flex flex-col gap-2" key={i}>
                     <div className="flex justify-between">
                       <div className="flex gap-2">
                         <div
-                          className={`${dataTagging.length > 1 ? "block" : "hidden"
+                          className={`${dataSasaran.length > 1 ? "block" : "hidden"
                             }`}
                         >
                           {i + 1} .
                         </div>
-                        <div>{el.nama_tagging}</div>
+                        <div>{el.sasaran}</div>
                       </div>
-                      {el.kode_opd === profile.Perangkat_Daerah.kode_opd && (
-                        <div>
-                          <button
-                            onClick={(e: any) =>
-                              handleDeleteTagging(e, el.id)
-                            }
-                          >
-                            <AiOutlineClose size={18} />
-                          </button>
-                        </div>
-                      )}
+                      <div>
+                        <button
+                          onClick={(e: any) =>
+                            handleDeleteSasaran(e, el.id_sasaran)
+                          }
+                        >
+                          <AiOutlineClose size={18} />
+                        </button>
+                      </div>
                     </div>
                   </li>
                 ))}
@@ -342,20 +348,18 @@ const XAddTagging = ({
                   </div>
                 </Button>
               </div>
-              <div className='flex space-x-4'>
-                <div className="btn-cancell">
-                  <Button
-                    variant="xl"
-                    className="button-container mb-2 mt-5"
-                    rounded
-                    onClick={handleSubmit}
-                    loading={loading}
-                  >
-                    <div className="flex px-6 text-white font-Nunito">
-                      <span className="button-text">Tambah / Update</span>
-                    </div>
-                  </Button>
-                </div>
+              <div className="btn-cancell">
+                <Button
+                  variant="xl"
+                  className="button-container mb-2 mt-5"
+                  rounded
+                  onClick={handleSubmit}
+                  loading={loading}
+                >
+                  <div className="flex px-6 text-white font-Nunito">
+                    <span className="button-text">Tambah / Update</span>
+                  </div>
+                </Button>
               </div>
             </div>
           </div>
@@ -365,4 +369,4 @@ const XAddTagging = ({
   )
 }
 
-export default XAddTagging;
+export default XAddSasaran;

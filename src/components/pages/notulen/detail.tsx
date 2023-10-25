@@ -13,6 +13,7 @@ import { useState } from "react";
 import Swal from "sweetalert2";
 import EditNotulenForm from "./edit";
 import XConfirmStatus from "../laporan/x-modal/XConfirmStatus";
+import Blocks from 'editorjs-blocks-react-renderer';
 
 const editorJsHtml = require("editorjs-html");
 const EditorJsToHtml = editorJsHtml();
@@ -30,8 +31,6 @@ interface DetailProps {
 const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
   const pathname = usePathname();
   const router = useRouter();
-  const htmlIsiRapat = EditorJsToHtml.parse(JSON.parse(data?.isi_rapat)) as ParsedContent[];
-  const htmlTindakLanjut = EditorJsToHtml.parse(JSON.parse(data?.tindak_lanjut)) as ParsedContent[];
 
   const [isOpenEdit, setIsOpenEdit] = useState<boolean>(false);
   const [tagging, setTagging] = useState<any>([]);
@@ -46,10 +45,6 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
   );
 
   const handlePrint = () => router.push(`${pathname}/cetak`);
-
-  const handleChange = (data: any) => {
-    setTagging(data.target.value);
-  };
 
   const handleSubmit = async () => {
     const payload = {
@@ -92,6 +87,8 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
     router.push(`${process.env.BASE_URL}/notulen/getFile?pathname=${val}`)
   }
 
+  const handleBack = () => router.push('/notulen/laporan');
+
   return (
     <>
       <div className="flex items-center justify-between mt-8 mb-2">
@@ -102,14 +99,19 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
           <BsPrinter size={20} />
           <div>Cetak</div>
         </div>
-        <div className={`${profile.role == 4 ? data.status === "Disetujui" ? 'hidden' : 'block' : 'hidden'}`}>
+        <div className={`${data.status === "Disetujui" ? 'hidden' : 'block'}`}>
           {isOpenEdit ? (
             <div className="border bg-danger text-white hover:bg-xl-pink rounded-lg px-8 py-1 hover:shadow-lg hover:cursor-pointer" onClick={() => setIsOpenEdit(false)}>
               Tutup
             </div>
           ) : (
-            <div className="border border-warning rounded-lg px-8 py-1 hover:shadow-lg bg-white hover:cursor-pointer" onClick={() => setIsOpenEdit(true)}>
-              Edit
+            <div className="flex space-x-4">
+              <div className="border bg-danger text-white hover:bg-xl-pink rounded-lg px-8 py-1 hover:shadow-lg hover:cursor-pointer" onClick={handleBack}>
+                Kembali
+              </div>
+              <div className={`${profile.role == 4 ? 'block' : 'hidden'} border border-none rounded-lg px-8 py-1 hover:shadow-lg bg-warning text-white hover:cursor-pointer`} onClick={() => setIsOpenEdit(true)}>
+                Edit
+              </div>
             </div>
           )}
         </div>
@@ -118,6 +120,22 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
         <div className="flex flex-col gap-4">
           <div className="body flex flex-row md:flex-row flex-col items-center justify-between">
             <div className="text-label md:w-[20%] w-full md:text-left text-center">
+              Tagging / Tematik
+            </div>
+            <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+              <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-10">
+                <ul>
+                  {data.Taggings?.map((el: any, i: number) => (
+                    <li className="list-decimal" key={i}>
+                      <div>{el.nama_tagging} <span className="px-8">{el.kode_opd !== '1234567890' ? '(Tagging OPD)' : '(Tagging Kota)'}</span></div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+          {/* <div className="body flex flex-row md:flex-row flex-col items-center justify-between">
+            <div className="text-label md:w-[20%] w-full md:text-left text-center">
               Pembuat Notulen
             </div>
             <div className="md:mt-0 mt-2 md:w-[75%] w-full">
@@ -125,7 +143,7 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
                 {data.Pegawai?.nama}
               </div>
             </div>
-          </div>
+          </div> */}
           <div className="body flex md:flex-row flex-col items-center justify-between">
             <div className="text-label md:w-[20%] w-full md:text-left text-center">
               Hari / Tanggal
@@ -219,8 +237,18 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
               Isi Rapat
             </div>
             <div className="md:mt-0 mt-2 md:w-[75%] w-full">
-              <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                <div dangerouslySetInnerHTML={{ __html: htmlIsiRapat }}></div>
+              <div className="border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                {data?.isi_rapat !== undefined && <Blocks data={JSON.parse(data?.isi_rapat)} config={{
+                  list: {
+                    className: "list-decimal ml-10"
+                  },
+                  paragraph: {
+                    className: "text-base text-opacity-75",
+                    actionsClassNames: {
+                      alignment: "text-justify",
+                    }
+                  }
+                }} />}
               </div>
             </div>
           </div>
@@ -229,36 +257,34 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
               Tindak Lanjut
             </div>
             <div className="md:mt-0 mt-2 md:w-[75%] w-full">
-              <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                <div
-                  dangerouslySetInnerHTML={{ __html: htmlTindakLanjut }}
-                ></div>
+              <div className="border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                {data?.tindak_lanjut !== undefined && <Blocks data={JSON.parse(data?.tindak_lanjut)} config={{
+                  list: {
+                    className: "list-decimal ml-10"
+                  },
+                  paragraph: {
+                    className: "text-base text-opacity-75",
+                    actionsClassNames: {
+                      alignment: "text-justify",
+                    }
+                  }
+                }} />}
               </div>
             </div>
           </div>
           <div className="body flex flex-row md:flex-row flex-col items-center justify-between">
             <div className="text-label md:w-[20%] w-full md:text-left text-center">
-              Pelapor
+              Sasaran
             </div>
             <div className="md:mt-0 mt-2 md:w-[75%] w-full">
-              <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                <div className="flex flex-col w-full">
-                  <div className="flex gap-3">
-                    <div className="w-[15%]">Nama</div>
-                    <div className="w-[5%]">:</div>
-                    <div className="w-[80%]">{data.pelapor.nama}</div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="w-[15%]">NIP</div>
-                    <div className="w-[5%]">:</div>
-                    <div className="w-[80%]">{data.pelapor.nip}</div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="w-[15%]">Pangkat</div>
-                    <div className="w-[5%]">:</div>
-                    <div className="w-[80%]">{data.pelapor.pangkat}</div>
-                  </div>
-                </div>
+              <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-10">
+                <ul>
+                  {data.Sasarans?.map((el: any, i: number) => (
+                    <li className="list-decimal" key={i}>
+                      {el.sasaran}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
@@ -353,11 +379,25 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
             <div className="w-[15%]">Pendukung</div>
             <div className="md:mt-0 mt-2 md:w-[75%] w-full">
               <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                {data.link_pendukung !== null ? (
+                {data.link_img_pendukung !== null ? (
                   <div onClick={(e: any) => handleDownloadFile(data.link_img_pendukung?.value, e)}>
                     <div className="text-blue-500 underline">
                       {data.link_img_pendukung?.name}
                     </div>
+                  </div>
+                ) : (
+                  <div>-</div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="body flex flex-row md:flex-row flex-col items-center justify-between">
+            <div className="w-[15%]">Tanda Tangan</div>
+            <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+              <div className="flex border-2 border-light-gray md:h-[200px] h-[130px] rounded-lg w-full py-3 px-4">
+                {data.signature !== null ? (
+                  <div>
+                    <img src={data.signature} />
                   </div>
                 ) : (
                   <div>-</div>

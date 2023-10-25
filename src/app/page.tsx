@@ -38,8 +38,6 @@ function Home() {
   }, [month])
 
   const fetchData = async () => {
-    console.log(month, '....');
-
     setLoading(true)
     const response = await fetchApi({
       url: `/notulen/getAuthNotulen/${profile.Perangkat_Daerah.kode_opd}/${profile.nip}/${month.month}/${month.year}`,
@@ -74,14 +72,14 @@ function Home() {
   return (
     <div className="list-notulen-container relative flex flex-col">
       <WelcomeBanner />
-      <div className='md:w-[30%] w-full md:absolute md:right-0 md:top-[10em] bg-white'>
+      {/* <div className='md:w-[30%] w-full md:absolute md:right-0 md:top-[10em] bg-white'>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
             <DatePicker label={'"Bulan" & "Tahun"'} views={['month', 'year']} onChange={handleDatePicked} />
           </DemoContainer>
         </LocalizationProvider>
-      </div>
-      <div className="mt-14 bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% ..."></div>
+      </div> */}
+      <div className="mt-2 bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% ..."></div>
       <LaporanNotulen data={notulens} loading={loading} profile={profile} />
     </div>
   )

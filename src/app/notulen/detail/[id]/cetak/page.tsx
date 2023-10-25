@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 import generatePDF, { Resolution, Margin, Options } from "react-to-pdf";
 import { useReactToPrint } from "react-to-print";
@@ -285,12 +286,12 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                 </div>
                 <div className="penjelasan-rapat flex-col">
                   <div className="title font-bold text-black dark:text-white text-title-sm mt-12 ml-4">
-                    Penjelasan Rapat
+                    Hasil Rapat
                   </div>
                   <div className="body text-black dark:text-white text-title-xsm mt-4 ml-4 ">
                     {laporan.isi_rapat !== undefined && <Blocks data={JSON.parse(laporan.isi_rapat)} config={{
                       list: {
-                        className: "list-decimal"
+                        className: "list-decimal ml-10"
                       },
                       paragraph: {
                         className: "text-base text-opacity-75",
@@ -303,12 +304,12 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                 </div>
                 <div className="penjelasan-rapat flex-col">
                   <div className="title font-bold text-black dark:text-white text-title-sm mt-12 ml-4">
-                    Tindak Lanjut
+                    Rencana Tindak Lanjut
                   </div>
                   <div className="body text-black dark:text-white text-title-xsm mt-4 ml-4 ">
                     {laporan.tindak_lanjut !== undefined && <Blocks data={JSON.parse(laporan.tindak_lanjut)} config={{
                       list: {
-                        className: "list-decimal"
+                        className: "list-decimal ml-10"
                       },
                       paragraph: {
                         className: "text-base text-opacity-75",
@@ -321,15 +322,10 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                 </div>
               </div>
             </div>
-            <div className="text-right mt-12">
-              <div className="text-black dark:text-white text-title-xsm">
-                Madiun, {formatDate(laporan.createdAt).split(", ")[1]}
-              </div>
-            </div>
-            <div className="flex items-center justify-between px-4">
-              <div className="flex flex-col items-center justify-between text-center w-[45%] h-[17em]">
+            {/* <div className="flex items-center justify-between px-4 bg-gray-200">
+              <div className="flex flex-col items-center justify-between text-center w-[45%] h-[25em]">
                 <div>
-                  <div className="font-bold text-black dark:text-white text-title-ss mt-12">
+                  <div className="font-bold text-black dark:text-white text-title-ss mt-[14em]">
                     Mengetahui,
                   </div>
                   <div className="font-bold text-black dark:text-white text-title-ss mt-1">
@@ -349,39 +345,105 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col items-center justify-between text-center w-[45%] h-[17em]">
-                <div>
-                  <div className="font-bold text-black dark:text-white text-title-ss mt-12">
-                    Yang Melapor,
+              <div className="flex flex-col items-center justify-between text-center w-[45%]">
+                <div className="text-right mt-12">
+                  <div className="text-black dark:text-white text-title-xsm">
+                    Madiun, {formatDate(laporan.createdAt).split(", ")[1]}
                   </div>
                 </div>
-                <div>
-                  <div className="font-bold text-black dark:text-white text-title-ss border-b border-black">
-                    {laporan.pelapor?.nama}
+                <div className="h-[25em]">
+                  <div>
+                    <div className="font-bold text-black dark:text-white text-title-ss mt-12">
+                      Yang Melapor,
+                    </div>
                   </div>
-                  <div className="text-black dark:text-white text-title-ss mt-1">
-                    {" "}
-                    {laporan.pelapor?.nama_pangkat}{" "}
-                  </div>
-                  <div className="font-bold text-black dark:text-white text-title-ss mt-1">
-                    NIP. {laporan.pelapor?.nip}
+                  <div>
+                    <div className="font-bold text-black dark:text-white text-title-ss border-b border-black">
+                      {laporan.Pegawai.nama}
+                    </div>
+                    <div className="text-black dark:text-white text-title-ss mt-1">
+                      {" "}
+                      {laporan.Pegawai?.nama_pangkat}{" "}
+                    </div>
+                    <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                      NIP. {laporan.Pegawai?.nip}
+                    </div>
                   </div>
                 </div>
               </div>
-              {/* <div className="flex flex-col text-center w-[45%] h-[40px]">
-                <div className="font-bold text-black dark:text-white text-title-ss mt-[60px]">
-                  Yang Melapor,
+            </div> */}
+            <div className="flex items-center justify-between px-4">
+              <div className="flex flex-col items-center justify-between text-center w-[45%] h-[25em]">
+                <div className="mt-[10em]">
+                  <div className="font-bold text-black dark:text-white text-title-ss">
+                    Mengetahui,
+                  </div>
+                  <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                    {laporan.atasan?.jabatan}
+                  </div>
                 </div>
-                <div className="font-bold text-black dark:text-white text-title-ss border-b border-black">
-                  {laporan.pelapor?.nama}
+                <div className={`${laporan.signature_atasan !== null ? 'block' : 'hidden'}`}>
+                  <img src={laporan.signature_atasan} className="w-[270px]" alt="TTD" />
                 </div>
-                <div className="text-black dark:text-white text-title-ss mt-1">
-                  {laporan.pelapor?.nama_pangkat}
+                <div>
+                  <div className="font-bold text-black dark:text-white text-title-ss border-b border-black">
+                    {laporan.atasan.nama}
+                  </div>
+                  <div className="text-black dark:text-white text-title-ss mt-1">
+                    {" "}
+                    {laporan.atasan?.namaPangkat}{" "}
+                  </div>
+                  <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                    NIP. {laporan.atasan?.nip}
+                  </div>
                 </div>
-                <div className="font-bold text-black dark:text-white text-title-ss mt-1">
-                  NIP. {laporan.pelapor?.nip}
+              </div>
+              <div className="flex flex-col items-center justify-between text-center w-[45%] h-[25em]">
+                <div className="text-right mt-12">
+                  <div className="text-black dark:text-white text-title-xsm">
+                    Madiun, {formatDate(laporan.createdAt).split(", ")[1]}
+                  </div>
                 </div>
-              </div> */}
+                <div className="mt-[2em]">
+                  <div className="font-bold text-black dark:text-white text-title-ss">
+                    Yang Melapor,
+                  </div>
+                </div>
+                <div className={`${laporan.signature !== null ? 'block' : 'hidden'}`}>
+                  <img src={laporan.signature} className="w-[270px]" alt="TTD" />
+                </div>
+                <div>
+                  <div className="font-bold text-black dark:text-white text-title-ss border-b border-black">
+                    {laporan.Pegawai?.nama}
+                  </div>
+                  <div className="text-black dark:text-white text-title-ss mt-1">
+                    {" "}
+                    {laporan.Pegawai?.nama_pangkat}{" "}
+                  </div>
+                  <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                    NIP. {laporan.Pegawai?.nip}
+                  </div>
+                </div>
+                {/* <div className="h-[25em]">
+                  <div>
+                    <div className="font-bold text-black dark:text-white text-title-ss mt-12">
+                      Yang Melapor,
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-bold text-black dark:text-white text-title-ss border-b border-black">
+                      {laporan.Pegawai.nama}
+                    </div>
+                    <div className="text-black dark:text-white text-title-ss mt-1">
+                      {" "}
+                      {laporan.Pegawai?.nama_pangkat}{" "}
+                    </div>
+                    <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                      NIP. {laporan.Pegawai?.nip}
+                    </div>
+                  </div>
+                </div> */}
+              </div>
             </div>
           </div>
         </>

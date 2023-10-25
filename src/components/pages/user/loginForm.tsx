@@ -119,7 +119,7 @@ function CreateForm({ handleSubmit }: MyFormProps) {
   return <FormWithFormik />
 }
 
-const LoginForm = () => {
+const LoginForm: any = () => {
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useDispatch();
@@ -190,8 +190,11 @@ const LoginForm = () => {
       type: "withoutAuth",
       body: payload
     })
+    console.log(response, '<<<');
 
     if (!response.success) {
+      console.log(response, '>>>');
+
       router.push('/auth/login');
       if (response.code == 404) {
         Swal.fire({
@@ -204,7 +207,7 @@ const LoginForm = () => {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
-          text: 'NIP tidak ditemukan',
+          text: 'Password salah!',
         })
         setLoading(false);
       } else if (response.code == 500) {

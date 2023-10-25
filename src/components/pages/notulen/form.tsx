@@ -4,15 +4,13 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import TextInput from "@/components/common/text-input/input";
 import { Button } from "@/components/common/button/button";
-import Link from "next/link";
+import SignatureCanvas from 'react-signature-canvas';
 import dynamic from "next/dynamic";
-import EditorJS, { OutputData } from "@editorjs/editorjs";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { fetchApi } from "@/components/mixins/request";
 import Swal from "sweetalert2";
 import DateRangePicker from "../laporan/x-modal/XDateRangePicker";
 import { formatDate } from "@/components/hooks/formatDate";
-import Select from "react-select";
 import Loading from "@/components/global/Loading/loading";
 import { AiOutlineClose } from "react-icons/ai";
 import { withFormik, FormikProps, FormikBag } from "formik";
@@ -22,7 +20,6 @@ import { State } from "@/store/reducer";
 import axios from "axios";
 import { getCookies } from "cookies-next";
 import { IoMdClose } from "react-icons/io";
-import { formatMonth } from "@/components/helpers/formatMonth";
 
 const EditorBlock = dynamic(() => import("../../hooks/editor"));
 
@@ -37,14 +34,13 @@ interface FormValues {
   tindakLanjut: any;
   lokasi: string;
   acara: string;
-  pelapor: any;
   atasan: any;
-  sasaran: any
   suratUndangan: any;
   daftarHadir: any;
   spj: any;
   foto: any;
   pendukung: any;
+  signature: string;
   dibuatTanggal: any;
 }
 
@@ -82,8 +78,8 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   const [idPesertaRapat, setIdPesertaRapat] = useState<number>(1);
   const [dataPegawai, setDataPegawai] = useState<any>([]);
   const [dataAtasan, setDataAtasan] = useState<any>([]);
-  const [dataSasaran, setDataSasaran] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [sign, setSign] = useState<any>()
 
   const [uploadMsgUndangan, setUploadMsgUndangan] = useState<string>("");
   const [progressUndangan, setProgressUndangan] = useState<any>({
@@ -118,7 +114,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   useEffect(() => {
     fetchDataPegawai();
     fetchDataAtasan();
-    fetchDataSasaran();
   }, []);
 
   const fetchDataPegawai = async () => {
@@ -200,39 +195,26 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     }
   };
 
-  const fetchDataSasaran = async () => {
-    setLoading(true);
-    const payload = {
-      nip: profile.nip,
-      tahun: 2023
-    }
+  const handleClear = (e: any) => {
+    e.preventDefault();
+    sign.clear()
+    handleChange({
+      target: { name: "signature", value: '' },
+    });
+  }
 
-    const response = await fetchApi({
-      url: '/notulen/syncSasaran',
-      method: 'post',
-      type: 'auth',
-      body: payload
-    })
+  const handleGenerate = (e: any) => {
+    e.preventDefault();
+    // setSignUrl(sign.getTrimmedCanvas().toDataURL('image/png'));
+    handleChange({
+      target: { name: "signature", value: sign.getTrimmedCanvas().toDataURL('image/png') },
+    });
+  }
 
-    if (!response.success) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Gagal memuat data sasaran!",
-      });
-      setLoading(false);
-    } else {
-      const { data } = response.data;
-      let temp: any = [];
-      data.data.sasaran_asn.map((el: any) => {
-        temp.push({
-          label: el.sasaran + ' ' + '/' + ' ' + 2023,
-          value: el.id_sasaran
-        })
-      })
-      setDataSasaran(temp);
-      setLoading(false);
-    }
+  const handleDeleteSignature = () => {
+    handleChange({
+      target: { name: "signature", value: '' },
+    });
   }
 
   const handleOpenAddPeserta = (e: any) => {
@@ -681,25 +663,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               <div className="data flex flex-row">
                 <TextInput
                   type="dropdown"
-                  id="pelapor"
-                  name="pelapor"
-                  label="Nama Pelapor"
-                  touched={touched.pelapor}
-                  errors={errors.pelapor}
-                  placeholder="Ketik dan pilih pelapor"
-                  options={dataPegawai}
-                  handleBlur={handleBlur}
-                  setValueSelected={handleChange}
-                  change={(selectedOption: any) => {
-                    handleChange({
-                      target: { name: "pelapor", value: selectedOption },
-                    });
-                  }}
-                />
-              </div>
-              <div className="data flex flex-row">
-                <TextInput
-                  type="dropdown"
                   id="atasan"
                   name="atasan"
                   label="Nama Atasan"
@@ -734,29 +697,10 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   />
                 </div>
               </div>
-              <div className="data flex flex-row">
-                <TextInput
-                  type="dropdown"
-                  id="sasaran"
-                  name="sasaran"
-                  label="Nama sasaran"
-                  touched={touched.sasaran}
-                  errors={errors.sasaran}
-                  placeholder="Ketik dan pilih Sasaran"
-                  options={dataSasaran}
-                  handleBlur={handleBlur}
-                  setValueSelected={handleChange}
-                  change={(selectedOption: any) => {
-                    handleChange({
-                      target: { name: "sasaran", value: selectedOption },
-                    });
-                  }}
-                />
-              </div>
               {values.suratUndangan == null ? (
                 <div className="data flex flex-col">
                   <label className="block mb-2 text-sm font-medium text-gray-900 text-Nunito dark:text-white">
-                    Upload Surat Undangan
+                    Upload Surat Undangan (opsional)
                   </label>
                   <input
                     className="block w-full text-md text-gray-900 border border-light-gray py-2 rounded-lg cursor-pointer bg-white focus:outline-none"
@@ -788,7 +732,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               {values.daftarHadir == null ? (
                 <div className="data flex flex-col">
                   <label className="block mb-2 text-sm font-medium text-gray-900 text-Nunito dark:text-white">
-                    Upload Daftar Hadir
+                    Upload Daftar Hadir (opsional)
                   </label>
                   <input
                     className="block w-full text-md text-gray-900 border border-light-gray py-2 rounded-lg cursor-pointer bg-white focus:outline-none"
@@ -823,7 +767,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               {values.spj == null ? (
                 <div className="data flex flex-col">
                   <label className="block mb-2 text-sm font-medium text-gray-900 text-Nunito dark:text-white">
-                    Upload SPJ
+                    Upload SPJ (opsional)
                   </label>
                   <input
                     className="block w-full text-md text-gray-900 border border-light-gray py-2 rounded-lg cursor-pointer bg-white focus:outline-none"
@@ -855,7 +799,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               {values.foto == null ? (
                 <div className="data flex flex-col">
                   <label className="block mb-2 text-sm font-medium text-gray-900 text-Nunito dark:text-white">
-                    Upload Foto
+                    Upload Foto (opsional)
                   </label>
                   <input
                     className="block w-full text-md text-gray-900 border border-light-gray py-2 rounded-lg cursor-pointer bg-white focus:outline-none"
@@ -887,7 +831,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               {values.pendukung == null ? (
                 <div className="data flex flex-col">
                   <label className="block mb-2 text-sm font-medium text-gray-900 text-Nunito dark:text-white">
-                    Upload Pendukung
+                    Upload Pendukung (opsional)
                   </label>
                   <input
                     className="block w-full text-md text-gray-900 border border-light-gray py-2 rounded-lg cursor-pointer bg-white focus:outline-none"
@@ -917,6 +861,28 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 </div>
               )}
             </div>
+            <div className="signature px-8 mt-6">
+              {values.signature === '' ? (
+                <>
+                  <div className="text-title-xsm2 mb-2">Bubuhkan Tanda tangan (opsional)</div>
+                  <div className="md:w-[500px] w-full md:h-[200px] h-[130px] border-2 border-light-gray rounded rounded-lg">
+                    <SignatureCanvas
+                      canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
+                      ref={(data: any) => setSign(data)}
+                    />
+                  </div>
+                  <button style={{ height: "30px", width: "60px" }} onClick={(e: any) => handleClear(e)}>Clear</button>
+                  <button style={{ height: "30px", width: "60px" }} onClick={(e: any) => handleGenerate(e)}>Save</button>
+                </>
+              ) : (
+                <div className="flex md:flex-row md:items-center md:justify-between flex-col mb-2 md:mb-0">
+                  <img src={values.signature} />
+                  <div className="text-danger text-title-xsm2 hover:cursor-pointer" onClick={handleDeleteSignature}>Hapus</div>
+                </div>
+              )}
+            </div>
+            <div className="text-danger text-title-ss mx-8 mt-3">*Pastikan mengisi seluruh data notulen, (kecuali yang opsional)</div>
+
             <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
               <div className="w-[8em] absolute bottom-6 right-8">
                 <Button
@@ -924,6 +890,20 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   className="button-container"
                   loading={loading}
                   rounded
+                  disabled={
+                    values.rangeTanggal.length == 0 ||
+                      values.jam === null ||
+                      values.pendahuluan === "" ||
+                      values.pimpinanRapat === "" ||
+                      values.pesertaArray.length == 0 ||
+                      values.isiRapat === null ||
+                      values.tindakLanjut === null ||
+                      values.lokasi === "" ||
+                      values.acara === "" ||
+                      values.atasan === null ||
+                      values.dibuatTanggal === null ?
+                      true : false
+                  }
                   onClick={handleSubmit}
                 >
                   <div className="flex justify-center items-center text-white font-Nunito">
@@ -981,14 +961,13 @@ function CreateForm({ handleSubmit }: MyFormProps) {
       tindakLanjut: null,
       lokasi: "",
       acara: "",
-      pelapor: null,
       atasan: null,
-      sasaran: null,
       suratUndangan: null,
       daftarHadir: null,
       spj: null,
       foto: null,
       pendukung: null,
+      signature: '',
       dibuatTanggal: null
     }),
     validationSchema: Yup.object().shape({
@@ -1012,13 +991,6 @@ function CreateForm({ handleSubmit }: MyFormProps) {
         .required("Lokasi tidak boleh kosong !"),
       acara: Yup.string()
         .required("Acara tidak boleh kosong !"),
-      pelapor: Yup.object()
-        .shape({
-          label: Yup.string(),
-          value: Yup.number(),
-        })
-        .required("Bagian dibutuhkan")
-        .nullable(),
       atasan: Yup.object()
         .shape({
           label: Yup.string(),
@@ -1046,6 +1018,7 @@ const AddNotulenForm = () => {
   const router = useRouter();
 
   const handleSubmit = async (values: FormValues) => {
+    setLoading(true);
     const payload = {
       tanggal: values.rangeTanggal,
       waktu: values.jam,
@@ -1056,19 +1029,17 @@ const AddNotulenForm = () => {
       tindak_lanjut: JSON.stringify(values.tindakLanjut),
       lokasi: values.lokasi,
       acara: values.acara,
-      pelapor: values.pelapor.data,
       atasan: values.atasan.data,
-      sasaran: values.sasaran.value,
       status: "-",
       hari: new Date(values.dibuatTanggal).getDate(),
       bulan: new Date(values.dibuatTanggal).getMonth() + 1,
       tahun: new Date(values.dibuatTanggal).getFullYear(),
-      id_sasaran: values.sasaran.value,
       link_img_surat_undangan: values.suratUndangan,
       link_img_daftar_hadir: values.daftarHadir,
       link_img_spj: values.spj,
       link_img_foto: values.foto,
       link_img_pendukung: values.pendukung,
+      signature: values.signature,
       kode_opd: profile.Perangkat_Daerah.kode_opd,
       nip_pegawai: profile.nip,
       nip_atasan: values.atasan.value
@@ -1083,19 +1054,20 @@ const AddNotulenForm = () => {
 
     if (!response.success) {
       if (response.data.code == 400) {
+        setLoading(false);
         Swal.fire({
           icon: "error",
           title: "Oops...",
           text: "Periksa kembali data Notulen!",
         });
       } else if (response.data.code == 500) {
+        setLoading(false);
         Swal.fire({
           icon: "error",
           title: "Oops...",
           text: "Koneksi bermasalah!",
         });
       }
-      setLoading(false);
     } else {
       Swal.fire({
         position: "center",

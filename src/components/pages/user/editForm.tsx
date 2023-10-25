@@ -70,7 +70,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     },
     {
       label: 'User',
-      value: 5
+      value: 4
     }
   ]
 
@@ -79,6 +79,13 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
       label: 'Verifikator',
       value: 3
     },
+    {
+      label: 'User',
+      value: 4
+    }
+  ]
+
+  const listNonVerifikator: any = [
     {
       label: 'User',
       value: 4
@@ -226,7 +233,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
         <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
           <div className="w-[8em] absolute bottom-10 right-8">
             <Button
-              variant="xl"
+              variant="warning"
               className="button-container"
               rounded
               disabled={values.role == null}
@@ -302,6 +309,7 @@ function CreateForm({ handleSubmit, opd, user }: MyFormProps) {
       nip: user.length != 0 ? user.nip : "",
       pangkat: user.length != 0 ? user.pangkat : "",
       namaPangkat: user.length != 0 ? user.namaPangkat : "",
+      eselon: user.length != 0 ? user.eselon : "",
       jabatan: user.length != 0 ? user.jabatan : "",
       role: user.role !== null ? listRole[user.role - 1] : null,
       opd: opd.length != 0 ? opd : ""
@@ -348,7 +356,7 @@ const EditForm = ({ opd, user, type }: PropTypes) => {
     const payload = {
       nama: values.nama,
       nip: values.nip,
-      password: 'Bappeda@123',
+      password: '12345678',
       pangkat: values.pangkat,
       nama_pangkat: values.namaPangkat,
       jabatan: values.jabatan,

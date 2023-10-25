@@ -34,6 +34,7 @@ const DataMasterOPD = () => {
       method: "get",
       type: "auth"
     })
+    console.log(response);
 
     if (!response.success) {
       setLoading(false);
@@ -92,7 +93,7 @@ const DataMasterOPD = () => {
           })
           setLoading(false);
           fetchOPD();
-        } 
+        }
         else {
           setLoading(false);
           Swal.fire({

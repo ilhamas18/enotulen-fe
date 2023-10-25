@@ -66,6 +66,7 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
             nip: el.nip,
             pangkat: el.pangkat,
             namaPangkat: el.namapangkat,
+            eselon: el.eselon,
             jabatan: el.jabatan
           }
         })
@@ -105,6 +106,13 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
     }
   ]
 
+  const listNonVerifikator: any = [
+    {
+      label: 'User',
+      value: 4
+    }
+  ]
+
   const handleSubmit = async () => {
     setLoading(true);
 
@@ -114,6 +122,7 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
       password: 'Bappeda@123',
       pangkat: user.pangkat,
       nama_pangkat: user.namaPangkat,
+      eselon: user.eselon,
       jabatan: user.jabatan,
       role: role,
       kode_opd: OPD.value,
@@ -154,6 +163,7 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
       router.push("/master/data-user");
     }
   }
+  const handleCancel = () => router.push('/master/data-user');
 
   return (
     <div className="relative py-6">
@@ -267,7 +277,7 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
                     name="role"
                     label="Nama Role"
                     placeholder="Pilih Role"
-                    options={profile.role == 1 ? listRoleAdmin : listRoleAdminOPD}
+                    options={user?.eselon?.includes('3') ? profile.role == 1 ? listRoleAdmin : listRoleAdminOPD : listNonVerifikator}
                     change={(selectedOption: any) => {
                       handleChangeRole({
                         target: { name: "role", value: selectedOption },
@@ -286,6 +296,7 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
               type="secondary"
               className="button-container mb-2 mt-5"
               rounded
+              onClick={handleCancel}
             >
               <div className="flex justify-center items-center text-[#002DBB] font-Nunito">
                 <span className="button-text">Batal</span>

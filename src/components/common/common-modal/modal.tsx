@@ -73,7 +73,7 @@ export const CommonModal = ({
                 // exit={{
                 //   scale: 0
                 // }}
-                className={`modal-content-wrapper w-[580px] ${type === "xl" ? 'xl' : 'axis'}`}
+                className={`modal-content-wrapper md:w-[50%] w-full max-h-[500px] ${type === "xl" ? 'xl' : 'axis'}`}
               >
                 <motion.div
                   className="modal-content grow"
@@ -127,7 +127,7 @@ export const CommonModal = ({
               className="modal-backdrop"
             >
               <div
-                className={`modal-content-wrapper w-[580px] ${type === "xl" ? 'xl' : 'axis'}`}
+                className={`modal-content-wrapper md:w-[50%] w-full max-h-[500px] ${type === "xl" ? 'xl' : 'axis'}`}
               >
                 <div>
                   {children}
