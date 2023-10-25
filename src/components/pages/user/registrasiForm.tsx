@@ -119,7 +119,7 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
     const payload = {
       nama: user.nama,
       nip: user.nip,
-      password: 'Bappeda@123',
+      password: process.env.PASSWORD_USER,
       pangkat: user.pangkat,
       nama_pangkat: user.namaPangkat,
       eselon: user.eselon,

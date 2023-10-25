@@ -190,10 +190,8 @@ const LoginForm: any = () => {
       type: "withoutAuth",
       body: payload
     })
-    console.log(response, '<<<');
 
     if (!response.success) {
-      console.log(response, '>>>');
 
       router.push('/auth/login');
       if (response.code == 404) {

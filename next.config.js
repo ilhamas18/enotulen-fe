@@ -20,6 +20,7 @@ module.exports = {
   },
   env: {
     BASE_URL: process.env.BASE_URL,
+    PASSWORD_USER: process.env.PASSWORD_USER
   },
   reactStrictMode: false,
   swcMinify: true,
