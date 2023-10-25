@@ -2,6 +2,7 @@
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
 import TextInput from "@/components/common/text-input/input";
 import { Button } from "@/components/common/button/button";
 import SignatureCanvas from 'react-signature-canvas';
@@ -17,6 +18,7 @@ import { withFormik, FormikProps, FormikBag } from "formik";
 import * as Yup from "yup";
 import { shallowEqual, useSelector } from "react-redux";
 import { State } from "@/store/reducer";
+import { setNotulen } from "@/store/notulen/action";
 import axios from "axios";
 import { getCookies } from "cookies-next";
 import { IoMdClose } from "react-icons/io";
@@ -42,11 +44,13 @@ interface FormValues {
   pendukung: any;
   signature: string;
   dibuatTanggal: any;
+  handleSave?: any;
 }
 
 interface OtherProps {
   title?: string;
   ref?: any;
+  handleSave?: any;
 }
 
 interface MyFormProps extends OtherProps {
@@ -54,6 +58,7 @@ interface MyFormProps extends OtherProps {
     values: FormValues,
     formikBag: FormikBag<object, FormValues>
   ) => void;
+  handleSave?: any
 }
 
 const FormField = (props: OtherProps & FormikProps<FormValues>) => {
@@ -64,6 +69,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     handleChange,
     handleBlur,
     handleSubmit,
+    handleSave,
     isSubmitting,
     ref,
   } = props;
@@ -72,6 +78,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   }), shallowEqual)
 
   const router = useRouter();
+  const dispatch = useDispatch();
   const [openDateRange, setOpenDateRange] = useState<boolean>(false);
   const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
   const [pesertaRapat, setPesertaRapat] = useState<string>("");
@@ -513,6 +520,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                     handleChange({
                       target: { name: "jam", value: e.$d },
                     });
+                    // dispatch(setNotulen({ 'jam': e.$d }))
                   }}
                   value={values.jam}
                   errors={errors.jam}
@@ -884,6 +892,18 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
             <div className="text-danger text-title-ss mx-8 mt-3">*Pastikan mengisi seluruh data notulen, (kecuali yang opsional)</div>
 
             <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
+              {/* <div className="w-[8em] absolute bottom-6 right-[11em]">
+                <Button
+                  variant="xl"
+                  className="button-container"
+                  rounded
+                  onClick={handleSave}
+                >
+                  <div className="flex justify-center items-center text-white font-Nunito">
+                    <span className="button-text">Simpan Draft</span>
+                  </div>
+                </Button>
+              </div> */}
               <div className="w-[8em] absolute bottom-6 right-8">
                 <Button
                   variant="xl"
@@ -1007,12 +1027,14 @@ function CreateForm({ handleSubmit }: MyFormProps) {
 }
 
 const AddNotulenForm = () => {
-  const { profile } = useSelector(
+  const { profile, notulen } = useSelector(
     (state: State) => ({
       profile: state.profile.profile,
+      notulen: state.notulen.notulen
     }),
     shallowEqual
   );
+  console.log(notulen);
 
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
@@ -1080,12 +1102,14 @@ const AddNotulenForm = () => {
     }
   };
 
+  const handleSave = () => { }
+
   return (
     <div>
       {loading ? (
         <Loading loading={loading} setLoading={setLoading} />
       ) : (
-        <CreateForm handleSubmit={handleSubmit} />
+        <CreateForm handleSubmit={handleSubmit} handleSave={handleSave} />
       )}
     </div>
   );

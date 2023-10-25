@@ -21,7 +21,7 @@ const DateRangePicker = ({ isOpen, setIsOpen, rangeTanggal, setRangeTanggal }: X
         <DateRange
           editableDateInputs={true}
           onChange={setRangeTanggal}
-          // onChange={(item: any) => setRangeTanggal([item.selection])}
+          // onChange={(item: any) => setRangeTanggal([item.selection])}  
           moveRangeOnFirstSelection={false}
           ranges={rangeTanggal}
         />
