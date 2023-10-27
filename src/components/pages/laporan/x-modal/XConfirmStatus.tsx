@@ -227,7 +227,7 @@ const XConfirmStatus = ({
                   variant="xl"
                   className="button-container mb-2 mt-5"
                   rounded
-                  disabled={!agree}
+                  disabled={!agree || signature === ''}
                   onClick={handleSubmit}
                   loading={loading}
                 >

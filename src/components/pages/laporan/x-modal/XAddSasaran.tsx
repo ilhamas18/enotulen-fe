@@ -288,78 +288,82 @@ const XAddSasaran = ({
       ) : (
         <div className='flex flex-col w-full py-3'>
           <div className='relative'>
-            <div className='text-center font-medium md:text-title-xsm text-title-xsm2 mb-6 bg-meta-6 py-2'>Masukkan Sasaran</div>
-            <div className={`${isOnFocus ? 'data flex flex-row fixed z-999 bg-white w-[520px]' : 'data flex flex-row w-full'}`}>
-              <Select
-                isMulti
-                name="tagging"
-                options={listSasaran}
-                className="basic-multi-select bg-white w-full"
-                classNamePrefix="select"
-                onFocus={() => setIsOnFocus(true)}
-                onBlur={() => setIsOnFocus(false)}
-                // defaultValue={notulen.sasaran}
-                onChange={(selectedOption: any) => {
-                  handleChange({
-                    target: { name: "tagging", value: selectedOption },
-                  });
-                }}
-              />
-            </div>
-            <div>
-              <ul className="mt-[5em] ml-4">
-                {dataSasaran?.length > 0 && dataSasaran?.map((el: any, i: number) => (
-                  <li className="font flex flex-col gap-2" key={i}>
-                    <div className="flex justify-between">
-                      <div className="flex gap-2">
-                        <div
-                          className={`${dataSasaran.length > 1 ? "block" : "hidden"
-                            }`}
-                        >
-                          {i + 1} .
+            <div className='flex flex-col justify-between items-center'>
+              <div className='w-full'>
+                <div className='text-center font-medium md:text-title-xsm text-title-xsm2 mb-6 bg-meta-6 py-2'>Masukkan Sasaran</div>
+                <div className={`${isOnFocus ? 'data flex flex-row fixed z-999 bg-white md:w-[680px] w-[400px]' : 'data flex flex-row w-full'}`}>
+                  <Select
+                    isMulti
+                    name="tagging"
+                    options={listSasaran}
+                    className="basic-multi-select bg-white w-full"
+                    classNamePrefix="select"
+                    onFocus={() => setIsOnFocus(true)}
+                    onBlur={() => setIsOnFocus(false)}
+                    // defaultValue={notulen.sasaran}
+                    onChange={(selectedOption: any) => {
+                      handleChange({
+                        target: { name: "tagging", value: selectedOption },
+                      });
+                    }}
+                  />
+                </div>
+                <div>
+                  <ul className="mt-[5em] ml-4">
+                    {dataSasaran?.length > 0 && dataSasaran?.map((el: any, i: number) => (
+                      <li className="font flex flex-col gap-2" key={i}>
+                        <div className="flex justify-between">
+                          <div className="flex gap-2">
+                            <div
+                              className={`${dataSasaran.length > 1 ? "block" : "hidden"
+                                }`}
+                            >
+                              {i + 1} .
+                            </div>
+                            <div>{el.sasaran}</div>
+                          </div>
+                          <div>
+                            <button
+                              onClick={(e: any) =>
+                                handleDeleteSasaran(e, el.id_sasaran)
+                              }
+                            >
+                              <AiOutlineClose size={18} />
+                            </button>
+                          </div>
                         </div>
-                        <div>{el.sasaran}</div>
-                      </div>
-                      <div>
-                        <button
-                          onClick={(e: any) =>
-                            handleDeleteSasaran(e, el.id_sasaran)
-                          }
-                        >
-                          <AiOutlineClose size={18} />
-                        </button>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className='mt-[5em] flex justify-between'>
-              <div className="btn-cancel">
-                <Button
-                  variant="xl"
-                  type="secondary"
-                  className="button-container mb-2 mt-5"
-                  rounded
-                  onClick={onClose}
-                >
-                  <div className="flex px-6 text-[#002DBB] font-Nunito">
-                    <span className="button-text text-xl-base">Batal</span>
-                  </div>
-                </Button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-              <div className="btn-cancell">
-                <Button
-                  variant="xl"
-                  className="button-container mb-2 mt-5"
-                  rounded
-                  onClick={handleSubmit}
-                  loading={loading}
-                >
-                  <div className="flex px-6 text-white font-Nunito">
-                    <span className="button-text">Tambah / Update</span>
-                  </div>
-                </Button>
+              <div className='mt-[5em] flex justify-between w-full'>
+                <div className="btn-cancel">
+                  <Button
+                    variant="xl"
+                    type="secondary"
+                    className="button-container mb-2 mt-5"
+                    rounded
+                    onClick={onClose}
+                  >
+                    <div className="flex px-6 text-[#002DBB] font-Nunito">
+                      <span className="button-text text-xl-base">Batal</span>
+                    </div>
+                  </Button>
+                </div>
+                <div className="btn-cancell">
+                  <Button
+                    variant="xl"
+                    className="button-container mb-2 mt-5"
+                    rounded
+                    onClick={handleSubmit}
+                    loading={loading}
+                  >
+                    <div className="flex px-6 text-white font-Nunito">
+                      <span className="button-text">Tambah / Update</span>
+                    </div>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

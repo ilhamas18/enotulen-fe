@@ -395,7 +395,7 @@ const NotulenDetailProps = ({ data, listTagging }: DetailProps) => {
             <div className="w-[15%]">Tanda Tangan</div>
             <div className="md:mt-0 mt-2 md:w-[75%] w-full">
               <div className="flex border-2 border-light-gray md:h-[200px] h-[130px] rounded-lg w-full py-3 px-4">
-                {data.signature !== null ? (
+                {data.signature !== '-' ? (
                   <div>
                     <img src={data.signature} />
                   </div>

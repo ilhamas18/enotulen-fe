@@ -95,7 +95,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               type="text"
               id="faximile"
               name="faximile"
-              label="Faximile"
+              label="Email"
               touched={touched.faximile}
               change={handleChange}
               value={values.faximile}

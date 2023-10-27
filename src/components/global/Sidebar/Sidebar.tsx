@@ -184,20 +184,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             </li>
                             <li>
                               <Link
-                                href="/master/data-urusan"
-                                className={`first-letter:group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white
-                                  ${pathname === "/master/data-urusan" && "text-white"}`}
-                              >Data Urusan</Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="/master/data-kinerja"
-                                className={`first-letter:group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white
-                                  ${pathname === "/master/data-kinerja" && "text-white"}`}
-                              >Data Kinerja</Link>
-                            </li>
-                            <li>
-                              <Link
                                 href="/master/tematik"
                                 className={`first-letter:group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white
                                   ${pathname === "/master/tematik" && "text-white"}`}

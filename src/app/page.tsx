@@ -7,15 +7,40 @@ import withAuth from '@/components/hocs/withAuth'
 import Swal from 'sweetalert2';
 import { shallowEqual, useSelector } from 'react-redux';
 import { State } from '@/store/reducer';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import dayjs from 'dayjs';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
+import { Line } from 'react-chartjs-2';
 import WelcomeBanner from '@/components/global/Banner/WelcomeBanner';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 function Home() {
   const [notulens, setNotulens] = useState<any>([]);
+  const [notulenLength, setNotulenLength] = useState<any>([]);
+  const [notulensVerifLength, setNotulensVerifLength] = useState<any>([]);
   const [month, setMonth] = useState<any>(null);
+  const [title, setTitle] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
   const { profile } = useSelector(
@@ -35,15 +60,33 @@ function Home() {
 
       setMonth({ month: currentShortMonth, year: currentYear })
     }
-  }, [month])
+
+    switch (profile.role) {
+      case 1:
+        setTitle(`LAPORAN NOTULEN ${new Date().getFullYear()}`);
+        break;
+      case 2:
+        setTitle(`LAPORAN NOTULEN ${profile.Perangkat_Daerah.nama_opd} ${new Date().getFullYear()}`);
+        break;
+      case 3:
+        setTitle(`LAPORAN NOTULEN ${profile.Perangkat_Daerah.nama_opd} ${new Date().getFullYear()}`);
+        break;
+      case 4:
+        setTitle(`LAPORAN NOTULEN ${profile.nama}`);
+        break;
+      default:
+        setTitle('');
+    }
+  }, [month]);
 
   const fetchData = async () => {
     setLoading(true)
     const response = await fetchApi({
-      url: `/notulen/getAuthNotulen/${profile.Perangkat_Daerah.kode_opd}/${profile.nip}/${month.month}/${month.year}`,
+      url: `/notulen/getAllNotulens/${profile.Perangkat_Daerah.kode_opd}`,
       method: "get",
       type: "auth",
     })
+    console.log(response);
 
     if (!response.success) {
       setLoading(false);
@@ -55,31 +98,120 @@ function Home() {
     } else {
       if (response.data.code == 200) {
         const { data } = response.data;
-        setNotulens(data)
+        if (profile.role != 3) {
+          let temp: any = [
+            data.filter((el: any) => el.bulan === "1").length,
+            data.filter((el: any) => el.bulan === "2").length,
+            data.filter((el: any) => el.bulan === "3").length,
+            data.filter((el: any) => el.bulan === "4").length,
+            data.filter((el: any) => el.bulan === "5").length,
+            data.filter((el: any) => el.bulan === "6").length,
+            data.filter((el: any) => el.bulan === "7").length,
+            data.filter((el: any) => el.bulan === "8").length,
+            data.filter((el: any) => el.bulan === "9").length,
+            data.filter((el: any) => el.bulan === "10").length,
+            data.filter((el: any) => el.bulan === "11").length,
+            data.filter((el: any) => el.bulan === "12").length
+          ];
+          setNotulenLength(temp);
+          setNotulens(data);
+        } else {
+          let temp: any = [
+            data.data.filter((el: any) => el.bulan === "1").length,
+            data.data.filter((el: any) => el.bulan === "2").length,
+            data.data.filter((el: any) => el.bulan === "3").length,
+            data.data.filter((el: any) => el.bulan === "4").length,
+            data.data.filter((el: any) => el.bulan === "5").length,
+            data.data.filter((el: any) => el.bulan === "6").length,
+            data.data.filter((el: any) => el.bulan === "7").length,
+            data.data.filter((el: any) => el.bulan === "8").length,
+            data.data.filter((el: any) => el.bulan === "9").length,
+            data.data.filter((el: any) => el.bulan === "10").length,
+            data.data.filter((el: any) => el.bulan === "11").length,
+            data.data.filter((el: any) => el.bulan === "12").length
+          ];
+          let temp2: any = [
+            data.verif.filter((el: any) => el.bulan === "1").length,
+            data.verif.filter((el: any) => el.bulan === "2").length,
+            data.verif.filter((el: any) => el.bulan === "3").length,
+            data.verif.filter((el: any) => el.bulan === "4").length,
+            data.verif.filter((el: any) => el.bulan === "5").length,
+            data.verif.filter((el: any) => el.bulan === "6").length,
+            data.verif.filter((el: any) => el.bulan === "7").length,
+            data.verif.filter((el: any) => el.bulan === "8").length,
+            data.verif.filter((el: any) => el.bulan === "9").length,
+            data.verif.filter((el: any) => el.bulan === "10").length,
+            data.verif.filter((el: any) => el.bulan === "11").length,
+            data.verif.filter((el: any) => el.bulan === "12").length
+          ];
+          setNotulenLength(temp);
+          setNotulens(data.verif);
+          setNotulensVerifLength(temp2)
+        }
         setLoading(false);
       }
     }
   }
 
-  const handleDatePicked = (val: any) => {
-    let temp: any = {
-      month: val.$M + 1,
-      year: val.$y
-    }
-    setMonth(temp)
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: title
+      },
+    },
+  };
+
+  const labels = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: 'Rekap Notulen',
+        data: notulenLength,
+        borderColor: 'rgb(53, 162, 235)',
+        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+      },
+      {
+        label: 'Verifikasi Notulen',
+        data: notulensVerifLength,
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      },
+    ],
+  };
+
+  const yander = (e: any) => {
+    console.log(e);
+
   }
 
   return (
     <div className="list-notulen-container relative flex flex-col">
       <WelcomeBanner />
-      {/* <div className='md:w-[30%] w-full md:absolute md:right-0 md:top-[10em] bg-white'>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
-            <DatePicker label={'"Bulan" & "Tahun"'} views={['month', 'year']} onChange={handleDatePicked} />
-          </DemoContainer>
-        </LocalizationProvider>
-      </div> */}
       <div className="mt-2 bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% ..."></div>
+      <div className='bg-white h-[400px] w-full relative flex'>
+        <Line
+          options={options}
+          data={data}
+          style={{ width: '100%', height: '100%' }}
+          onClick={(e: any) => yander(e)}
+        />
+        <div className='w-[30%] bg-[#f5f3ed] my-4 hidden md:block'>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={['DateCalendar', 'DateCalendar']}>
+              <DemoItem>
+                <DateCalendar defaultValue={dayjs(`${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`)} disabled />
+              </DemoItem>
+            </DemoContainer>
+          </LocalizationProvider>
+        </div>
+      </div>
       <LaporanNotulen data={notulens} loading={loading} profile={profile} />
     </div>
   )

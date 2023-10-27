@@ -3,5 +3,5 @@ interface NotulenInterface {
 }
 
 export const initialState: NotulenInterface = {
-  notulen: []
+  notulen: [],
 }

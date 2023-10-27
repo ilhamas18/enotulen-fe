@@ -8,14 +8,11 @@ const dataSlice = createSlice({
     setNotulen: (state, action: PayloadAction<any>) => {
       state.notulen = action.payload;
     }
-    // setSelected: (state, action: PayloadAction<any>) => {
-    //   state.selected = action.payload;
-    // },
   }
 })
 
 export const {
-  setNotulen
+  setNotulen,
 } = dataSlice.actions;
 const notulen = dataSlice.reducer;
 

@@ -58,7 +58,6 @@ interface MyFormProps extends OtherProps {
     values: FormValues,
     formikBag: FormikBag<object, FormValues>
   ) => void;
-  handleSave?: any
 }
 
 const FormField = (props: OtherProps & FormikProps<FormValues>) => {
@@ -69,7 +68,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     handleChange,
     handleBlur,
     handleSubmit,
-    handleSave,
     isSubmitting,
     ref,
   } = props;
@@ -470,9 +468,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
 
   const handleCancel = () => router.push('/notulen/laporan');
 
-  const handleDownloadFile = async (val: any, e: any) => {
-    router.push(`${process.env.BASE_URL}/notulen/getFile?pathname=${val}`)
-  }
+  const handleDownloadFile = async (val: any, e: any) => router.push(`${process.env.BASE_URL}/notulen/getFile?pathname=${val}`);
 
   return (
     <React.Fragment>
@@ -480,7 +476,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
         <Loading loading={loading} setLoading={setLoading} />
       ) : (
         <div className="form-container relative bg-white rounded-lg">
-          <form className="form-wrapper-general">
+          <div className="form-wrapper-general">
             <div className="px-8 flex flex-col space-y-7 mt-4">
               <div className="data flex flex-row mt-4">
                 <div
@@ -906,6 +902,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               </div> */}
               <div className="w-[8em] absolute bottom-6 right-8">
                 <Button
+                  type="button"
                   variant="xl"
                   className="button-container"
                   loading={loading}
@@ -932,7 +929,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 </Button>
               </div>
             </div>
-          </form>
+          </div>
           <div className="w-[8em] pb-6 pt-2 pl-6">
             <Button
               variant="xl"
@@ -1030,11 +1027,10 @@ const AddNotulenForm = () => {
   const { profile, notulen } = useSelector(
     (state: State) => ({
       profile: state.profile.profile,
-      notulen: state.notulen.notulen
+      notulen: state.notulen.notulen,
     }),
     shallowEqual
   );
-  console.log(notulen);
 
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
@@ -1051,7 +1047,7 @@ const AddNotulenForm = () => {
       tindak_lanjut: JSON.stringify(values.tindakLanjut),
       lokasi: values.lokasi,
       acara: values.acara,
-      atasan: values.atasan.data,
+      atasan: values.atasan?.data,
       status: "-",
       hari: new Date(values.dibuatTanggal).getDate(),
       bulan: new Date(values.dibuatTanggal).getMonth() + 1,
@@ -1061,7 +1057,7 @@ const AddNotulenForm = () => {
       link_img_spj: values.spj,
       link_img_foto: values.foto,
       link_img_pendukung: values.pendukung,
-      signature: values.signature,
+      signature: values.signature !== '' ? values.signature : '-',
       kode_opd: profile.Perangkat_Daerah.kode_opd,
       nip_pegawai: profile.nip,
       nip_atasan: values.atasan.value

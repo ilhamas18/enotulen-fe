@@ -466,9 +466,9 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
 
   const handleCancel = () => router.push('/notulen/laporan');
 
-  const handleDownloadFile = async (val: any, e: any) => {
-    router.push(`${process.env.BASE_URL}/notulen/getFile?pathname=${val}`)
-  }
+  const handleDownloadFile = async (val: any, e: any) => router.push(`${process.env.BASE_URL}/notulen/getFile?pathname=${val}`)
+  console.log(values.signature);
+
 
   return (
     <React.Fragment>
@@ -856,7 +856,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               )}
             </div>
             <div className="signature px-8 mt-6">
-              {values.signature === '' ? (
+              {values.signature === '' || values.signature === null ? (
                 <>
                   <div className="text-title-xsm2 mb-2">Bubuhkan Tanda tangan</div>
                   <div className="md:w-[500px] w-full md:h-[200px] h-[130px] border-2 border-light-gray rounded rounded-lg">
@@ -945,7 +945,7 @@ function CreateForm({ handleSubmit, dataNotulen, atasan, dibuatTanggal }: MyForm
       spj: dataNotulen.link_img_spj !== null ? dataNotulen.link_img_spj : null,
       foto: dataNotulen.link_img_foto !== null ? dataNotulen.link_img_foto : null,
       pendukung: dataNotulen.link_img_pendukung !== null ? dataNotulen.link_img_pendukung : null,
-      signature: dataNotulen.signature !== null ? dataNotulen.signature : null,
+      signature: dataNotulen.signature !== '-' ? dataNotulen.signature : null,
       dibuatTanggal: dibuatTanggal !== null ? dibuatTanggal : null
     }),
     validationSchema: Yup.object().shape({
@@ -1064,7 +1064,7 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
       link_img_spj: values.spj,
       link_img_foto: values.foto,
       link_img_pendukung: values.pendukung,
-      signature: values.signature,
+      signature: values.signature !== '' ? values.signature : '-',
       kode_opd: profile.Perangkat_Daerah.kode_opd,
       nip_pegawai: profile.nip,
       nip_atasan: values.atasan.value
