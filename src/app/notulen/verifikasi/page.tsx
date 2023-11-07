@@ -65,7 +65,6 @@ const Verifikasi = () => {
     } else {
       if (response.data.code == 200) {
         const { data } = response.data;
-        console.log(data, '>>.');
 
         const temp: any = [];
         data.map((el: any, i: number) => {

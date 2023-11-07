@@ -1042,7 +1042,6 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
     const year = parseInt(dateParts[2], 10);
     // Create a Date object with the parsed values
     const formattedDate = new Date(year, month, day);
-    console.log(month, ' .>>> format');
 
     // Define a formatting option for the date
     const options: any = {

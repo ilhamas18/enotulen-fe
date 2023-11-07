@@ -86,7 +86,6 @@ function Home() {
       method: "get",
       type: "auth",
     })
-    console.log(response);
 
     if (!response.success) {
       setLoading(false);

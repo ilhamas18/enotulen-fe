@@ -43,7 +43,6 @@ const LaporanNotulen = ({ data, loading, profile }: LaporanNotulenProps) => {
   const router = useRouter();
 
   const handleClickDetail = (id: number) => router.push(`/notulen/detail/${id}`);
-  console.log(data);
 
   return (
     <div className='mt-8'>
