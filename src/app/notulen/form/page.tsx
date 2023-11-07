@@ -16,7 +16,7 @@ const Notulen = () => {
   }), shallowEqual);
 
   useEffect(() => {
-    if (profile.role != 3 && profile.role != 4) {
+    if (profile.role != 2 && profile.role != 3 && profile.role != 4) {
       router.push('/unauthorized')
     }
   }, [])

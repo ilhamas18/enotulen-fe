@@ -1,6 +1,7 @@
 "use client";
-import * as React from "react";
-import { useState, useEffect } from "react";
+import * as React from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { fetchApi } from "@/components/mixins/request";
 import Swal from "sweetalert2";
 import LaporanNotulenAuth from "@/components/pages/laporan/laporanAuth";
@@ -16,7 +17,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Loading from "@/components/global/Loading/loading";
 
-const Laporan = () => {
+const Verifikasi = () => {
+  const router = useRouter();
   const [notulens, setNotulens] = useState<any>([]);
   const [month, setMonth] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -44,21 +46,26 @@ const Laporan = () => {
   const fetchData = async () => {
     setLoading(true);
     const response = await fetchApi({
-      url: `/notulen/getAuthNotulen/${profile.Perangkat_Daerah.kode_opd}/${profile.nip}/${month.month}/${month.year}`,
+      url: `/notulen/getAgreement/${profile.Perangkat_Daerah.kode_opd}/${month.month}/${month.year}`,
       method: "get",
       type: "auth",
     });
 
     if (!response.success) {
-      setLoading(false);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Koneksi bermasalah!",
-      });
+      if (response.code == 401) {
+        router.push('/unauthorized');
+      } else {
+        setLoading(false);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Koneksi bermasalah!",
+        });
+      }
     } else {
       if (response.data.code == 200) {
         const { data } = response.data;
+        console.log(data, '>>.');
 
         const temp: any = [];
         data.map((el: any, i: number) => {
@@ -66,7 +73,6 @@ const Laporan = () => {
             id: i + 1,
             id_notulen: el.id,
             index: el.id,
-            opd: el.Perangkat_Daerah.nama_opd,
             pembuat: el.Pegawai.nama,
             tagging: el.Taggings.length !== 0 ? el.Taggings.map((el: any) => el.nama_tagging) : "-",
             tanggal: el.tanggal[0]?.startDate !== el.tanggal[0]?.endDate
@@ -107,14 +113,11 @@ const Laporan = () => {
 
   return (
     <div className="list-notulen-container relative">
-      <Breadcrumb pageName="Laporan" />
+      <Breadcrumb pageName="Verifikasi" />
       <div className="bg-white dark:bg-meta-4 shadow-card flex flex-col gap-2 py-4 text-center font-bold text-title-sm rounded rounded-lg border-none">
-        <div>DAFTAR LAPORAN NOTULEN</div>
-        {profile.role == 1 && <div>PEMERINTAH KOTA MADIUN</div>}
-        {profile.role == 2 || profile.role == 3 ? <div>{profile.Perangkat_Daerah?.nama_opd}</div> : null}
-        {/* <div>Bulan {currentMonth}</div> */}
+        <div>VERIFIKASI LAPORAN NOTULEN</div>
+        <div>{profile.Perangkat_Daerah?.nama_opd}</div>
       </div>
-      {/* <div className='md:w-[30%] w-full md:absolute md:right-0 md:top-[10em] top-[13em] bg-white'> */}
       <div className="flex md:justify-between justify-center">
         <div></div>
         <div className="bg-white mt-10">
@@ -137,7 +140,7 @@ const Laporan = () => {
         <LaporanNotulenAuth data={notulens} profile={profile} fetchData={fetchData} />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default withAuth(Laporan);
+export default withAuth(Verifikasi);

@@ -28,7 +28,7 @@ interface FormValues {
   tagging: any;
   rangeTanggal: any;
   jam: any;
-  pendahuluan: string;
+  pendahuluan: any;
   pimpinanRapat: string;
   pesertaArray: any;
   isiRapat: any;
@@ -466,9 +466,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
 
   const handleCancel = () => router.push('/notulen/laporan');
 
-  const handleDownloadFile = async (val: any, e: any) => router.push(`${process.env.BASE_URL}/notulen/getFile?pathname=${val}`)
-  console.log(values.signature);
-
+  const handleDownloadFile = async (val: any, e: any) => router.push(`${process.env.BASE_URL}/notulen/getFile?pathname=${val}`);
 
   return (
     <React.Fragment>
@@ -542,19 +540,20 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   errors={errors.acara}
                 />
               </div>
-              <div className="mt-2 -pb-2">Penjelasan :</div>
-              <div className="data flex flex-row">
-                <TextInput
-                  type="text-area"
-                  id="pendahuluan"
-                  name="pendahuluan"
-                  touched={touched.pendahuluan}
-                  label="Pendahuluan"
-                  change={handleChange}
-                  value={values.pendahuluan}
-                  handleBlur={handleBlur}
-                  errors={errors.pendahuluan}
-                />
+              <div className="mt-2 -pb-2 text-title-xsm2 font-bold">Penjelasan :</div>
+              <div>
+                <div className="text-deep-gray">Pendahuluan</div>
+                <div className="container border border-light-gray rounded-lg">
+                  <EditorBlock
+                    data={values.pendahuluan}
+                    onChange={(e) => {
+                      handleChange({
+                        target: { name: "pendahuluan", value: e },
+                      });
+                    }}
+                    holder="editorjs-containe"
+                  />
+                </div>
               </div>
               <div className="data flex flex-row">
                 <TextInput
@@ -640,7 +639,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                         target: { name: "isiRapat", value: e },
                       });
                     }}
-                    holder="editorjs-container"
+                    holder="editorjs-container2"
                   />
                 </div>
               </div>
@@ -654,7 +653,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                         target: { name: "tindakLanjut", value: e },
                       });
                     }}
-                    holder="editorjs-container2"
+                    holder="editorjs-container3"
                   />
                 </div>
               </div>
@@ -690,6 +689,28 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                     });
                   }}
                 />
+              </div>
+              <div className="data items-center flex md:flex-row flex-col md:gap-4 w-full">
+                <div className="data flex flex-row mt-4 md:mt-0 md:w-[25%] w-full">
+                  <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                    <span>{formatDate(values.dibuatTanggal)}</span>
+                  </div>
+                </div>
+                <div className="w-[15%] text-right">Edit Waktu Pembuatan: </div>
+                <div className="w-[60%] mb-2">
+                  <TextInput
+                    type="date-picker"
+                    id="dibuatTanggal"
+                    name="dibuatTanggal"
+                    touched={touched.dibuatTanggal}
+                    change={(e: any) => {
+                      handleChange({
+                        target: { name: "dibuatTanggal", value: e.$d },
+                      });
+                    }}
+                    errors={errors.dibuatTanggal}
+                  />
+                </div>
               </div>
               {values.suratUndangan == null ? (
                 <div className="data flex flex-col">
@@ -932,7 +953,7 @@ function CreateForm({ handleSubmit, dataNotulen, atasan, dibuatTanggal }: MyForm
         },
       ],
       jam: dataNotulen.waktu !== null ? dataNotulen.waktu : null,
-      pendahuluan: dataNotulen.pendahuluan !== null ? dataNotulen.pendahuluan : "",
+      pendahuluan: dataNotulen.pendahuluan !== null ? JSON.parse(dataNotulen.pendahuluan) : "",
       pimpinanRapat: dataNotulen.pimpinan_rapat !== null ? dataNotulen.pimpinan_rapat : "",
       pesertaArray: dataNotulen.peserta_rapat.length != 0 ? dataNotulen.peserta_rapat : [],
       isiRapat: dataNotulen.isi_rapat !== null ? JSON.parse(dataNotulen.isi_rapat) : null,
@@ -954,9 +975,8 @@ function CreateForm({ handleSubmit, dataNotulen, atasan, dibuatTanggal }: MyForm
       jam: Yup.mixed()
         .nullable()
         .required("Waktu tidak boleh kosong !"),
-      pendahuluan: Yup.string()
-        .required("Harap isi pendahuluan !")
-        .min(4, "Minimal 4 karakter"),
+      pendahuluan: Yup.mixed()
+        .required("Harap isi pendahuluan !"),
       pimpinanRapat: Yup.string()
         .required("Harap isi nama pimpinan rapat !"),
       pesertaArray: Yup.array()
@@ -1015,13 +1035,14 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
   }, []);
 
   const formattedDate = () => {
-    let tempDate: any = dataNotulen.hari + '/' + dataNotulen.bulan + '/' + dataNotulen.tahun;
+    let tempDate: any = dataNotulen.hari + '/' + Number(dataNotulen.bulan - 1) + '/' + dataNotulen.tahun;
     const dateParts = tempDate.split('/');
-    const month = parseInt(dateParts[0], 10); // Months are 0-based (0 = January, 1 = February, etc.)
-    const day = parseInt(dateParts[1], 10);
+    const day = parseInt(dateParts[0], 10);
+    const month = parseInt(dateParts[1], 10); // Months are 0-based (0 = January, 1 = February, etc.)
     const year = parseInt(dateParts[2], 10);
     // Create a Date object with the parsed values
     const formattedDate = new Date(year, month, day);
+    console.log(month, ' .>>> format');
 
     // Define a formatting option for the date
     const options: any = {
@@ -1039,7 +1060,8 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
     // Format the date using the Intl.DateTimeFormat API
     const formatter = new Intl.DateTimeFormat('en-US', options);
     const formattedDateString = formatter.format(formattedDate);
-    setDibuatTanggal(formattedDateString);
+    setDibuatTanggal(formattedDate);
+
   }
 
   const handleSubmit = async (values: FormValues) => {
@@ -1047,7 +1069,7 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
     const payload = {
       tanggal: values.rangeTanggal,
       waktu: values.jam,
-      pendahuluan: values.pendahuluan,
+      pendahuluan: JSON.stringify(values.pendahuluan),
       pimpinan_rapat: values.pimpinanRapat,
       peserta_rapat: values.pesertaArray,
       isi_rapat: JSON.stringify(values.isiRapat),
@@ -1056,9 +1078,9 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
       acara: values.acara,
       atasan: values.atasan.data,
       status: "editted",
-      hari: dataNotulen.hari,
-      bulan: dataNotulen.bulan,
-      tahun: dataNotulen.tahun,
+      hari: new Date(values.dibuatTanggal).getDate(),
+      bulan: new Date(values.dibuatTanggal).getMonth() + 1,
+      tahun: new Date(values.dibuatTanggal).getFullYear(),
       link_img_surat_undangan: values.suratUndangan,
       link_img_daftar_hadir: values.daftarHadir,
       link_img_spj: values.spj,

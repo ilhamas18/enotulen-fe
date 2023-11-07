@@ -94,7 +94,6 @@ const XAddTagging = ({
     } else {
       if (response.data.code == 200) {
         const { data } = response.data;
-        console.log(data.Taggings.filter((el: any) => el.kode_opd === profile.Perangkat_Daerah.kode_opd));
 
         setDataTagging(data?.Taggings)
         setLoading(false);
@@ -108,9 +107,7 @@ const XAddTagging = ({
     setAgree(false);
   }
 
-  const handleChange = (data: any) => {
-    setTagging(data.target.value);
-  };
+  const handleChange = (data: any) => setTagging(data.target.value);
 
   const handleSeeDetail = () => router.push(`/notulen/detail/${notulen.index}`);
 
@@ -130,13 +127,10 @@ const XAddTagging = ({
     setLoading(true);
 
     if (tagging.length != 0) {
-      let payload: any = [];
-      tagging.forEach((el: any) => {
-        payload.push({
-          id_notulen: notulen.id_notulen,
-          id_tagging: el.value
-        })
-      })
+      let payload: any = {
+        id_notulen: notulen.id_notulen,
+        id_tagging: tagging.value
+      };
 
       const response = await fetchApi({
         url: '/notulen/addTagging',
@@ -184,6 +178,7 @@ const XAddTagging = ({
               timer: 1500,
             });
             fetchTagging();
+            fetchData();
             onClose();
           }
         } else {
@@ -195,6 +190,7 @@ const XAddTagging = ({
             timer: 1500,
           });
           fetchTagging();
+          fetchData();
           onClose();
         }
       }
@@ -227,6 +223,7 @@ const XAddTagging = ({
             timer: 1500,
           });
           fetchTagging();
+          fetchData();
           onClose();
         }
       } else {
@@ -247,34 +244,53 @@ const XAddTagging = ({
                 <GrClose size={17} />
               </div>
             </div>
-            <div className="btn my-6 flex items-center justify-between">
-              <div className="btn-cancel">
-                <Button
-                  variant="xl"
-                  type="secondary"
-                  className="button-container mb-2 mt-5"
-                  rounded
-                  onClick={handleSeeDetail}
-                  loading={loading}
-                >
-                  <div className="flex px-6 text-[#002DBB] font-Nunito">
-                    <span className="button-text text-xl-base">Lihat Detail</span>
+            <div className="btn my-6">
+              {notulen.status !== 'archieve' ? (
+                <div className='flex items-center justify-between'>
+                  <div className="btn-cancel">
+                    <Button
+                      variant="xl"
+                      type="secondary"
+                      className="button-container mb-2 mt-5"
+                      rounded
+                      onClick={handleSeeDetail}
+                      loading={loading}
+                    >
+                      <div className="flex px-6 text-[#002DBB] font-Nunito">
+                        <span className="button-text text-xl-base">Lihat Detail</span>
+                      </div>
+                    </Button>
                   </div>
-                </Button>
-              </div>
-              <div className="btn-cancell">
-                <Button
-                  variant="xl"
-                  className="button-container mb-2 mt-5"
-                  rounded
-                  onClick={() => setIsAddTagging(true)}
-                  loading={loading}
-                >
-                  <div className="flex px-6 text-white font-Nunito">
-                    <span className="button-text">Tambah Tagging</span>
+                  <div className="btn-cancell">
+                    <Button
+                      variant="xl"
+                      className="button-container mb-2 mt-5"
+                      rounded
+                      onClick={() => setIsAddTagging(true)}
+                      loading={loading}
+                    >
+                      <div className="flex px-6 text-white font-Nunito">
+                        <span className="button-text">Tambah Tagging</span>
+                      </div>
+                    </Button>
                   </div>
-                </Button>
-              </div>
+                </div>
+              ) : (
+                <div className="btn-cancel">
+                  <Button
+                    variant="xl"
+                    type="secondary"
+                    className="button-container mb-2 mt-5"
+                    rounded
+                    onClick={handleSeeDetail}
+                    loading={loading}
+                  >
+                    <div className="flex px-6 text-[#002DBB] font-Nunito">
+                      <span className="button-text text-xl-base">Lihat Detail</span>
+                    </div>
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -282,8 +298,8 @@ const XAddTagging = ({
         <div className='flex flex-col w-full py-3'>
           <div className='relative'>
             <div className='text-center font-medium md:text-xsm text-title-xsm mb-6'>Masukkan Tagging</div>
-            <div className={`${isOnFocus ? 'data flex flex-row fixed z-999 bg-white w-[520px]' : 'data flex flex-row w-full'}`}>
-              <Select
+            <div className='data flex flex-row w-full'>
+              {/* <Select
                 isMulti
                 name="tagging"
                 options={listTagging}
@@ -292,6 +308,22 @@ const XAddTagging = ({
                 onFocus={() => setIsOnFocus(true)}
                 onBlur={() => setIsOnFocus(false)}
                 onChange={(selectedOption: any) => {
+                  handleChange({
+                    target: { name: "tagging", value: selectedOption },
+                  });
+                }}
+              /> */}
+              <TextInput
+                type="dropdown"
+                id="sasaran"
+                name="sasaran"
+                label="Sasaran"
+                placeholder="Ketik dan pilih atasan"
+                options={listTagging}
+                handleFocus={() => setIsOnFocus(true)}
+                handleBlur={() => setIsOnFocus(false)}
+                setValueSelected={tagging}
+                change={(selectedOption: any) => {
                   handleChange({
                     target: { name: "tagging", value: selectedOption },
                   });

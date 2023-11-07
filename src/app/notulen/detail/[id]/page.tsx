@@ -7,6 +7,8 @@ import Loading from '@/components/global/Loading/loading';
 import Swal from 'sweetalert2';
 import Breadcrumb from '@/components/global/Breadcrumbs/Breadcrumb';
 import withAuth from '@/components/hocs/withAuth';
+import { shallowEqual, useSelector } from 'react-redux';
+import { State } from '@/store/reducer';
 
 const NotulenDetail = ({ params }: { params: { id: number } }) => {
   const { id } = params;
@@ -14,9 +16,12 @@ const NotulenDetail = ({ params }: { params: { id: number } }) => {
   const [listTagging, setListTagging] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
+  const { profile } = useSelector((state: State) => ({
+    profile: state.profile.profile
+  }), shallowEqual)
+
   useEffect(() => {
     fetchData();
-    // fetchTagging();
   }, [])
 
   const fetchData = async () => {
@@ -48,8 +53,17 @@ const NotulenDetail = ({ params }: { params: { id: number } }) => {
     <div className="detail-notulen-container">
       <Breadcrumb pageName="Laporan / Detail" />
       <div className="bg-white dark:bg-meta-4 flex flex-col gap-2 shadow-lg py-4 text-center font-bold text-title-sm rounded rounded-lg border-none">
-        <div className='uppercase'>Laporan Notulen</div>
-        <div className='text-title-xsm2'>{notulenDetail?.Pegawai?.nama}</div>
+        <div className='uppercase'>
+          {notulenDetail?.status === 'archieve' ? (
+            <div>Hapus Notulen</div>
+          ) : notulenDetail?.atasan?.nip !== profile.nip ? (
+            <div>Laporan Notulen</div>
+          ) : (
+            <div>Verifikasi Notulen</div>
+          )}
+        </div>
+        <div className='text-title-xsm2'><div>{notulenDetail?.Pegawai?.nama}</div>
+        </div>
         {/* <div className='text-title-xsm'>PEMERINTAH KOTA MADIUN</div> */}
       </div>
       {loading ? (

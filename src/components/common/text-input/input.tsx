@@ -25,6 +25,7 @@ interface type {
   change?: any;
   setValueSelected?: any;
   touched?: any,
+  handleFocus?: any,
   handleBlur?: any;
   options?: any;
   hideCopy?: boolean;
@@ -46,6 +47,7 @@ const TextInput = ({
   change,
   setValueSelected,
   touched,
+  handleFocus,
   handleBlur,
   options,
   hideCopy,
@@ -53,7 +55,6 @@ const TextInput = ({
   variant,
   onClick,
 }: type) => {
-  const [active, setActive] = useState<boolean>(false);
   const [iconAye, setIconAye] = useState(false)
 
   return (
@@ -78,9 +79,7 @@ const TextInput = ({
            ${center ? "center text-center tracking-widests font-Bold" : ""} `
           }
           pattern="[a-zA-Z0-9.,\s]+"
-          onFocus={(e) => {
-            setActive(true);
-          }}
+          onFocus={handleFocus}
           placeholder={`${placeholder ? placeholder : " "}`}
           autoComplete="off"
           onPaste={(e: any) => {
@@ -121,9 +120,7 @@ const TextInput = ({
               ${center ? "center text-center tracking-widests font-Bold" : ""} `
             }
             pattern="[a-zA-Z0-9.,\s]+"
-            onFocus={(e) => {
-              setActive(true);
-            }}
+            onFocus={handleFocus}
             placeholder={`${placeholder ? placeholder : " "}`}
             autoComplete="off"
             onPaste={(e: any) => {
@@ -171,9 +168,7 @@ const TextInput = ({
           onInvalid={(e: any) => {
             e.target.setCustomValidity("Hanya dapat memasukan huruf dan angka");
           }}
-          onFocus={(e) => {
-            setActive(true);
-          }}
+          onFocus={handleFocus}
           placeholder={`${placeholder ? placeholder : " "}`}
           autoComplete="off"
           onPaste={(e: any) => {
@@ -212,6 +207,7 @@ const TextInput = ({
           options={options}
           name={name}
           value={value}
+          onFocus={handleFocus}
           onBlur={handleBlur}
           onChange={change}
           placeholder={placeholder}
@@ -238,6 +234,7 @@ const TextInput = ({
             <DemoContainer components={['TimePicker']}>
               <TimePicker
                 label={label}
+                ampm={false}
                 value={value}
                 onChange={change}
               />
@@ -271,6 +268,7 @@ const TextInput = ({
             placeholder={placeholder}
             id={name}
             onChange={change}
+            onFocus={handleFocus}
             onBlur={handleBlur}
             value={value}
             className="search-input"

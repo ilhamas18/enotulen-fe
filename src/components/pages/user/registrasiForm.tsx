@@ -103,6 +103,10 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
     {
       label: 'User',
       value: 4
+    },
+    {
+      label: 'Kepala OPD',
+      value: 5
     }
   ]
 
@@ -277,7 +281,7 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
                     name="role"
                     label="Nama Role"
                     placeholder="Pilih Role"
-                    options={user?.eselon?.includes('3') || user?.eselon?.includes('2') ? profile.role == 1 ? listRoleAdmin : listRoleAdminOPD : listNonVerifikator}
+                    options={user?.eselon?.includes('3') ? profile.role == 1 ? listRoleAdmin : listRoleAdminOPD : listNonVerifikator}
                     change={(selectedOption: any) => {
                       handleChangeRole({
                         target: { name: "role", value: selectedOption },

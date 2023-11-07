@@ -177,6 +177,18 @@ function Home() {
         borderColor: 'rgb(53, 162, 235)',
         backgroundColor: 'rgba(53, 162, 235, 0.5)',
       },
+    ],
+  };
+
+  const dataVerif = {
+    labels,
+    datasets: [
+      {
+        label: 'Rekap Notulen',
+        data: notulenLength,
+        borderColor: 'rgb(53, 162, 235)',
+        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+      },
       {
         label: 'Verifikasi Notulen',
         data: notulensVerifLength,
@@ -186,11 +198,6 @@ function Home() {
     ],
   };
 
-  const yander = (e: any) => {
-    console.log(e);
-
-  }
-
   return (
     <div className="list-notulen-container relative flex flex-col">
       <WelcomeBanner />
@@ -198,9 +205,8 @@ function Home() {
       <div className='bg-white h-[400px] w-full relative flex'>
         <Line
           options={options}
-          data={data}
+          data={profile.role == 3 ? dataVerif : data}
           style={{ width: '100%', height: '100%' }}
-          onClick={(e: any) => yander(e)}
         />
         <div className='w-[30%] bg-[#f5f3ed] my-4 hidden md:block'>
           <LocalizationProvider dateAdapter={AdapterDayjs}>

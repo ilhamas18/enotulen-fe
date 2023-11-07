@@ -11,6 +11,7 @@ import Select from "react-select";
 import { State } from '@/store/reducer';
 import { GrClose } from 'react-icons/gr';
 import { AiOutlineClose } from 'react-icons/ai';
+import Loading from '@/components/global/Loading/loading';
 
 interface PropTypes {
   openAddSasaran: boolean,
@@ -27,7 +28,7 @@ const XAddSasaran = ({
 }: PropTypes) => {
   const router = useRouter();
   const [listSasaran, setListSasaran] = useState<any>([]);
-  const [sasaran, setSasaran] = useState<any>([]);
+  const [sasaran, setSasaran] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [isAddSasaran, setIsAddSasaran] = useState<boolean>(false);
   const [dataSasaran, setDataSasaran] = useState<any>([]);
@@ -41,7 +42,7 @@ const XAddSasaran = ({
   useEffect(() => {
     fetchDataSasaran();
     fetchSasaran();
-  }, [])
+  }, []);
 
   const fetchDataSasaran = async () => {
     setLoading(true);
@@ -87,7 +88,7 @@ const XAddSasaran = ({
   const fetchSasaran = async () => {
     setLoading(true);
     const response = await fetchApi({
-      url: `/notulen/getNotulenDetail/${notulen.id_notulen}`,
+      url: `/notulen/getNotulenDetail/${notulen.id}`,
       method: "get",
       type: "auth"
     })
@@ -109,31 +110,25 @@ const XAddSasaran = ({
     }
   }
 
-  const handleChange = (data: any) => {
-    setSasaran(data.target.value);
-  };
-
   const onClose = () => {
     setOpenAddSasaran(false);
     setIsAddSasaran(false);
-    setSasaran([]);
+    setSasaran('');
   }
 
+  const handleChange = (e: any) => setSasaran(e.target.value)
 
-  const handleSeeDetail = () => router.push(`/notulen/detail/${notulen.index}`);
+  const handleSeeDetail = () => router.push(`/notulen/detail/${notulen.id}`);
 
   const handleSubmit = async () => {
     setLoading(true);
     if (sasaran.length != 0) {
-      let payload: any = []
-      sasaran.forEach((el: any) => {
-        payload.push({
-          id_sasaran: el.value,
-          id_notulen: notulen.id_notulen,
-          sasaran: el.data.label,
-          nama_pembuat: el.data.nama_pembuat
-        })
-      })
+      let payload: any = {
+        id_sasaran: sasaran?.value,
+        id_notulen: notulen.id,
+        sasaran: sasaran.data.label,
+        nama_pembuat: sasaran.data.nama_pembuat
+      }
 
       const response = await fetchApi({
         url: `/notulen/addSasaran`,
@@ -254,8 +249,38 @@ const XAddSasaran = ({
                 <GrClose size={17} />
               </div>
             </div>
-            <div className="btn my-6 flex items-center justify-between">
-              <div className="btn-cancel">
+            {notulen?.Pegawai.nip === profile.nip ? (
+              <div className="btn my-6 flex items-center justify-between">
+                <div className="btn-detail">
+                  <Button
+                    variant="xl"
+                    type="secondary"
+                    className="button-container mb-2 mt-5"
+                    rounded
+                    onClick={handleSeeDetail}
+                    loading={loading}
+                  >
+                    <div className="flex px-6 text-[#002DBB] font-Nunito">
+                      <span className="button-text text-xl-base">Lihat Detail</span>
+                    </div>
+                  </Button>
+                </div>
+                <div className="btn-update">
+                  <Button
+                    variant="xl"
+                    className="button-container mb-2 mt-5"
+                    rounded
+                    onClick={() => setIsAddSasaran(true)}
+                    loading={loading}
+                  >
+                    <div className="flex px-6 text-white font-Nunito">
+                      <span className="button-text">Update Sasaran / Rencana Kenerja</span>
+                    </div>
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="btn-detail">
                 <Button
                   variant="xl"
                   type="secondary"
@@ -269,20 +294,7 @@ const XAddSasaran = ({
                   </div>
                 </Button>
               </div>
-              <div className="btn-cancell">
-                <Button
-                  variant="xl"
-                  className="button-container mb-2 mt-5"
-                  rounded
-                  onClick={() => setIsAddSasaran(true)}
-                  loading={loading}
-                >
-                  <div className="flex px-6 text-white font-Nunito">
-                    <span className="button-text">Update Sasaran / Rencana Kenerja</span>
-                  </div>
-                </Button>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       ) : (
@@ -291,19 +303,20 @@ const XAddSasaran = ({
             <div className='flex flex-col justify-between items-center'>
               <div className='w-full'>
                 <div className='text-center font-medium md:text-title-xsm text-title-xsm2 mb-6 bg-meta-6 py-2'>Masukkan Sasaran</div>
-                <div className={`${isOnFocus ? 'data flex flex-row fixed z-999 bg-white md:w-[680px] w-[400px]' : 'data flex flex-row w-full'}`}>
-                  <Select
-                    isMulti
-                    name="tagging"
+                <div className='data flex flex-row w-full'>
+                  <TextInput
+                    type="dropdown"
+                    id="sasaran"
+                    name="sasaran"
+                    label="Sasaran"
+                    placeholder="Ketik dan pilih atasan"
                     options={listSasaran}
-                    className="basic-multi-select bg-white w-full"
-                    classNamePrefix="select"
-                    onFocus={() => setIsOnFocus(true)}
-                    onBlur={() => setIsOnFocus(false)}
-                    // defaultValue={notulen.sasaran}
-                    onChange={(selectedOption: any) => {
+                    handleFocus={() => setIsOnFocus(true)}
+                    handleBlur={() => setIsOnFocus(false)}
+                    setValueSelected={sasaran}
+                    change={(selectedOption: any) => {
                       handleChange({
-                        target: { name: "tagging", value: selectedOption },
+                        target: { name: "sasaran", value: selectedOption },
                       });
                     }}
                   />

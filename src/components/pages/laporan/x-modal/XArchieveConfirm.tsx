@@ -11,17 +11,14 @@ import Swal from 'sweetalert2';
 import { State } from '@/store/reducer';
 
 interface PropTypes {
-  openConfirmSubmit: boolean,
-  setOpenConfirmSubmit: any,
-  status: string,
+  openArchieve: boolean,
+  setOpenArchieve: any,
   data: any,
-  // setLoading: any
 }
 
-const XConfirmStatus = ({
-  openConfirmSubmit,
-  setOpenConfirmSubmit,
-  status,
+const XArchieveConfirm = ({
+  openArchieve,
+  setOpenArchieve,
   data,
   // setLoading
 }: PropTypes) => {
@@ -58,7 +55,7 @@ const XConfirmStatus = ({
   }
 
   const onClose = () => {
-    setOpenConfirmSubmit(false);
+    setOpenArchieve(false);
     setAgree(false);
   }
 
@@ -96,7 +93,7 @@ const XConfirmStatus = ({
       }
     } else {
       setLoading(false);
-      setOpenConfirmSubmit(false);
+      setOpenArchieve(false);
       Swal.fire({
         position: "center",
         icon: "success",
@@ -104,12 +101,12 @@ const XConfirmStatus = ({
         showConfirmButton: false,
         timer: 1500,
       });
-      router.push("/notulen/verifikasi");
+      router.push("/notulen/laporan");
     }
   }
 
   return (
-    <CommonModal isOpen={openConfirmSubmit} onClose={setOpenConfirmSubmit}>
+    <CommonModal isOpen={openArchieve} onClose={setOpenArchieve}>
       <div className="relative items-center justify-center pt-3">
         {status === "Ditolak" ? (
           <div className='w-[100%]'>
@@ -244,4 +241,4 @@ const XConfirmStatus = ({
   )
 }
 
-export default XConfirmStatus;
+export default XArchieveConfirm;

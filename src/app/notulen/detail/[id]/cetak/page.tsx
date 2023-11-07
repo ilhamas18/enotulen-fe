@@ -13,10 +13,10 @@ import Laporan from "@/app/notulen/laporan/page";
 import withAuth from "@/components/hocs/withAuth";
 import edjsHTML from "editorjs-html";
 import Blocks from 'editorjs-blocks-react-renderer';
+import { formatMonth } from "@/components/helpers/formatMonth";
 
 const editorJsHtml = require("editorjs-html");
 const EditorJsToHtml = editorJsHtml();
-
 
 
 type ParsedContent = string | JSX.Element;
@@ -26,28 +26,11 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
   const [laporan, setLaporan] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const edjsParser = edjsHTML();
-  let htmlIsiRapat = laporan.isi_rapat !== undefined && edjsParser.parse(JSON.parse(laporan.isi_rapat));
-  // const blocks = (EditorJsToHtml.parse(htmlIsiRapat.blocks) as ParsedContent[])
-  // if (laporan.isi_rapat !== undefined) {
-  //   htmlIsiRapat = 
-  //   // console.log(HTML, '<<<<');
-
-  // }
-
-
-  const htmlTindakLanjut = laporan?.tindak_lanjut !== undefined && (EditorJsToHtml.parse(JSON.parse(laporan?.tindak_lanjut)) as ParsedContent[]);
-  // const edjsParser = edjsHTML();
-  // const htmlParse = edjsParser.parse(laporan.isi_rapat);
-  // console.log(laporan.isi_rapat, '>>>>>');
-
-
   const printRef: any = useRef();
+
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
   });
-
-  const html = laporan.length != 0 && (EditorJsToHtml.parse(JSON.parse(laporan?.isi_rapat)) as ParsedContent[]);
 
   useEffect(() => {
     fetchData();
@@ -75,46 +58,6 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
       }
     }
   };
-
-  const options: Options = {
-    filename: "laporan-notulen.pdf",
-    method: "save",
-    // default is Resolution.MEDIUM = 3, which should be enough, higher values
-    // increases the image quality but also the size of the PDF, so be careful
-    // using values higher than 10 when having multiple pages generated, it
-    // might cause the page to crash or hang.
-    resolution: Resolution.EXTREME,
-    page: {
-      // margin is in MM, default is Margin.NONE = 0
-      margin: Margin.SMALL,
-      // default is 'A4'
-      format: "A4",
-      // default is 'portrait'
-      orientation: "portrait",
-    },
-    canvas: {
-      // default is 'image/jpeg' for better size performance
-      mimeType: "image/jpeg",
-      qualityRatio: 1,
-    },
-    // Customize any value passed to the jsPDF instance and html2canvas
-    // function. You probably will not need this and things can break,
-    // so use with caution.
-    overrides: {
-      // see https://artskydj.github.io/jsPDF/docs/jsPDF.html for more options
-      pdf: {
-        compress: true,
-      },
-      // see https://html2canvas.hertzen.com/configuration for more options
-      canvas: {
-        useCORS: true,
-      },
-    },
-  };
-
-  const getTargetElement = () => document.getElementById("container");
-
-  const downloadPdf = () => generatePDF(getTargetElement, options);
 
   function formatDateRange(startDate: any, endDate: any) {
     const start = new Date(startDate);
@@ -202,7 +145,17 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                     I. Pendahuluan
                   </div>
                   <div className="text-black dark:text-white text-title-xsm mt-3 ml-4 text-justify">
-                    {laporan.pendahuluan}
+                    {laporan?.pendahuluan !== undefined && <Blocks data={JSON.parse(laporan?.pendahuluan)} config={{
+                      list: {
+                        className: "list-decimal ml-10"
+                      },
+                      paragraph: {
+                        className: "text-base text-opacity-75",
+                        actionsClassNames: {
+                          alignment: "text-justify",
+                        }
+                      }
+                    }} />}
                   </div>
                 </div>
                 <div className="pendahuluan flex-col">
@@ -351,7 +304,7 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
               <div className="flex flex-col items-center justify-between text-center w-[45%] h-[25em]">
                 <div className="text-right mt-12">
                   <div className="text-black dark:text-white text-title-xsm">
-                    Madiun, {formatDate(laporan.createdAt).split(", ")[1]}
+                    Madiun, {laporan.hari} {formatMonth[laporan.bulan - 1]} {laporan.tahun}
                   </div>
                 </div>
                 <div className="mt-[2em]">
@@ -374,25 +327,6 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                     NIP. {laporan.Pegawai?.nip}
                   </div>
                 </div>
-                {/* <div className="h-[25em]">
-                  <div>
-                    <div className="font-bold text-black dark:text-white text-title-ss mt-12">
-                      Yang Melapor,
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-bold text-black dark:text-white text-title-ss border-b border-black">
-                      {laporan.Pegawai.nama}
-                    </div>
-                    <div className="text-black dark:text-white text-title-ss mt-1">
-                      {" "}
-                      {laporan.Pegawai?.nama_pangkat}{" "}
-                    </div>
-                    <div className="font-bold text-black dark:text-white text-title-ss mt-1">
-                      NIP. {laporan.Pegawai?.nip}
-                    </div>
-                  </div>
-                </div> */}
               </div>
             </div>
           </div>

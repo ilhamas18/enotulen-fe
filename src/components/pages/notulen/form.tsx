@@ -29,7 +29,7 @@ interface FormValues {
   tagging: any;
   rangeTanggal: any;
   jam: any;
-  pendahuluan: string;
+  pendahuluan: any;
   pimpinanRapat: string;
   pesertaArray: any;
   isiRapat: any;
@@ -535,19 +535,20 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   errors={errors.acara}
                 />
               </div>
-              <div className="mt-2 -pb-2">Penjelasan :</div>
-              <div className="data flex flex-row">
-                <TextInput
-                  type="text-area"
-                  id="pendahuluan"
-                  name="pendahuluan"
-                  touched={touched.pendahuluan}
-                  label="Pendahuluan"
-                  change={handleChange}
-                  value={values.pendahuluan}
-                  handleBlur={handleBlur}
-                  errors={errors.pendahuluan}
-                />
+              <div className="mt-2 -pb-2 text-title-xsm font-bold">Penjelasan :</div>
+              <div>
+                <div className="text-deep-gray">Pendahuluan</div>
+                <div className="container border-2 border-light-gray rounded-lg">
+                  <EditorBlock
+                    data={values.pendahuluan}
+                    onChange={(e) => {
+                      handleChange({
+                        target: { name: "pendahuluan", value: e },
+                      });
+                    }}
+                    holder="editorjs-containe"
+                  />
+                </div>
               </div>
               <div className="data flex flex-row">
                 <TextInput
@@ -625,7 +626,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               </div>
               <div>
                 <div className="text-deep-gray">Tambahkan Isi Rapat</div>
-                <div className="container border border-light-gray rounded-lg">
+                <div className="container border-2 border-light-gray rounded-lg">
                   <EditorBlock
                     data={values.isiRapat}
                     onChange={(e) => {
@@ -633,13 +634,13 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                         target: { name: "isiRapat", value: e },
                       });
                     }}
-                    holder="editorjs-container"
+                    holder="editorjs-container2"
                   />
                 </div>
               </div>
               <div>
                 <div className="text-deep-gray">Tindak Lanjut</div>
-                <div className="container border border-light-gray rounded-lg">
+                <div className="container border-2 border-light-gray rounded-lg">
                   <EditorBlock
                     data={values.tindakLanjut}
                     onChange={(e) => {
@@ -647,7 +648,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                         target: { name: "tindakLanjut", value: e },
                       });
                     }}
-                    holder="editorjs-container2"
+                    holder="editorjs-container3"
                   />
                 </div>
               </div>
@@ -888,18 +889,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
             <div className="text-danger text-title-ss mx-8 mt-3">*Pastikan mengisi seluruh data notulen, (kecuali yang opsional)</div>
 
             <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
-              {/* <div className="w-[8em] absolute bottom-6 right-[11em]">
-                <Button
-                  variant="xl"
-                  className="button-container"
-                  rounded
-                  onClick={handleSave}
-                >
-                  <div className="flex justify-center items-center text-white font-Nunito">
-                    <span className="button-text">Simpan Draft</span>
-                  </div>
-                </Button>
-              </div> */}
               <div className="w-[8em] absolute bottom-6 right-8">
                 <Button
                   type="button"
@@ -971,7 +960,7 @@ function CreateForm({ handleSubmit }: MyFormProps) {
         },
       ],
       jam: null,
-      pendahuluan: "",
+      pendahuluan: [],
       pimpinanRapat: "",
       pesertaArray: [],
       isiRapat: null,
@@ -993,9 +982,8 @@ function CreateForm({ handleSubmit }: MyFormProps) {
       jam: Yup.mixed()
         .nullable()
         .required("Waktu tidak boleh kosong !"),
-      pendahuluan: Yup.string()
-        .required("Harap isi pendahuluan !")
-        .min(4, "Minimal 4 karakter"),
+      pendahuluan: Yup.mixed()
+        .required("Harap isi pendahuluan !"),
       pimpinanRapat: Yup.string()
         .required("Harap isi nama pimpinan rapat !"),
       pesertaArray: Yup.array()
@@ -1040,7 +1028,7 @@ const AddNotulenForm = () => {
     const payload = {
       tanggal: values.rangeTanggal,
       waktu: values.jam,
-      pendahuluan: values.pendahuluan,
+      pendahuluan: JSON.stringify(values.pendahuluan),
       pimpinan_rapat: values.pimpinanRapat,
       peserta_rapat: values.pesertaArray,
       isi_rapat: JSON.stringify(values.isiRapat),
