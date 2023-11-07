@@ -14,6 +14,7 @@ import EditNotulenForm from "./edit";
 import { Button } from "@/components/common/button/button";
 import Blocks from 'editorjs-blocks-react-renderer';
 import Loading from "@/components/global/Loading/loading";
+import { formatMonth } from "@/components/helpers/formatMonth";
 
 const editorJsHtml = require("editorjs-html");
 const EditorJsToHtml = editorJsHtml();
@@ -180,6 +181,16 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
           </div>
           <div className={`detail-wrap bg-white dark:bg-meta-4 rounded-lg p-8 ${!isOpenEdit ? 'block' : 'hidden'}`}>
             <div className="flex flex-col gap-4">
+              <div className={`body flex flex-row md:flex-row flex-col items-center justify-between ${data.keterangan != '' && data.status === "Ditolak" ? 'block' : 'hidden'}`}>
+                <div className="text-label md:w-[20%] w-full md:text-left text-center">
+                  Alasan ditolak :
+                </div>
+                <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+                  <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-6">
+                    {data.keterangan}
+                  </div>
+                </div>
+              </div>
               <div className="body flex flex-row md:flex-row flex-col items-center justify-between">
                 <div className="text-label md:w-[20%] w-full md:text-left text-center">
                   Tagging / Tematik
@@ -187,11 +198,15 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-10">
                     <ul>
-                      {data.Taggings?.map((el: any, i: number) => (
-                        <li className="list-decimal" key={i}>
-                          <div>{el.nama_tagging} <span className="px-8">{el.kode_opd !== '1234567890' ? '(Tagging OPD)' : '(Tagging Kota)'}</span></div>
-                        </li>
-                      ))}
+                      {data.Taggings.length != 0 ? (
+                        data.Taggings?.map((el: any, i: number) => (
+                          <li className="list-decimal" key={i}>
+                            <div>{el.nama_tagging} <span className="px-8">{el.kode_opd !== '1234567890' ? '(Tagging OPD)' : '(Tagging Kota)'}</span></div>
+                          </li>
+                        ))
+                      ) : (
+                        <div>-</div>
+                      )}
                     </ul>
                   </div>
                 </div>
@@ -373,6 +388,16 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
                         <div className="w-[80%]">{data.atasan.pangkat}</div>
                       </div>
                     </div>
+                  </div>
+                </div>
+              </div>
+              <div className="body flex flex-row md:flex-row flex-col items-center justify-between">
+                <div className="text-label md:w-[20%] w-full md:text-left text-center">
+                  Dibuat tanggal
+                </div>
+                <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+                  <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                    {data.hari} {formatMonth[data.bulan - 1]} {data.tahun}
                   </div>
                 </div>
               </div>

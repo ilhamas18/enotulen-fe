@@ -152,7 +152,8 @@ const XAddTagging = ({
       } else {
         if (idTagging != 0) {
           const payload2 = {
-            id_tagging: idTagging
+            id_tagging: idTagging,
+            id_notulen: notulen.id_notulen
           }
 
           const response2 = await fetchApi({
@@ -197,7 +198,8 @@ const XAddTagging = ({
     } else {
       if (idTagging != 0) {
         const payload2 = {
-          id_tagging: idTagging
+          id_tagging: idTagging,
+          id_notulen: notulen.id_notulen
         }
 
         const response2 = await fetchApi({
