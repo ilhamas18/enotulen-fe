@@ -24,6 +24,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { Line } from 'react-chartjs-2';
 import WelcomeBanner from '@/components/global/Banner/WelcomeBanner';
+import SEO from '@/components/global/seo';
 
 ChartJS.register(
   CategoryScale,

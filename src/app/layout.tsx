@@ -6,6 +6,7 @@ import { Router } from "next/router"
 import nProgress from "nprogress"
 import { AuthProvider } from '@/components/providers/Auth';
 import Layout from '@/components/pages/layout';
+import SEO from '@/components/global/seo';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -17,12 +18,6 @@ export default function RootLayout({
 }) {
   const [authenticated, setAuthenticated] = useState<boolean>(false);
 
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    setTimeout(() => setLoading(false), 1000);
-  }, []);
-
   nProgress.configure({ showSpinner: false })
   Router.events.on("routeChangeStart", (url) => nProgress.start())
   Router.events.on("routeChangeComplete", () => nProgress.done())
@@ -30,6 +25,7 @@ export default function RootLayout({
 
   return (
     <AuthProvider authenticated={authenticated}>
+      <SEO />
       <Layout setAuthenticated={setAuthenticated}>
         {children}
       </Layout>

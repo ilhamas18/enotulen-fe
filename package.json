@@ -48,6 +48,7 @@
     "moment": "^2.29.4",
     "next": "13.4.19",
     "next-redux-wrapper": "^8.1.0",
+    "next-seo": "^6.4.0",
     "npm": "^10.1.0",
     "nprogress": "^0.2.0",
     "postcss": "8.4.30",
