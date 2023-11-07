@@ -95,26 +95,15 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
     }
   ]
 
-  const listRoleAdminOPD: any = [
+  const listStaff: any = [
     {
-      label: 'Verifikator',
-      value: 3
+      label: 'Admin OPD',
+      value: 2
     },
     {
       label: 'User',
       value: 4
     },
-    {
-      label: 'Kepala OPD',
-      value: 5
-    }
-  ]
-
-  const listNonVerifikator: any = [
-    {
-      label: 'User',
-      value: 4
-    }
   ]
 
   const handleSubmit = async () => {
@@ -168,6 +157,7 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
     }
   }
   const handleCancel = () => router.push('/master/data-user');
+  console.log(listUser);
 
   return (
     <div className="relative py-6">
@@ -275,19 +265,49 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
               <div className='md:w-[5%]'>:</div>
               <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                 <div className="data flex flex-row">
-                  <TextInput
+                  {user?.eselon?.includes('3') || user?.eselon?.includes('2') ? (
+                    <TextInput
+                      type="dropdown"
+                      id="role"
+                      name="role"
+                      label="Nama Role"
+                      placeholder="Pilih Role"
+                      options={listRoleAdmin}
+                      change={(selectedOption: any) => {
+                        handleChangeRole({
+                          target: { name: "role", value: selectedOption },
+                        });
+                      }}
+                    />
+                  ) : (
+                    <TextInput
+                      type="dropdown"
+                      id="role"
+                      name="role"
+                      label="Nama Role"
+                      placeholder="Pilih Role"
+                      options={listStaff}
+                      change={(selectedOption: any) => {
+                        handleChangeRole({
+                          target: { name: "role", value: selectedOption },
+                        });
+                      }}
+                    />
+                  )}
+                  {/* <TextInput
                     type="dropdown"
                     id="role"
                     name="role"
                     label="Nama Role"
                     placeholder="Pilih Role"
-                    options={user?.eselon?.includes('3') ? profile.role == 1 ? listRoleAdmin : listRoleAdminOPD : listNonVerifikator}
+                    // options={user?.eselon?.includes('3') ? profile.role == 1 ? listRoleAdmin : listRoleAdminOPD : listNonVerifikator}
+                    options={}
                     change={(selectedOption: any) => {
                       handleChangeRole({
                         target: { name: "role", value: selectedOption },
                       });
                     }}
-                  />
+                  /> */}
                 </div>
               </div>
             </div>
