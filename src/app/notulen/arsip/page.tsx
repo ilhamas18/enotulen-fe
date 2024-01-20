@@ -3,7 +3,7 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { fetchApi } from "@/components/mixins/request";
-import LaporanNotulenAuth from "@/components/pages/laporan/laporanAuth";
+import LaporanNotulenAuth from "@/components/pages/notulen/list";
 import Breadcrumb from "@/components/global/Breadcrumbs/Breadcrumb";
 import { getShortDate, getTime } from "@/components/hooks/formatDate";
 import { ImTable2 } from "react-icons/im";

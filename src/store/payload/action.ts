@@ -2,18 +2,18 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { initialState } from "./reducer";
 
 const dataSlice = createSlice({
-  name: "notulen",
+  name: "payload",
   initialState,
   reducers: {
-    setNotulen: (state, action: PayloadAction<any>) => {
-      state.notulen = action.payload;
+    setPayload: (state, action: PayloadAction<any>) => {
+      state.payload = action.payload;
     }
   }
 })
 
 export const {
-  setNotulen,
+  setPayload,
 } = dataSlice.actions;
-const notulen = dataSlice.reducer;
+const payload = dataSlice.reducer;
 
-export default notulen;
+export default payload;

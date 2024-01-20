@@ -9,6 +9,7 @@ import { AiOutlineDatabase } from "react-icons/ai";
 import { GiPapers } from "react-icons/gi";
 import { shallowEqual, useSelector } from "react-redux";
 import { State } from "@/store/reducer";
+import { FaRegNewspaper } from "react-icons/fa";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -196,6 +197,56 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   }}
                 </SidebarLinkGroup>
               </div>
+
+              <SidebarLinkGroup
+                activeCondition={
+                  pathname.includes("undangan")
+                }
+              >
+                {(handleClick, open) => {
+                  return (
+                    <React.Fragment>
+                      <Link
+                        href="#"
+                        className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4
+                          ${pathname.includes("undangan") && "bg-graydark dark:bg-meta-4"}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          sidebarExpanded
+                            ? handleClick()
+                            : setSidebarExpanded(true);
+                        }}
+                      >
+                        <FaRegNewspaper size={20} />
+                        <div className="text-title-">Undangan</div>
+                        <IoIosArrowDown size={20} className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && "rotate-180"}`} />
+                      </Link>
+                      <div className={`translate transform overflow-hidden ${!open && "hidden"}`}>
+                        <ul className="mt-4 flex flex-col gap-2.5 pl-6">
+                          <li>
+                            <Link
+                              href="/undangan/laporan"
+                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${pathname === "/undangan/laporan" && "text-white"
+                                } ${pathname === '/undangan/laporan' && 'text-white'} `}
+                            >
+                              List Undangan
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/undangan/tambah"
+                              className={`group relative flex items-center gap-2.5 mb-4 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${pathname === '/undangan/tambah' && "text-white"
+                                } ${profile.role == 4 || profile.role == 3 || profile.role == 2 ? 'block' : 'hidden'}`}
+                            >
+                              Input Undangan
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
+                    </React.Fragment>
+                  )
+                }}
+              </SidebarLinkGroup>
 
               {/* {profile.role == 3 || profile.role == 4 && ( */}
               <SidebarLinkGroup

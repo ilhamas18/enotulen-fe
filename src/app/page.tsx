@@ -1,6 +1,7 @@
 'use client';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { fetchApi } from '@/components/mixins/request';
 import LaporanNotulen from '@/components/pages/laporan/laporanNotulen';
 import withAuth from '@/components/hocs/withAuth'
@@ -37,6 +38,7 @@ ChartJS.register(
 );
 
 function Home() {
+  const router = useRouter();
   const [notulens, setNotulens] = useState<any>([]);
   const [notulenLength, setNotulenLength] = useState<any>([]);
   const [notulensVerifLength, setNotulensVerifLength] = useState<any>([]);
@@ -198,16 +200,23 @@ function Home() {
     ],
   };
 
+  const handleGoToForm = () => router.push('/undangan/tambah?step=1');
+
   return (
-    <div className="list-notulen-container relative flex flex-col">
+    <div className="list-notulen-container relative flex flex-col relative">
       <WelcomeBanner />
-      <div className="mt-2 bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% ..."></div>
-      <div className='bg-white h-[400px] w-full relative flex'>
-        <Line
-          options={options}
-          data={profile.role == 3 ? dataVerif : data}
-          style={{ width: '100%', height: '100%' }}
-        />
+      <div
+        className={`absolute right-0 top-[9em] py-2 px-4 rounded-md bg-gradient-to-r from-[#6366f1] from-10% via-[#0ea5e9] via-30% to-[#10b981] to-90% text-white font-bold text-center mb-3 animate-pulse hover:shadow-lg hover:cursor-pointer hover:scale-102 ${profile.role == 1 ? 'hidden' : 'show'}`}
+        onClick={handleGoToForm}
+      >Tambah Undangan & Notulen</div>
+      <div className='bg-white h-[400px] w-full relative flex mt-10'>
+        <div className='w-[68%]'>
+          <Line
+            options={options}
+            data={profile.role == 3 ? dataVerif : data}
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
         <div className='w-[30%] bg-[#f5f3ed] my-4 hidden md:block'>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={['DateCalendar', 'DateCalendar']}>

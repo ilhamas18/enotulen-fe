@@ -1,18 +1,17 @@
-'use client'
+'use client';
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
 import { shallowEqual, useSelector } from "react-redux";
 import { State } from "@/store/reducer";
-import { useEffect } from "react";
-import AddNotulenForm from "@/components/pages/notulen/form"
+import { useEffect, useState } from "react";
 import { FaWpforms } from "react-icons/fa";
 import withAuth from "@/components/hocs/withAuth";
 import { fetchApi } from "@/components/mixins/request";
 import Swal from "sweetalert2";
+import AddUndanganForm from "@/components/pages/undangan/add";
 import Loading from "@/components/global/Loading/loading";
 import StepsWrapper from "@/components/global/Steps";
 
-const Notulen = () => {
+const TambahUndangan = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [dataAtasan, setDataAtasan] = useState<any>([]);
@@ -20,9 +19,8 @@ const Notulen = () => {
 
   const step: any = searchParams.get('step');
 
-  const { profile, payload } = useSelector((state: State) => ({
-    profile: state.profile.profile,
-    payload: state.payload.payload
+  const { profile } = useSelector((state: State) => ({
+    profile: state.profile.profile
   }), shallowEqual);
 
   useEffect(() => {
@@ -78,22 +76,21 @@ const Notulen = () => {
   };
 
   return (
-    <div className="form-notulen-container">
+    <div className="form-undangan-containe">
       {step !== null && (
         <StepsWrapper step={step} />
       )}
       <div style={gradientStyle} className='mt-8'>
         <div className='px-4 flex text-white py-4 space-x-6 font-bold items-center'>
           <FaWpforms size={20} />
-          <div className='text-title-xsm'>Form Tambah Notulen</div>
+          <div className='text-title-xsm'>Form Tambah Undangan</div>
         </div>
       </div>
       {loading ? (
         <Loading loading={loading} setLoading={setLoading} />
       ) : (
-        <AddNotulenForm
+        <AddUndanganForm
           profile={profile}
-          payload={payload}
           dataAtasan={dataAtasan}
           step={step}
         />
@@ -102,4 +99,5 @@ const Notulen = () => {
   )
 }
 
-export default withAuth(Notulen)
+export default withAuth(TambahUndangan);
+

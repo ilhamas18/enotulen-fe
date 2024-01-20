@@ -1060,7 +1060,6 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
     const formatter = new Intl.DateTimeFormat('en-US', options);
     const formattedDateString = formatter.format(formattedDate);
     setDibuatTanggal(formattedDate);
-
   }
 
   const handleSubmit = async (values: FormValues) => {

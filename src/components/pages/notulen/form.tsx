@@ -18,10 +18,11 @@ import { withFormik, FormikProps, FormikBag } from "formik";
 import * as Yup from "yup";
 import { shallowEqual, useSelector } from "react-redux";
 import { State } from "@/store/reducer";
-import { setNotulen } from "@/store/notulen/action";
 import axios from "axios";
 import { getCookies } from "cookies-next";
 import { IoMdClose } from "react-icons/io";
+import { v4 as uuidv4 } from 'uuid';
+import ModalConfirm from "@/components/global/Modal/confirm";
 
 const EditorBlock = dynamic(() => import("../../hooks/editor"));
 
@@ -51,6 +52,11 @@ interface OtherProps {
   title?: string;
   ref?: any;
   handleSave?: any;
+  dataAtasan?: any;
+  atasan?: any;
+  payload?: any;
+  dibuatTanggal?: any;
+  step?: string;
 }
 
 interface MyFormProps extends OtherProps {
@@ -69,6 +75,8 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     handleBlur,
     handleSubmit,
     isSubmitting,
+    dataAtasan,
+    step,
     ref,
   } = props;
   const { profile } = useSelector((state: State) => ({
@@ -81,8 +89,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
   const [pesertaRapat, setPesertaRapat] = useState<string>("");
   const [idPesertaRapat, setIdPesertaRapat] = useState<number>(1);
-  const [dataPegawai, setDataPegawai] = useState<any>([]);
-  const [dataAtasan, setDataAtasan] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [sign, setSign] = useState<any>()
 
@@ -115,90 +121,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     started: false,
     pc: 0,
   });
-
-  useEffect(() => {
-    fetchDataPegawai();
-    fetchDataAtasan();
-  }, []);
-
-  const fetchDataPegawai = async () => {
-    setLoading(true);
-    const response = await fetchApi({
-      url: `/pegawai/getPelapor/${profile.Perangkat_Daerah.kode_opd}/all`,
-      method: "get",
-      type: "auth",
-    });
-
-    if (!response.success) {
-      if (response.data.code == 500) {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Gagal memuat data pegawai",
-        });
-        setLoading(false);
-      }
-      setLoading(false);
-    } else {
-      const { data } = response.data;
-      let temp: any = [];
-      data.forEach((item: any) => {
-        temp.push({
-          label: item.nama,
-          value: item.nip,
-          data: {
-            nama: item.nama,
-            nip: item.nip,
-            pangkat: item.pangkat,
-            namaPangkat: item.nama_pangkat,
-            jabatan: item.jabatan
-          },
-        });
-      });
-      setDataPegawai(temp);
-      setLoading(false);
-    }
-  };
-
-  const fetchDataAtasan = async () => {
-    setLoading(true);
-    const response = await fetchApi({
-      url: `/pegawai/getPelapor/${profile.Perangkat_Daerah.kode_opd}/atasan`,
-      method: "get",
-      type: "auth",
-    });
-
-    if (!response.success) {
-      if (response.data.code == 500) {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Gagal memuat data atasan",
-        });
-        setLoading(false);
-      }
-      setLoading(false);
-    } else {
-      const { data } = response.data;
-      const filtered = data.filter((el: any) => el.role == 3);
-      let temp: any = [];
-      filtered.forEach((item: any) => {
-        temp.push({
-          label: item.nama,
-          value: item.nip,
-          data: {
-            nama: item.nama,
-            nip: item.nip,
-            pangkat: item.pangkat,
-            namaPangkat: item.nama_pangkat,
-            jabatan: item.jabatan
-          },
-        });
-      });
-      setDataAtasan(temp);
-      setLoading(false);
-    }
-  };
 
   const handleClear = (e: any) => {
     e.preventDefault();
@@ -673,6 +595,8 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   label="Nama Atasan"
                   touched={touched.atasan}
                   errors={errors.atasan}
+                  value={values.atasan}
+                  disabled={step !== undefined ? true : false}
                   placeholder="Ketik dan pilih atasan"
                   options={dataAtasan}
                   handleBlur={handleBlur}
@@ -684,22 +608,12 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   }}
                 />
               </div>
-              <div className="data flex flex-row w-full mt-2">
-                <div className="flex flex-col gap-3">
-                  <div>Masukkan tanggal pembuatan notulen :</div>
-                  <TextInput
-                    type="date-picker"
-                    id="dibuatTanggal"
-                    name="dibuatTanggal"
-                    touched={touched.dibuatTanggal}
-                    change={(e: any) => {
-                      handleChange({
-                        target: { name: "dibuatTanggal", value: e.$d },
-                      });
-                    }}
-                    value={values.dibuatTanggal}
-                    errors={errors.dibuatTanggal}
-                  />
+              <div className="data flex flex-col w-full mt-2 gap-2 justify-center">
+                <div>Waktu pembuatan notulen :</div>
+                <div className="data flex flex-row mt-4 md:mt-0 md:w-[25%] w-full">
+                  <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                    <span>{formatDate(values.dibuatTanggal)}</span>
+                  </div>
                 </div>
               </div>
               {values.suratUndangan == null ? (
@@ -948,33 +862,33 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   );
 };
 
-function CreateForm({ handleSubmit }: MyFormProps) {
+function CreateForm({ handleSubmit, atasan, dibuatTanggal, payload, ...otherProps }: MyFormProps) {
   const FormWithFormik = withFormik({
     mapPropsToValues: () => ({
       tagging: [],
       rangeTanggal: [
         {
-          startDate: null,
-          endDate: null,
+          startDate: payload.tanggal[0]?.startDate != null ? new Date(payload.tanggal[0]?.startDate) : null,
+          endDate: payload.tanggal[0]?.endDate != null ? new Date(payload.tanggal[0]?.endDate) : null,
           key: "selection",
         },
       ],
-      jam: null,
-      pendahuluan: [],
+      jam: payload.waktu !== null ? payload.waktu : null,
+      pendahuluan: payload.pendahuluan !== null ? JSON.parse(payload.pendahuluan) : "",
       pimpinanRapat: "",
       pesertaArray: [],
       isiRapat: null,
       tindakLanjut: null,
-      lokasi: "",
-      acara: "",
-      atasan: null,
+      lokasi: payload.tempat !== "" ? payload.tempat : "",
+      acara: payload.acara !== "" ? payload.acara : "",
+      atasan: payload.atasan !== null ? atasan : null,
       suratUndangan: null,
       daftarHadir: null,
       spj: null,
       foto: null,
       pendukung: null,
       signature: '',
-      dibuatTanggal: null
+      dibuatTanggal: dibuatTanggal !== null ? dibuatTanggal : null
     }),
     validationSchema: Yup.object().shape({
       rangeTanggal: Yup.array()
@@ -1008,24 +922,72 @@ function CreateForm({ handleSubmit }: MyFormProps) {
     handleSubmit,
   })(FormField);
 
-  return <FormWithFormik />;
+  return <FormWithFormik {...otherProps} />;
 }
 
-const AddNotulenForm = () => {
-  const { profile, notulen } = useSelector(
-    (state: State) => ({
-      profile: state.profile.profile,
-      notulen: state.notulen.notulen,
-    }),
-    shallowEqual
-  );
+interface PropTypes {
+  profile: any;
+  payload: any;
+  dataAtasan: any;
+  step: string
+}
 
-  const [loading, setLoading] = useState<boolean>(false);
+const AddNotulenForm = ({ profile, payload, dataAtasan, step }: PropTypes) => {
   const router = useRouter();
+  const [atasan, setAtasan] = useState<any>(null);
+  const [dibuatTanggal, setDibuatTanggal] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [response, setResponse] = useState<any>([]);
+  const [openConfirm, setOpenConfirm] = useState<boolean>(false);
+
+  useEffect(() => {
+    setAtasan({
+      label: payload.atasan.nama,
+      value: payload.atasan.nip,
+      data: {
+        nama: payload.atasan.nama,
+        nip: payload.atasan.nip,
+        pangkat: payload.atasan.pangkat,
+        namaPangkat: payload.atasan.nama_pangkat,
+        jabatan: payload.atasan.jabatan
+      },
+    })
+
+    formattedDate();
+  }, []);
+
+  const formattedDate = () => {
+    let tempDate: any = payload.hari + '/' + Number(payload.bulan - 1) + '/' + payload.tahun;
+    const dateParts = tempDate.split('/');
+    const day = parseInt(dateParts[0], 10);
+    const month = parseInt(dateParts[1], 10); // Months are 0-based (0 = January, 1 = February, etc.)
+    const year = parseInt(dateParts[2], 10);
+    // Create a Date object with the parsed values
+    const formattedDate = new Date(year, month, day);
+
+    // Define a formatting option for the date
+    const options: any = {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZoneName: 'long',
+      timeZone: 'Asia/Jakarta' // Set the desired time zone
+    };
+
+    // Format the date using the Intl.DateTimeFormat API
+    const formatter = new Intl.DateTimeFormat('en-US', options);
+    const formattedDateString = formatter.format(formattedDate);
+    setDibuatTanggal(formattedDate);
+  }
 
   const handleSubmit = async (values: FormValues) => {
     setLoading(true);
-    const payload = {
+    const dataNotulen = {
+      uuid: payload.uuid !== null ? payload.uuid : uuidv4(),
       tanggal: values.rangeTanggal,
       waktu: values.jam,
       pendahuluan: JSON.stringify(values.pendahuluan),
@@ -1054,7 +1016,7 @@ const AddNotulenForm = () => {
     const response = await fetchApi({
       url: `/notulen/addNotulen`,
       method: "post",
-      body: payload,
+      body: dataNotulen,
       type: "auth",
     });
 
@@ -1075,302 +1037,45 @@ const AddNotulenForm = () => {
         });
       }
     } else {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "Berhasil menambahkan notulen",
-        showConfirmButton: false,
-        timer: 1500,
-      });
-      router.push("/notulen/laporan");
+      if (step !== undefined) {
+        setLoading(false);
+        setOpenConfirm(true);
+      } else {
+        router.push("/notulen/laporan");
+      }
     }
   };
 
-  const handleSave = () => { }
+  const handleNext = () => { }
+
+  const handleCancel = () => router.push("/notulen/laporan");
 
   return (
     <div>
       {loading ? (
         <Loading loading={loading} setLoading={setLoading} />
       ) : (
-        <CreateForm handleSubmit={handleSubmit} handleSave={handleSave} />
+        <CreateForm
+          handleSubmit={handleSubmit}
+          dataAtasan={dataAtasan}
+          atasan={atasan}
+          dibuatTanggal={dibuatTanggal}
+          payload={payload}
+          step={step}
+        />
       )}
+      <ModalConfirm
+        openModal={openConfirm}
+        setOpenModal={setOpenConfirm}
+        condition="success"
+        title="Berhasil Simpan Notulen"
+        text="Ingin Menambah Notulen ?"
+        handleCancel={handleCancel}
+        handleNext={handleNext}
+      />
     </div>
   );
 };
 
 export default AddNotulenForm;
 
-// const FormNotulenForm = () => {
-//   const router = useRouter();
-
-//   const [jam, setJam] = useState<string>('');
-//   const [pendahuluan, setPendahuluan] = useState<string>('');
-//   const [pimpinanRapat, setPimpinanRapat] = useState<string>('');
-//   const [pesertaRapat, setPesertaRapat] = useState<string>('');
-//   // const [pesertaArray, setPesertaArray] = useState<any>({ id: 0, nama: '' });
-//   const [pesertaArray, setPesertaArray] = useState<any>([])
-//   const [lokasi, setLokasi] = useState<string>('');
-//   const [acara, setAcara] = useState<string>('');
-//   const [pelapor, setPelapor] = useState<string>('');
-//   const [atasan, setAtasan] = useState<string>('');
-//   const [isiRapat, setIsiRapat] = useState<OutputData>();
-//   // const [value, setValue] = React.useState<DateRange<Dayjs>>([
-//   //   dayjs('2022-04-17'),
-//   //   dayjs('2022-04-21'),
-//   // ]);
-//   const [rangeTanggal, setRangeTanggal] = useState<any>([
-// {
-//   startDate: null,
-//   endDate: null,
-//   key: 'selection'
-// }
-//   ]);
-
-//   const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
-//   const [openDateRange, setOpenDateRange] = useState<boolean>(false);
-//   const [loading, setLoading] = useState<boolean>(false);
-
-//   const handleAddParticipant = (e: any) => {
-//     e.preventDefault();
-//     setOpenAddParticipant(false);
-//     setPesertaRapat('');
-//     let temp = pesertaArray;
-//     temp.push({ nama: pesertaRapat })
-//     setPesertaArray(temp);
-//     // const temp = pesertaArray;
-//     // temp[pesertaArray.id] = {
-//     //   id: pesertaArray.id++,
-//     //   nama: pesertaRapat
-//     // }
-//     // setPesertaArray(temp);
-//   }
-
-//   const handleSubmit = async (e: any) => {
-//     e.preventDefault();
-//     const payload = {
-//       tanggal: rangeTanggal,
-//       waktu: jam,
-//       pendahuluan: pendahuluan,
-//       pimpinan_rapat: pimpinanRapat,
-//       peserta_rapat: pesertaArray,
-//       isi_rapat: JSON.stringify(isiRapat),
-//       lokasi: lokasi,
-//       acara: acara,
-//       pelapor: pelapor,
-//       atasan: atasan,
-//       status: '-',
-//       id_pegawai: 2
-//     }
-
-//     const response = await fetchApi({
-//       url: `/notulen/addNotulen`,
-//       method: 'post',
-//       body: payload,
-//       type: "auth"
-//     })
-//     console.log(response, '<<<');
-
-//     if (!response.success) {
-//       if (response.data.code == 500) {
-//         Swal.fire({
-//           icon: 'error',
-//           title: 'Oops...',
-//           text: 'Koneksi bermasalah!',
-//         })
-//       }
-//       setLoading(false);
-//     } else {
-//       if (response.data.code == 200) {
-//         setLoading(false);
-//         Swal.fire({
-//           position: 'top-end',
-//           icon: 'success',
-//           title: 'Your work has been saved',
-//           showConfirmButton: false,
-//           timer: 1500
-//         })
-//         router.push('/notulen/laporan')
-//       }
-//     }
-//   }
-
-//   return (
-//     <div className="form-container bg-white">
-//       <form className="form-wrapper-general" onSubmit={handleSubmit}>
-//         <div className="px-8 font-Nunito flex flex-col space-y-7 mt-4">
-//           <div className="data flex flex-row mt-4">
-//             <div className='flex border-2 border-light-gray rounded-lg w-full py-3 px-4' onClick={() => setOpenDateRange(true)}>
-//               {rangeTanggal[0]?.startDate === null ? (
-//                 <span>Pilih Hari / Tanggal</span>
-//               ) : (
-//                 <div className='flex gap-4'>
-//                   {rangeTanggal[0]?.startDate !== null && <span>{formatDate(rangeTanggal[0]?.startDate)}</span>}
-//                   {rangeTanggal[0]?.endDate !== null && rangeTanggal[0]?.endDate !== rangeTanggal[0]?.startDate && <span> - {formatDate(rangeTanggal[0]?.endDate)}</span>}
-//                 </div>
-//               )}
-//             </div>
-
-//           </div>
-//           <div className="data flex flex-row w-full">
-//             <TextInput
-//               type="time"
-//               id="jam"
-//               name="jam"
-//               label="Masukkan Jam"
-//               change={(e: any) => setJam(e.$d)}
-//               value={jam}
-//             // errors={errors.nama}
-//             // value={values.nama}
-//             // change={handleChange}
-//             />
-//           </div>
-//           <div className='mt-2 -pb-2'>Penjelasan :</div>
-//           <div className="data flex flex-row">
-//             <TextInput
-//               type="text-area"
-//               id="pendahuluan"
-//               name="pendahuluan"
-//               label="Pendahuluan"
-//               change={(e: any) => setPendahuluan(e.target.value)}
-//               value={pendahuluan}
-//             />
-//           </div>
-//           <div className="data flex flex-row">
-//             <TextInput
-//               type="text"
-//               id="pimpinanRapat"
-//               name="pimpinanRapat"
-//               label="Pimpinan Rapat"
-//               change={(e: any) => setPimpinanRapat(e.target.value)}
-//               value={pimpinanRapat}
-//             />
-//           </div>
-//           <div className="flex flex-col justify-center mb-2">
-//             <div className='flex gap-2'>
-//               <button onClick={(e) => {
-//                 e.preventDefault()
-//                 setOpenAddParticipant(!openAddParticipant)
-//               }}><AiFillPlusCircle size={26} /></button>
-//               <div>Tambah Peserta</div>
-//             </div>
-//             <div className={`data flex flex-row ${openAddParticipant ? 'block' : 'hidden'}`}>
-//               <div className='flex flex-col w-full'>
-//                 <TextInput
-//                   type="text"
-//                   id="pesertaRapat"
-//                   name="pesertaRapat"
-//                   label="Peserta Rapat"
-//                   change={(e: any) => setPesertaRapat(e.target.value)}
-//                   value={pesertaRapat}
-//                 />
-//                 <button onClick={(e) => handleAddParticipant(e)}>Tambah</button>
-//               </div>
-//             </div>
-//             <ul className='mt-4 ml-4'>
-//               <li className='font flex flex-col gap-2'>
-//                 {pesertaArray.map((el: any, i: number) => (
-//                   <div key={i} className='flex gap-2'>
-//                     <div>{i + 1} .</div>
-//                     <div>{el.nama}</div>
-//                   </div>
-//                 ))}
-//               </li>
-//             </ul>
-//           </div>
-//           <div className='mt-8 -mb-4 text-deep-gray'>Tambahkan Isi Rapat</div>
-//           <div className="container border border-light-gray rounded-lg">
-//             <EditorBlock data={isiRapat} onChange={setIsiRapat} holder="editorjs-container" />
-//           </div>
-//           <div className="data flex flex-row">
-//             <TextInput
-//               type="text"
-//               id="lokasi"
-//               name="lokasi"
-//               label="Lokasi / tempat"
-//               change={(e: any) => setLokasi(e.target.value)}
-//               value={lokasi}
-//             />
-//           </div>
-//           <div className="data flex flex-row">
-//             <TextInput
-//               type="text"
-//               id="acara"
-//               name="acara"
-//               label="Acara"
-//               change={(e: any) => setAcara(e.target.value)}
-//               value={acara}
-//             />
-//           </div>
-//           <div className="data flex flex-row">
-//             <TextInput
-//               type="text"
-//               id="subKegiatan"
-//               name="subKegiatan"
-//               label="Pilih Nama Pelapor"
-//               placeholder="Pilih Nama Pelapor"
-//               change={(e: any) => setPelapor(e.target.value)}
-//               value={pelapor}
-//             />
-//           </div>
-//           <div className="data flex flex-row">
-//             <TextInput
-//               type="text"
-//               id="subKegiatan"
-//               name="subKegiatan"
-//               label="Pilih Nama Atasan"
-//               placeholder="Pilih Nama Atasan"
-//               change={(e: any) => setAtasan(e.target.value)}
-//               value={atasan}
-//             // errors={errors.subKegiatan}
-//             // options={subKegiatanList}
-//             // handleBlur={handleBlur}
-//             // setValueSelected={handleChange}
-//             // change={(selectedOption: any) => {
-//             //   handleChange({
-//             //     target: { name: "subKegiatan", value: selectedOption }
-//             //   })
-//             // }}
-//             />
-//           </div>
-//         </div>
-//         <div className="btn-submit mx-8 flex flex-row space-x-3">
-//           <div className="w-[8em]">
-//             <Button
-//               variant="xl"
-//               className="button-container mb-2 mt-5"
-//               // loading={loading}
-//               rounded
-//             // onClick={handleSubmit}
-//             >
-//               <div className="flex justify-center items-center text-white font-Nunito">
-//                 <span className="button-text">Tambah</span>
-//               </div>
-//             </Button>
-//           </div>
-//           <div className="w-[8em]">
-//             <Button
-//               variant="xl"
-//               type="secondary"
-//               className="button-container mb-2 mt-5"
-//               rounded
-//             >
-//               <div className="flex justify-center items-center text-[#002DBB] font-Nunito">
-//                 <span className="button-text">Batal</span>
-//               </div>
-//             </Button>
-//           </div>
-//         </div>
-//       </form>
-
-//       <DateRangePicker
-//         isOpen={openDateRange}
-//         setIsOpen={setOpenDateRange}
-//         rangeTanggal={rangeTanggal}
-//         setRangeTanggal={setRangeTanggal}
-//       />
-//     </div>
-//   )
-// }
-
-// export default FormNotulenForm

@@ -1,25 +1,25 @@
 "use client";
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { fetchApi } from "@/components/mixins/request";
-import Swal from "sweetalert2";
-import LaporanNotulenList from "@/components/pages/notulen/list";
-import Breadcrumb from "@/components/global/Breadcrumbs/Breadcrumb";
-import { getShortDate, getTime } from "@/components/hooks/formatDate";
-import { ImTable2 } from "react-icons/im";
 import withAuth from "@/components/hocs/withAuth";
 import { shallowEqual, useSelector } from "react-redux";
+import { fetchApi } from "@/components/mixins/request";
+import Swal from "sweetalert2";
+import Loading from "@/components/global/Loading/loading";
 import { State } from "@/store/reducer";
+import { getShortDate, getTime } from "@/components/hooks/formatDate";
+import Breadcrumb from "@/components/global/Breadcrumbs/Breadcrumb";
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import Loading from "@/components/global/Loading/loading";
+import { ImTable2 } from "react-icons/im";
+import LaporanUndanganList from "@/components/pages/undangan/list";
 
-const LaporanNotulen = () => {
-  const [notulens, setNotulens] = useState<any>([]);
+const LaporanUndangan = () => {
+  const [undangan, setUndangan] = useState<any>([]);
   const [month, setMonth] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { profile } = useSelector(
     (state: State) => ({
@@ -30,7 +30,6 @@ const LaporanNotulen = () => {
 
   useEffect(() => {
     fetchData();
-
     if (month === null) {
       const currentDate = new Date();
       const currentShortMonth = currentDate.getMonth() + 1;
@@ -44,10 +43,10 @@ const LaporanNotulen = () => {
   const fetchData = async () => {
     setLoading(true);
     const response = await fetchApi({
-      url: `/notulen/getAuthNotulen/${profile.Perangkat_Daerah.kode_opd}/${profile.nip}/${month.month}/${month.year}`,
+      url: `/undangan/getAuthUndangan/${profile.Perangkat_Daerah.kode_opd}/${month.month}/${month.year}`,
       method: "get",
       type: "auth",
-    });
+    })
 
     if (!response.success) {
       setLoading(false);
@@ -57,40 +56,31 @@ const LaporanNotulen = () => {
         text: "Koneksi bermasalah!",
       });
     } else {
-      if (response.data.code == 200) {
-        const { data } = response.data;
+      const { data } = response.data;
+      console.log(data, '<<');
 
-        const temp: any = [];
-        data.map((el: any, i: number) => {
-          temp.push({
-            id: i + 1,
-            id_notulen: el.id,
-            index: el.id,
-            opd: el.Perangkat_Daerah.nama_opd,
-            pembuat: el.Pegawai.nama,
-            tagging: el.Taggings.length !== 0 ? el.Taggings.map((el: any) => el.nama_tagging) : "-",
-            tanggal: el.tanggal[0]?.startDate !== el.tanggal[0]?.endDate
-              ? getShortDate(el.tanggal[0]?.startDate) +
-              " - " +
-              getShortDate(el.tanggal[0]?.endDate)
-              : getShortDate(el.tanggal[0]?.startDate),
-            waktu: getTime(el.waktu) + " WIB",
-            acara: el.acara,
-            sasaran: el.Sasarans.length !== 0 ? el.Sasarans.map((data: any) => data.sasaran) : "-",
-            lokasi: el.lokasi,
-            status: el.status,
-            foto: el.link_img_foto !== null ? "V" : "X",
-            daftarHadir: el.link_img_daftar_hadir !== null ? "V" : "X",
-            undangan: el.link_img_surat_undangan !== null ? "V" : "X",
-            spj: el.link_img_spj !== null ? "V" : "X",
-            lainLain: el.link_img_pendukung !== null ? "V" : "X",
-          });
-        });
-        setNotulens(temp);
-        setLoading(false);
-      }
+      const temp: any = [];
+      data.map((el: any, i: number) => {
+        temp.push({
+          id: i + 1,
+          id_undangan: el.id,
+          opd: el.Perangkat_Daerah.nama_opd,
+          pembuat: el.Pegawai.nama,
+          tanggal: el.tanggal[0]?.startDate !== el.tanggal[0]?.endDate
+            ? getShortDate(el.tanggal[0]?.startDate) +
+            " - " +
+            getShortDate(el.tanggal[0]?.endDate)
+            : getShortDate(el.tanggal[0]?.startDate),
+          waktu: getTime(el.waktu) + " WIB",
+          acara: el.acara,
+          tempat: el.tempat,
+          status: el.status,
+        })
+      });
+      setUndangan(temp);
+      setLoading(false);
     }
-  };
+  }
 
   const gradientStyle = {
     width: "100%",
@@ -106,15 +96,13 @@ const LaporanNotulen = () => {
   }
 
   return (
-    <div className="list-notulen-container relative">
-      <Breadcrumb pageName="Laporan" />
+    <div className="list-undangan-container relative">
+      <Breadcrumb pageName="Undangan" />
       <div className="bg-white dark:bg-meta-4 shadow-card flex flex-col gap-2 py-4 text-center font-bold text-title-sm rounded rounded-lg border-none">
-        <div>DAFTAR LAPORAN NOTULEN</div>
+        <div>DAFTAR LAPORAN UNDANGAN</div>
         {profile.role == 1 && <div>PEMERINTAH KOTA MADIUN</div>}
         {profile.role == 2 || profile.role == 3 ? <div>{profile.Perangkat_Daerah?.nama_opd}</div> : null}
-        {/* <div>Bulan {currentMonth}</div> */}
       </div>
-      {/* <div className='md:w-[30%] w-full md:absolute md:right-0 md:top-[10em] top-[13em] bg-white'> */}
       <div className="flex md:justify-between justify-center">
         <div></div>
         <div className="bg-white mt-10">
@@ -128,16 +116,16 @@ const LaporanNotulen = () => {
       <div style={gradientStyle} className="md:mt-[1em]">
         <div className="px-4 flex text-white py-4 space-x-6 font-bold items-center">
           <ImTable2 size={20} />
-          <div className="text-title-xsm">Notulen</div>
+          <div className="text-title-xsm">Undangan</div>
         </div>
       </div>
       {loading ? (
         <Loading loading={loading} setLoading={setLoading} />
       ) : (
-        <LaporanNotulenList data={notulens} profile={profile} fetchData={fetchData} />
+        <LaporanUndanganList data={undangan} profile={profile} fetchData={fetchData} />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default withAuth(LaporanNotulen);
+export default withAuth(LaporanUndangan);

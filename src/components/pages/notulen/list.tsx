@@ -1,23 +1,22 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getTime, getShortDate } from '@/components/hooks/formatDate';
-import { DataGrid, GridColDef, GridCellParams } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import { darken, lighten, styled } from '@mui/material/styles';
 import { fetchApi } from '@/components/mixins/request';
 import Swal from 'sweetalert2';
-import XAddTagging from './x-modal/XAddTagging';
-import XAddSasaran from './x-modal/XAddSasaran';
+import XAddTagging from '../laporan/x-modal/XAddTagging';
+import XAddSasaran from '../laporan/x-modal/XAddSasaran';
 import Loading from '@/components/global/Loading/loading';
 
-interface LaporanNotulenAuthType {
+interface PropTypes {
   data: any,
   profile: any,
   fetchData?: any
 }
 
-const LaporanNotulenAuth = ({ data, profile, fetchData }: LaporanNotulenAuthType) => {
+const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
   const router = useRouter();
   const [openAddTagging, setOpenAddTagging] = useState<boolean>(false);
   const [openAddSasaran, setOpenAddSasaran] = useState<boolean>(false);
@@ -597,4 +596,4 @@ const LaporanNotulenAuth = ({ data, profile, fetchData }: LaporanNotulenAuthType
   )
 }
 
-export default LaporanNotulenAuth
+export default LaporanNotulenList

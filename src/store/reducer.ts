@@ -1,12 +1,12 @@
 import { combineReducers } from "redux";
 import opd from "./opd/action";
 import profile from "./profile/action";
-import notulen from "./notulen/action";
+import payload from "./payload/action";
 
 const combinedReducer = combineReducers({
   opd,
   profile,
-  notulen
+  payload
 })
 
 export default combinedReducer;

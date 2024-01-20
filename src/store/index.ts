@@ -9,7 +9,7 @@ const config = {
   whitelist: [
     "opd",
     "profile",
-    "notulen"
+    "payload"
   ]
 }
 

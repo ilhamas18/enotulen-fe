@@ -1,0 +1,60 @@
+.steps-wrapper {
+  padding: 1rem 0;
+  overflow: auto;
+  width: 100%;
+
+  .steps-list {
+    display: flex;
+    align-items: center;
+  }
+
+  .steps__item {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+
+    span {
+      font-size: 14px;
+      font-weight: 500 !important;
+
+      @include media-breakpoint-up(xxl) {
+        font-size: 1rem;
+      }
+    }
+
+    &.active {
+      opacity: 1;
+
+      span {
+        font-weight: 500;
+      }
+    }
+
+    &.done {
+      opacity: 1;
+      cursor: pointer;
+
+      span {
+        font-weight: 600;
+      }
+    }
+  }
+
+  .line-gap-wrapper {
+    .line-gap {
+      padding: 0.625rem 0.5rem;
+
+      @include media-breakpoint-up(xxl) {
+        padding: 0.625rem 0.75rem;
+      }
+
+      span {
+        width: 125px;
+        display: block;
+        height: 1px;
+        background: rgb(46, 42, 42);
+      }
+    }
+  }
+}
