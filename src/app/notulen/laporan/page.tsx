@@ -8,15 +8,17 @@ import Breadcrumb from "@/components/global/Breadcrumbs/Breadcrumb";
 import { getShortDate, getTime } from "@/components/hooks/formatDate";
 import { ImTable2 } from "react-icons/im";
 import withAuth from "@/components/hocs/withAuth";
-import { shallowEqual, useSelector } from "react-redux";
+import { shallowEqual, useSelector, useDispatch } from "react-redux";
 import { State } from "@/store/reducer";
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Loading from "@/components/global/Loading/loading";
+import { setPayload } from "@/store/payload/action";
 
 const LaporanNotulen = () => {
+  const dispatch = useDispatch();
   const [notulens, setNotulens] = useState<any>([]);
   const [month, setMonth] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -39,6 +41,8 @@ const LaporanNotulen = () => {
 
       setMonth({ month: currentShortMonth, year: currentYear })
     }
+
+    dispatch(setPayload([]));
   }, [month]);
 
   const fetchData = async () => {

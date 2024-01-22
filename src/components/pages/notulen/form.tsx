@@ -608,14 +608,35 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   }}
                 />
               </div>
-              <div className="data flex flex-col w-full mt-2 gap-2 justify-center">
-                <div>Waktu pembuatan notulen :</div>
-                <div className="data flex flex-row mt-4 md:mt-0 md:w-[25%] w-full">
-                  <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                    <span>{formatDate(values.dibuatTanggal)}</span>
+              {values.dibuatTanggal == null ? (
+                <div className="data flex flex-row w-full mt-2">
+                  <div className="flex flex-col gap-3">
+                    <div>Masukkan tanggal pembuatan notulen :</div>
+                    <TextInput
+                      type="date-picker"
+                      id="dibuatTanggal"
+                      name="dibuatTanggal"
+                      touched={touched.dibuatTanggal}
+                      change={(e: any) => {
+                        handleChange({
+                          target: { name: "dibuatTanggal", value: e.$d },
+                        });
+                      }}
+                      value={values.dibuatTanggal}
+                      errors={errors.dibuatTanggal}
+                    />
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div className="data flex flex-col w-full mt-2 gap-2 justify-center">
+                  <div>Waktu pembuatan notulen :</div>
+                  <div className="data flex flex-row mt-4 md:mt-0 md:w-[25%] w-full">
+                    <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                      <span>{formatDate(values.dibuatTanggal)}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
               {values.suratUndangan == null ? (
                 <div className="data flex flex-col">
                   <label className="block mb-2 text-sm font-medium text-gray-900 text-Nunito dark:text-white">
@@ -790,8 +811,8 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                       ref={(data: any) => setSign(data)}
                     />
                   </div>
-                  <button style={{ height: "30px", width: "60px" }} onClick={(e: any) => handleClear(e)}>Clear</button>
-                  <button style={{ height: "30px", width: "60px" }} onClick={(e: any) => handleGenerate(e)}>Save</button>
+                  <button style={{ height: "30px", width: "200px" }} className="text-meta-1" onClick={(e: any) => handleClear(e)}>BERSIHKAN</button>
+                  <button style={{ height: "30px", width: "200px" }} className="text-xl-base font-bold" onClick={(e: any) => handleGenerate(e)}>SIMPAN</button>
                 </>
               ) : (
                 <div className="flex md:flex-row md:items-center md:justify-between flex-col mb-2 md:mb-0">
@@ -868,20 +889,20 @@ function CreateForm({ handleSubmit, atasan, dibuatTanggal, payload, ...otherProp
       tagging: [],
       rangeTanggal: [
         {
-          startDate: payload.tanggal[0]?.startDate != null ? new Date(payload.tanggal[0]?.startDate) : null,
-          endDate: payload.tanggal[0]?.endDate != null ? new Date(payload.tanggal[0]?.endDate) : null,
+          startDate: payload.length != 0 ? payload.tanggal[0]?.startDate != null ? new Date(payload.tanggal[0]?.startDate) : null : null,
+          endDate: payload.length != 0 ? payload.tanggal[0]?.endDate != null ? new Date(payload.tanggal[0]?.endDate) : null : null,
           key: "selection",
         },
       ],
-      jam: payload.waktu !== null ? payload.waktu : null,
-      pendahuluan: payload.pendahuluan !== null ? JSON.parse(payload.pendahuluan) : "",
+      jam: payload.length != 0 ? payload.waktu !== null ? payload.waktu : null : null,
+      pendahuluan: payload.length != 0 ? payload.pendahuluan !== null ? JSON.parse(payload.pendahuluan) : "" : "",
       pimpinanRapat: "",
       pesertaArray: [],
       isiRapat: null,
       tindakLanjut: null,
-      lokasi: payload.tempat !== "" ? payload.tempat : "",
-      acara: payload.acara !== "" ? payload.acara : "",
-      atasan: payload.atasan !== null ? atasan : null,
+      lokasi: payload.length != 0 ? payload.tempat !== "" ? payload.tempat : "" : "",
+      acara: payload.length != 0 ? payload.acara !== "" ? payload.acara : "" : "",
+      atasan: payload.atasan != 0 ? payload.atasan !== null ? atasan : null : null,
       suratUndangan: null,
       daftarHadir: null,
       spj: null,
@@ -941,19 +962,20 @@ const AddNotulenForm = ({ profile, payload, dataAtasan, step }: PropTypes) => {
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
 
   useEffect(() => {
-    setAtasan({
-      label: payload.atasan.nama,
-      value: payload.atasan.nip,
-      data: {
-        nama: payload.atasan.nama,
-        nip: payload.atasan.nip,
-        pangkat: payload.atasan.pangkat,
-        namaPangkat: payload.atasan.nama_pangkat,
-        jabatan: payload.atasan.jabatan
-      },
-    })
-
-    formattedDate();
+    if (payload.length != 0) {
+      setAtasan({
+        label: payload.atasan.nama,
+        value: payload.atasan.nip,
+        data: {
+          nama: payload.atasan.nama,
+          nip: payload.atasan.nip,
+          pangkat: payload.atasan.pangkat,
+          namaPangkat: payload.atasan.nama_pangkat,
+          jabatan: payload.atasan.jabatan
+        },
+      })
+      formattedDate();
+    }
   }, []);
 
   const formattedDate = () => {
@@ -987,7 +1009,7 @@ const AddNotulenForm = ({ profile, payload, dataAtasan, step }: PropTypes) => {
   const handleSubmit = async (values: FormValues) => {
     setLoading(true);
     const dataNotulen = {
-      uuid: payload.uuid !== null ? payload.uuid : uuidv4(),
+      uuid: payload.length != 0 ? payload.uuid : uuidv4(),
       tanggal: values.rangeTanggal,
       waktu: values.jam,
       pendahuluan: JSON.stringify(values.pendahuluan),

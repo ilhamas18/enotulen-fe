@@ -10,6 +10,7 @@ import { GiPapers } from "react-icons/gi";
 import { shallowEqual, useSelector } from "react-redux";
 import { State } from "@/store/reducer";
 import { FaRegNewspaper } from "react-icons/fa";
+import { BiSolidReport } from "react-icons/bi";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -227,7 +228,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             <Link
                               href="/undangan/laporan"
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${pathname === "/undangan/laporan" && "text-white"
-                                } ${pathname === '/undangan/laporan' && 'text-white'} `}
+                                }`}
                             >
                               List Undangan
                             </Link>
@@ -260,7 +261,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       <Link
                         href="#"
                         className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4
-                          ${pathname.includes("laporan") && "bg-graydark dark:bg-meta-4"}`}
+                          ${pathname.includes("notulen") && "bg-graydark dark:bg-meta-4"}`}
                         onClick={(e) => {
                           e.preventDefault();
                           sidebarExpanded
@@ -314,7 +315,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   )
                 }}
               </SidebarLinkGroup>
-              {/* )} */}
+
+              <li>
+                <Link
+                  href="/laporan"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4
+                          ${pathname === "/laporan" && "bg-graydark dark:bg-meta-4"}`}
+                >
+                  <BiSolidReport size={20} />
+                  Laporan
+                </Link>
+              </li>
             </ul>
           </div>
         </nav>

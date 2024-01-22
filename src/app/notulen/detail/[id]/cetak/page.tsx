@@ -312,9 +312,11 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                     Yang Melapor,
                   </div>
                 </div>
-                <div className={`${laporan.signature !== '-' || laporan.signature !== '' || laporan.signature !== null ? 'block' : 'hidden'}`}>
-                  <img src={laporan.signature} className="w-[270px]" alt="TTD" />
-                </div>
+                {laporan.signature !== '-' && (
+                  <div>
+                    <img src={laporan.signature} className="w-[270px]" alt="TTD" />
+                  </div>
+                )}
                 <div>
                   <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
                     {laporan.Pegawai?.nama}
