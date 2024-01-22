@@ -199,7 +199,7 @@ const TambahTematik = () => {
                         <StyledTableCell align="center">{i + 1}</StyledTableCell>
                         <StyledTableCell align="center">{row.nama_tagging}</StyledTableCell>
                         {profile.role == 1 && <StyledTableCell align="center">{row.Perangkat_Daerah.nama_opd}</StyledTableCell>}
-                        <StyledTableCell align="center">{row.Notulens.length} Notulen</StyledTableCell>
+                        <StyledTableCell align="center">{row.Uuids.length} Notulen</StyledTableCell>
                         <StyledTableCell align="center">
                           <div className='flex space-x-4 items-center justify-center'>
                             <div onClick={() => handleDetail(row.id)}><FaRegEye size={20} /></div>

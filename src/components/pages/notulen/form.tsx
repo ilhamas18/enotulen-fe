@@ -1059,7 +1059,7 @@ const AddNotulenForm = ({ profile, payload, dataAtasan, step }: PropTypes) => {
         });
       }
     } else {
-      if (step !== undefined) {
+      if (step !== null) {
         setLoading(false);
         setOpenConfirm(true);
       } else {
@@ -1091,7 +1091,7 @@ const AddNotulenForm = ({ profile, payload, dataAtasan, step }: PropTypes) => {
         setOpenModal={setOpenConfirm}
         condition="success"
         title="Berhasil Simpan Notulen"
-        text="Ingin Menambah Notulen ?"
+        text="Ingin Menambah Daftar Hadir ?"
         handleCancel={handleCancel}
         handleNext={handleNext}
       />

@@ -100,51 +100,53 @@ function Home() {
     } else {
       if (response.data.code == 200) {
         const { data } = response.data;
+        console.log(data, '.daf');
+
         if (profile.role != 3) {
           let temp: any = [
-            data.filter((el: any) => el.bulan === "1").length,
-            data.filter((el: any) => el.bulan === "2").length,
-            data.filter((el: any) => el.bulan === "3").length,
-            data.filter((el: any) => el.bulan === "4").length,
-            data.filter((el: any) => el.bulan === "5").length,
-            data.filter((el: any) => el.bulan === "6").length,
-            data.filter((el: any) => el.bulan === "7").length,
-            data.filter((el: any) => el.bulan === "8").length,
-            data.filter((el: any) => el.bulan === "9").length,
-            data.filter((el: any) => el.bulan === "10").length,
-            data.filter((el: any) => el.bulan === "11").length,
-            data.filter((el: any) => el.bulan === "12").length
+            data.filter((el: any) => el.Uuid.bulan === "1").length,
+            data.filter((el: any) => el.Uuid.bulan === "2").length,
+            data.filter((el: any) => el.Uuid.bulan === "3").length,
+            data.filter((el: any) => el.Uuid.bulan === "4").length,
+            data.filter((el: any) => el.Uuid.bulan === "5").length,
+            data.filter((el: any) => el.Uuid.bulan === "6").length,
+            data.filter((el: any) => el.Uuid.bulan === "7").length,
+            data.filter((el: any) => el.Uuid.bulan === "8").length,
+            data.filter((el: any) => el.Uuid.bulan === "9").length,
+            data.filter((el: any) => el.Uuid.bulan === "10").length,
+            data.filter((el: any) => el.Uuid.bulan === "11").length,
+            data.filter((el: any) => el.Uuid.bulan === "12").length
           ];
           setNotulenLength(temp);
           setNotulens(data);
         } else {
           let temp: any = [
-            data.data.filter((el: any) => el.bulan === "1").length,
-            data.data.filter((el: any) => el.bulan === "2").length,
-            data.data.filter((el: any) => el.bulan === "3").length,
-            data.data.filter((el: any) => el.bulan === "4").length,
-            data.data.filter((el: any) => el.bulan === "5").length,
-            data.data.filter((el: any) => el.bulan === "6").length,
-            data.data.filter((el: any) => el.bulan === "7").length,
-            data.data.filter((el: any) => el.bulan === "8").length,
-            data.data.filter((el: any) => el.bulan === "9").length,
-            data.data.filter((el: any) => el.bulan === "10").length,
-            data.data.filter((el: any) => el.bulan === "11").length,
-            data.data.filter((el: any) => el.bulan === "12").length
+            data.data.filter((el: any) => el.Uuid.bulan === "1").length,
+            data.data.filter((el: any) => el.Uuid.bulan === "2").length,
+            data.data.filter((el: any) => el.Uuid.bulan === "3").length,
+            data.data.filter((el: any) => el.Uuid.bulan === "4").length,
+            data.data.filter((el: any) => el.Uuid.bulan === "5").length,
+            data.data.filter((el: any) => el.Uuid.bulan === "6").length,
+            data.data.filter((el: any) => el.Uuid.bulan === "7").length,
+            data.data.filter((el: any) => el.Uuid.bulan === "8").length,
+            data.data.filter((el: any) => el.Uuid.bulan === "9").length,
+            data.data.filter((el: any) => el.Uuid.bulan === "10").length,
+            data.data.filter((el: any) => el.Uuid.bulan === "11").length,
+            data.data.filter((el: any) => el.Uuid.bulan === "12").length
           ];
           let temp2: any = [
-            data.verif.filter((el: any) => el.bulan === "1").length,
-            data.verif.filter((el: any) => el.bulan === "2").length,
-            data.verif.filter((el: any) => el.bulan === "3").length,
-            data.verif.filter((el: any) => el.bulan === "4").length,
-            data.verif.filter((el: any) => el.bulan === "5").length,
-            data.verif.filter((el: any) => el.bulan === "6").length,
-            data.verif.filter((el: any) => el.bulan === "7").length,
-            data.verif.filter((el: any) => el.bulan === "8").length,
-            data.verif.filter((el: any) => el.bulan === "9").length,
-            data.verif.filter((el: any) => el.bulan === "10").length,
-            data.verif.filter((el: any) => el.bulan === "11").length,
-            data.verif.filter((el: any) => el.bulan === "12").length
+            data.verif.filter((el: any) => el.Uuid.bulan === "1").length,
+            data.verif.filter((el: any) => el.Uuid.bulan === "2").length,
+            data.verif.filter((el: any) => el.Uuid.bulan === "3").length,
+            data.verif.filter((el: any) => el.Uuid.bulan === "4").length,
+            data.verif.filter((el: any) => el.Uuid.bulan === "5").length,
+            data.verif.filter((el: any) => el.Uuid.bulan === "6").length,
+            data.verif.filter((el: any) => el.Uuid.bulan === "7").length,
+            data.verif.filter((el: any) => el.Uuid.bulan === "8").length,
+            data.verif.filter((el: any) => el.Uuid.bulan === "9").length,
+            data.verif.filter((el: any) => el.Uuid.bulan === "10").length,
+            data.verif.filter((el: any) => el.Uuid.bulan === "11").length,
+            data.verif.filter((el: any) => el.Uuid.bulan === "12").length
           ];
           setNotulenLength(temp);
           setNotulens(data.verif);

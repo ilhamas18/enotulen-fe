@@ -43,7 +43,7 @@ const LaporanUndangan = () => {
   const fetchData = async () => {
     setLoading(true);
     const response = await fetchApi({
-      url: `/undangan/getAuthUndangan/${profile.Perangkat_Daerah.kode_opd}/${month.month}/${month.year}`,
+      url: `/undangan/getAuthUndangan/${profile.Perangkat_Daerah.kode_opd}/${month?.month}/${month?.year}`,
       method: "get",
       type: "auth",
     })
@@ -63,8 +63,8 @@ const LaporanUndangan = () => {
         temp.push({
           id: i + 1,
           id_undangan: el.id,
-          opd: el.Perangkat_Daerah.nama_opd,
-          pembuat: el.Pegawai.nama,
+          opd: el.Uuid.Perangkat_Daerah.nama_opd,
+          pembuat: el.Uuid.Pegawai.nama,
           tanggal: el.tanggal[0]?.startDate !== el.tanggal[0]?.endDate
             ? getShortDate(el.tanggal[0]?.startDate) +
             " - " +

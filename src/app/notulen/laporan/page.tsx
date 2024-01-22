@@ -63,16 +63,18 @@ const LaporanNotulen = () => {
     } else {
       if (response.data.code == 200) {
         const { data } = response.data;
+        console.log(data);
 
         const temp: any = [];
         data.map((el: any, i: number) => {
           temp.push({
             id: i + 1,
             id_notulen: el.id,
+            uuid: el.Uuid.uuid,
             index: el.id,
-            opd: el.Perangkat_Daerah.nama_opd,
-            pembuat: el.Pegawai.nama,
-            tagging: el.Taggings.length !== 0 ? el.Taggings.map((el: any) => el.nama_tagging) : "-",
+            opd: el.Uuid.Perangkat_Daerah.nama_opd,
+            pembuat: el.Uuid.Pegawai.nama,
+            tagging: el.Uuid.Taggings.length !== 0 ? el.Uuid.Taggings.map((el: any) => el.nama_tagging) : "-",
             tanggal: el.tanggal[0]?.startDate !== el.tanggal[0]?.endDate
               ? getShortDate(el.tanggal[0]?.startDate) +
               " - " +
@@ -80,7 +82,7 @@ const LaporanNotulen = () => {
               : getShortDate(el.tanggal[0]?.startDate),
             waktu: getTime(el.waktu) + " WIB",
             acara: el.acara,
-            sasaran: el.Sasarans.length !== 0 ? el.Sasarans.map((data: any) => data.sasaran) : "-",
+            sasaran: el.Uuid.Sasarans.length !== 0 ? el.Sasarans.map((data: any) => data.sasaran) : "-",
             lokasi: el.lokasi,
             status: el.status,
             foto: el.link_img_foto !== null ? "V" : "X",

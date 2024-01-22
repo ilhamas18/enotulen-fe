@@ -18,11 +18,11 @@ const NotulenDetail = ({ params }: { params: { id: number } }) => {
 
   const { profile } = useSelector((state: State) => ({
     profile: state.profile.profile
-  }), shallowEqual)
+  }), shallowEqual);
 
   useEffect(() => {
     fetchData();
-  }, [])
+  }, []);
 
   const fetchData = async () => {
     setLoading(true);

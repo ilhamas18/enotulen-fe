@@ -16,14 +16,14 @@ import Loading from '@/components/global/Loading/loading';
 interface PropTypes {
   openAddSasaran: boolean,
   setOpenAddSasaran: any,
-  notulen: any;
+  data: any;
   fetchData?: any;
 }
 
 const XAddSasaran = ({
   openAddSasaran,
   setOpenAddSasaran,
-  notulen,
+  data,
   fetchData
 }: PropTypes) => {
   const router = useRouter();
@@ -88,7 +88,7 @@ const XAddSasaran = ({
   const fetchSasaran = async () => {
     setLoading(true);
     const response = await fetchApi({
-      url: `/notulen/getNotulenDetail/${notulen.id}`,
+      url: `/notulen/getNotulenDetail/${data.id}`,
       method: "get",
       type: "auth"
     })
@@ -118,14 +118,14 @@ const XAddSasaran = ({
 
   const handleChange = (e: any) => setSasaran(e.target.value)
 
-  const handleSeeDetail = () => router.push(`/notulen/detail/${notulen.id}`);
+  const handleSeeDetail = () => router.push(`/notulen/detail/${data.id}`);
 
   const handleSubmit = async () => {
     setLoading(true);
     if (sasaran.length != 0) {
       let payload: any = {
         id_sasaran: sasaran?.value,
-        id_notulen: notulen.id,
+        id_uuid: data.uuid,
         sasaran: sasaran.data.label,
         nama_pembuat: sasaran.data.nama_pembuat
       }
@@ -244,12 +244,12 @@ const XAddSasaran = ({
           <div className='w-[100%]'>
             <div className='flex items-center justify-between bg-meta-6'>
               <div></div>
-              <div className='text-center font-medium md:text-xsm text-xsm2 py-2'>{notulen.acara}</div>
+              <div className='text-center font-medium md:text-xsm text-xsm2 py-2'>{data.acara}</div>
               <div className='mr-2 p-1 bg-white' onClick={onClose}>
                 <GrClose size={17} />
               </div>
             </div>
-            {notulen?.Pegawai.nip === profile.nip ? (
+            {data?.Pegawai.nip === profile.nip ? (
               <div className="btn my-6 flex items-center justify-between">
                 <div className="btn-detail">
                   <Button

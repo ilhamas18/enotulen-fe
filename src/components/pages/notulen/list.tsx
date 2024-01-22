@@ -24,8 +24,8 @@ const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
   const [notulen, setNotulen] = useState<number>(0);
 
   const handleAddTagging = (params: any) => {
-    setNotulen(params.row)
-    setOpenAddTagging(true)
+    setNotulen(params.row);
+    setOpenAddTagging(true);
   }
 
   const handleAddSasaran = async (params: any) => {
@@ -515,6 +515,7 @@ const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
       "ariaV7": true
     }
   }
+  console.log(notulen, 'not');
 
   return (
     <React.Fragment>
@@ -578,7 +579,7 @@ const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
             <XAddTagging
               openAddTagging={openAddTagging}
               setOpenAddTagging={setOpenAddTagging}
-              notulen={notulen}
+              data={data}
               fetchData={fetchData}
             />
           )}
@@ -586,7 +587,7 @@ const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
             <XAddSasaran
               openAddSasaran={openAddSasaran}
               setOpenAddSasaran={setOpenAddSasaran}
-              notulen={notulen}
+              data={data}
               fetchData={fetchData}
             />
           )}

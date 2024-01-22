@@ -15,16 +15,18 @@ import { AiOutlineClose } from 'react-icons/ai';
 interface PropTypes {
   openAddTagging: boolean,
   setOpenAddTagging: any,
-  notulen: any;
+  data: any;
   fetchData?: any;
 }
 
 const XAddTagging = ({
   openAddTagging,
   setOpenAddTagging,
-  notulen,
+  data,
   fetchData
 }: PropTypes) => {
+  console.log(data);
+
   const router = useRouter();
   const [reason, setReason] = useState<string>('');
   const [agree, setAgree] = useState<boolean>(false);
@@ -78,7 +80,7 @@ const XAddTagging = ({
   const fetchTagging = async () => {
     setLoading(true);
     const response = await fetchApi({
-      url: `/notulen/getNotulenDetail/${notulen.id_notulen}`,
+      url: `/data/getNotulenDetail/${data.id_notulen}`,
       method: "get",
       type: "auth"
     })
@@ -109,7 +111,7 @@ const XAddTagging = ({
 
   const handleChange = (data: any) => setTagging(data.target.value);
 
-  const handleSeeDetail = () => router.push(`/notulen/detail/${notulen.index}`);
+  const handleSeeDetail = () => router.push(`/notulen/detail/${data.index}`);
 
   const handleDeleteTagging = (e: any, id: number) => {
     e.preventDefault();
@@ -128,7 +130,7 @@ const XAddTagging = ({
 
     if (tagging.length != 0) {
       let payload: any = {
-        id_notulen: notulen.id_notulen,
+        id_uuid: data.uuid,
         id_tagging: tagging.value
       };
 
@@ -153,7 +155,7 @@ const XAddTagging = ({
         if (idTagging != 0) {
           const payload2 = {
             id_tagging: idTagging,
-            id_notulen: notulen.id_notulen
+            id_uuid: data.uuid
           }
 
           const response2 = await fetchApi({
@@ -199,7 +201,7 @@ const XAddTagging = ({
       if (idTagging != 0) {
         const payload2 = {
           id_tagging: idTagging,
-          id_notulen: notulen.id_notulen
+          id_uuid: data.uuid
         }
 
         const response2 = await fetchApi({
@@ -241,13 +243,13 @@ const XAddTagging = ({
           <div className='w-[100%]'>
             <div className='flex items-center justify-between bg-meta-6'>
               <div></div>
-              <div className='text-center font-medium md:text-xsm text-xsm2 py-2'>{notulen.acara}</div>
+              <div className='text-center font-medium md:text-xsm text-xsm2 py-2'>{data.acara}</div>
               <div className='mr-2 p-1 bg-white' onClick={onClose}>
                 <GrClose size={17} />
               </div>
             </div>
             <div className="btn my-6">
-              {notulen.status !== 'archieve' ? (
+              {data.status !== 'archieve' ? (
                 <div className='flex items-center justify-between'>
                   <div className="btn-cancel">
                     <Button
