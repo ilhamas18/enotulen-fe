@@ -41,7 +41,7 @@ const XAddSasaran = ({
 
   useEffect(() => {
     fetchDataSasaran();
-    fetchSasaran();
+    setDataSasaran(data.Sasarans);
   }, []);
 
   const fetchDataSasaran = async () => {
@@ -85,32 +85,6 @@ const XAddSasaran = ({
     }
   }
 
-  const fetchSasaran = async () => {
-    setLoading(true);
-    const response = await fetchApi({
-      url: `/notulen/getNotulenDetail/${data.id}`,
-      method: "get",
-      type: "auth"
-    })
-
-    if (!response.success) {
-      setLoading(false);
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Koneksi bermasalah!',
-      })
-      setLoading(false);
-    } else {
-      if (response.data.code == 200) {
-        const { data } = response.data;
-
-        setDataSasaran(data?.Uuid.Sasarans)
-        setLoading(false);
-      }
-    }
-  }
-
   const onClose = () => {
     setOpenAddSasaran(false);
     setIsAddSasaran(false);
@@ -118,8 +92,6 @@ const XAddSasaran = ({
   }
 
   const handleChange = (e: any) => setSasaran(e.target.value);
-
-  const handleSeeDetail = () => router.push(`/notulen/detail/${data.id}`);
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -237,152 +209,93 @@ const XAddSasaran = ({
     temp.push(id);
     setIdSasaran(temp);
   }
+  console.log(data, '>>> data');
 
   return (
     <CommonModal isOpen={openAddSasaran} onClose={setOpenAddSasaran} animate={true}>
-      {!isAddSasaran ? (
-        <div className="relative items-center flex flex-col justify-between space-y-4 gap-4 pt-2">
-          <div className='w-[100%]'>
-            <div className='flex items-center justify-between bg-meta-6'>
-              <div></div>
-              <div className='text-center font-medium md:text-xsm text-xsm2 py-2'>{data.acara}</div>
-              <div className='mr-2 p-1 bg-white' onClick={onClose}>
-                <GrClose size={17} />
+      <div className='flex flex-col w-full py-3'>
+        <div className='relative'>
+          <div className='flex flex-col justify-between items-center'>
+            <div className='w-full'>
+              <div className='text-center font-medium md:text-title-xsm text-title-xsm2 mb-6 bg-meta-6 py-2'>Masukkan Sasaran</div>
+              <div className='data flex flex-row w-full'>
+                <TextInput
+                  type="dropdown"
+                  id="sasaran"
+                  name="sasaran"
+                  label="Sasaran"
+                  placeholder="Ketik dan pilih atasan"
+                  options={listSasaran}
+                  handleFocus={() => setIsOnFocus(true)}
+                  handleBlur={() => setIsOnFocus(false)}
+                  setValueSelected={sasaran}
+                  change={(selectedOption: any) => {
+                    handleChange({
+                      target: { name: "sasaran", value: selectedOption },
+                    });
+                  }}
+                />
+              </div>
+              <div>
+                <ul className="mt-[5em] ml-4">
+                  {dataSasaran?.length > 0 && dataSasaran?.map((el: any, i: number) => (
+                    <li className="font flex flex-col gap-2" key={i}>
+                      <div className="flex justify-between">
+                        <div className="flex gap-2">
+                          <div
+                            className={`${dataSasaran.length > 1 ? "block" : "hidden"
+                              }`}
+                          >
+                            {i + 1} .
+                          </div>
+                          <div>{el.sasaran}</div>
+                        </div>
+                        <div>
+                          <button
+                            onClick={(e: any) =>
+                              handleDeleteSasaran(e, el.id_sasaran)
+                            }
+                          >
+                            <AiOutlineClose size={18} />
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
-            {data?.Uuid.Pegawai.nip === profile.nip ? (
-              <div className="btn my-6 flex items-center justify-between">
-                <div className="btn-detail">
-                  <Button
-                    variant="xl"
-                    type="secondary"
-                    className="button-container mb-2 mt-5"
-                    rounded
-                    onClick={handleSeeDetail}
-                    loading={loading}
-                  >
-                    <div className="flex px-6 text-[#002DBB] font-Nunito">
-                      <span className="button-text text-xl-base">Lihat Detail</span>
-                    </div>
-                  </Button>
-                </div>
-                <div className="btn-update">
-                  <Button
-                    variant="xl"
-                    className="button-container mb-2 mt-5"
-                    rounded
-                    onClick={() => setIsAddSasaran(true)}
-                    loading={loading}
-                  >
-                    <div className="flex px-6 text-white font-Nunito">
-                      <span className="button-text">Update Sasaran / Rencana Kenerja</span>
-                    </div>
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="btn-detail">
+            <div className='mt-[5em] flex justify-between w-full'>
+              <div className="btn-cancel">
                 <Button
                   variant="xl"
                   type="secondary"
                   className="button-container mb-2 mt-5"
                   rounded
-                  onClick={handleSeeDetail}
-                  loading={loading}
+                  onClick={onClose}
                 >
                   <div className="flex px-6 text-[#002DBB] font-Nunito">
-                    <span className="button-text text-xl-base">Lihat Detail</span>
+                    <span className="button-text text-xl-base">Batal</span>
                   </div>
                 </Button>
               </div>
-            )}
-          </div>
-        </div>
-      ) : (
-        <div className='flex flex-col w-full py-3'>
-          <div className='relative'>
-            <div className='flex flex-col justify-between items-center'>
-              <div className='w-full'>
-                <div className='text-center font-medium md:text-title-xsm text-title-xsm2 mb-6 bg-meta-6 py-2'>Masukkan Sasaran</div>
-                <div className='data flex flex-row w-full'>
-                  <TextInput
-                    type="dropdown"
-                    id="sasaran"
-                    name="sasaran"
-                    label="Sasaran"
-                    placeholder="Ketik dan pilih atasan"
-                    options={listSasaran}
-                    handleFocus={() => setIsOnFocus(true)}
-                    handleBlur={() => setIsOnFocus(false)}
-                    setValueSelected={sasaran}
-                    change={(selectedOption: any) => {
-                      handleChange({
-                        target: { name: "sasaran", value: selectedOption },
-                      });
-                    }}
-                  />
-                </div>
-                <div>
-                  <ul className="mt-[5em] ml-4">
-                    {dataSasaran?.length > 0 && dataSasaran?.map((el: any, i: number) => (
-                      <li className="font flex flex-col gap-2" key={i}>
-                        <div className="flex justify-between">
-                          <div className="flex gap-2">
-                            <div
-                              className={`${dataSasaran.length > 1 ? "block" : "hidden"
-                                }`}
-                            >
-                              {i + 1} .
-                            </div>
-                            <div>{el.sasaran}</div>
-                          </div>
-                          <div>
-                            <button
-                              onClick={(e: any) =>
-                                handleDeleteSasaran(e, el.id_sasaran)
-                              }
-                            >
-                              <AiOutlineClose size={18} />
-                            </button>
-                          </div>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-              <div className='mt-[5em] flex justify-between w-full'>
-                <div className="btn-cancel">
-                  <Button
-                    variant="xl"
-                    type="secondary"
-                    className="button-container mb-2 mt-5"
-                    rounded
-                    onClick={onClose}
-                  >
-                    <div className="flex px-6 text-[#002DBB] font-Nunito">
-                      <span className="button-text text-xl-base">Batal</span>
-                    </div>
-                  </Button>
-                </div>
-                <div className="btn-cancell">
-                  <Button
-                    variant="xl"
-                    className="button-container mb-2 mt-5"
-                    rounded
-                    onClick={handleSubmit}
-                    loading={loading}
-                  >
-                    <div className="flex px-6 text-white font-Nunito">
-                      <span className="button-text">Tambah / Update</span>
-                    </div>
-                  </Button>
-                </div>
+              <div className="btn-cancell">
+                <Button
+                  variant="xl"
+                  className="button-container mb-2 mt-5"
+                  rounded
+                  onClick={handleSubmit}
+                  loading={loading}
+                >
+                  <div className="flex px-6 text-white font-Nunito">
+                    <span className="button-text">Tambah / Update</span>
+                  </div>
+                </Button>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </CommonModal >
   )
 }

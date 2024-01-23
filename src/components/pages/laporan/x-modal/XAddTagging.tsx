@@ -7,9 +7,7 @@ import TextInput from '@/components/common/text-input/input';
 import { Button } from '@/components/common/button/button';
 import { fetchApi } from '@/components/mixins/request';
 import Swal from 'sweetalert2';
-import Select from "react-select";
 import { State } from '@/store/reducer';
-import { GrClose } from 'react-icons/gr';
 import { AiOutlineClose } from 'react-icons/ai';
 
 interface PropTypes {
@@ -42,7 +40,7 @@ const XAddTagging = ({
 
   useEffect(() => {
     fetchDataTagging();
-    fetchTagging();
+    setDataTagging(data.Taggings);
   }, []);
 
   const fetchDataTagging = async () => {
@@ -75,32 +73,6 @@ const XAddTagging = ({
     }
   }
 
-  const fetchTagging = async () => {
-    setLoading(true);
-    const response = await fetchApi({
-      url: `/notulen/getNotulenDetail/${data.id_notulen}`,
-      method: "get",
-      type: "auth"
-    })
-
-    if (!response.success) {
-      setLoading(false);
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Koneksi bermasalah!',
-      })
-      setLoading(false);
-    } else {
-      if (response.data.code == 200) {
-        const { data } = response.data;
-
-        setDataTagging(data?.Uuid.Taggings)
-        setLoading(false);
-      }
-    }
-  }
-
   const onClose = () => {
     setOpenAddTagging(false);
     setIsAddTagging(false);
@@ -109,13 +81,12 @@ const XAddTagging = ({
 
   const handleChange = (data: any) => setTagging(data.target.value);
 
-  const handleSeeDetail = () => router.push(`/notulen/detail/${data.index}`);
-
   const handleDeleteTagging = (e: any, id: number) => {
     e.preventDefault();
     const newArray = dataTagging.filter(
       (item: any) => item.id != id
     )
+
     setDataTagging(newArray);
 
     let temp: any = idTagging;
@@ -178,7 +149,6 @@ const XAddTagging = ({
               showConfirmButton: false,
               timer: 1500,
             });
-            fetchTagging();
             fetchData();
             onClose();
           }
@@ -190,7 +160,6 @@ const XAddTagging = ({
             showConfirmButton: false,
             timer: 1500,
           });
-          fetchTagging();
           fetchData();
           onClose();
         }
@@ -224,7 +193,6 @@ const XAddTagging = ({
             showConfirmButton: false,
             timer: 1500,
           });
-          fetchTagging();
           fetchData();
           onClose();
         }
@@ -236,165 +204,89 @@ const XAddTagging = ({
 
   return (
     <CommonModal isOpen={openAddTagging} onClose={setOpenAddTagging} animate={true}>
-      {!isAddTagging ? (
-        <div className="relative items-center flex flex-col justify-between space-y-4 gap-4 pt-2">
-          <div className='w-[100%]'>
-            <div className='flex items-center justify-between bg-meta-6'>
-              <div></div>
-              <div className='text-center font-medium md:text-xsm text-xsm2 py-2'>{data.acara}</div>
-              <div className='mr-2 p-1 bg-white' onClick={onClose}>
-                <GrClose size={17} />
-              </div>
-            </div>
-            <div className="btn my-6">
-              {data.status !== 'archieve' ? (
-                <div className='flex items-center justify-between'>
-                  <div className="btn-cancel">
-                    <Button
-                      variant="xl"
-                      type="secondary"
-                      className="button-container mb-2 mt-5"
-                      rounded
-                      onClick={handleSeeDetail}
-                      loading={loading}
-                    >
-                      <div className="flex px-6 text-[#002DBB] font-Nunito">
-                        <span className="button-text text-xl-base">Lihat Detail</span>
-                      </div>
-                    </Button>
-                  </div>
-                  <div className="btn-cancell">
-                    <Button
-                      variant="xl"
-                      className="button-container mb-2 mt-5"
-                      rounded
-                      onClick={() => setIsAddTagging(true)}
-                      loading={loading}
-                    >
-                      <div className="flex px-6 text-white font-Nunito">
-                        <span className="button-text">Tambah Tagging</span>
-                      </div>
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="btn-cancel">
-                  <Button
-                    variant="xl"
-                    type="secondary"
-                    className="button-container mb-2 mt-5"
-                    rounded
-                    onClick={handleSeeDetail}
-                    loading={loading}
-                  >
-                    <div className="flex px-6 text-[#002DBB] font-Nunito">
-                      <span className="button-text text-xl-base">Lihat Detail</span>
-                    </div>
-                  </Button>
-                </div>
-              )}
-            </div>
+      <div className='flex flex-col w-full py-3'>
+        <div className='relative'>
+          <div className='text-center md:text-xsm text-title-xsm mb-6 font-bold'>Masukkan Tagging</div>
+          <div className={`data z-50 ${isOnFocus ? 'fixed w-[46%]' : ''}`}>
+            <TextInput
+              type="dropdown"
+              id="sasaran"
+              name="sasaran"
+              label="Sasaran"
+              placeholder="Ketik dan pilih atasan"
+              options={listTagging}
+              handleFocus={() => setIsOnFocus(true)}
+              handleBlur={() => setIsOnFocus(false)}
+              setValueSelected={tagging}
+              change={(selectedOption: any) => {
+                handleChange({
+                  target: { name: "tagging", value: selectedOption },
+                });
+              }}
+            />
           </div>
-        </div>
-      ) : (
-        <div className='flex flex-col w-full py-3'>
-          <div className='relative'>
-            <div className='text-center font-medium md:text-xsm text-title-xsm mb-6'>Masukkan Tagging</div>
-            <div className='data flex flex-row w-full'>
-              {/* <Select
-                isMulti
-                name="tagging"
-                options={listTagging}
-                className="basic-multi-select bg-white w-full"
-                classNamePrefix="select"
-                onFocus={() => setIsOnFocus(true)}
-                onBlur={() => setIsOnFocus(false)}
-                onChange={(selectedOption: any) => {
-                  handleChange({
-                    target: { name: "tagging", value: selectedOption },
-                  });
-                }}
-              /> */}
-              <TextInput
-                type="dropdown"
-                id="sasaran"
-                name="sasaran"
-                label="Sasaran"
-                placeholder="Ketik dan pilih atasan"
-                options={listTagging}
-                handleFocus={() => setIsOnFocus(true)}
-                handleBlur={() => setIsOnFocus(false)}
-                setValueSelected={tagging}
-                change={(selectedOption: any) => {
-                  handleChange({
-                    target: { name: "tagging", value: selectedOption },
-                  });
-                }}
-              />
-            </div>
-            <div>
-              <ul className="mt-[5em] ml-4">
-                {dataTagging?.length > 0 && dataTagging?.map((el: any, i: number) => (
-                  <li className="font flex flex-col gap-2" key={i}>
-                    <div className="flex justify-between">
-                      <div className="flex gap-2">
-                        <div
-                          className={`${dataTagging.length > 1 ? "block" : "hidden"
-                            }`}
-                        >
-                          {i + 1} .
-                        </div>
-                        <div>{el.nama_tagging}</div>
+          <div>
+            <ul className="mt-[5em] ml-4">
+              {dataTagging?.length > 0 && dataTagging.map((el: any, i: number) => (
+                <li className="font flex flex-col gap-2" key={i}>
+                  <div className="flex justify-between">
+                    <div className="flex gap-2">
+                      <div
+                        className={`${dataTagging.length > 1 ? "block" : "hidden"
+                          }`}
+                      >
+                        {i + 1} .
                       </div>
-                      {el.kode_opd === profile.Perangkat_Daerah.kode_opd && (
-                        <div>
-                          <button
-                            onClick={(e: any) =>
-                              handleDeleteTagging(e, el.id)
-                            }
-                          >
-                            <AiOutlineClose size={18} />
-                          </button>
-                        </div>
-                      )}
+                      <div>{el.nama_tagging}</div>
                     </div>
-                  </li>
-                ))}
-              </ul>
+                    {el.kode_opd === profile.Perangkat_Daerah.kode_opd && (
+                      <div>
+                        <button
+                          onClick={(e: any) =>
+                            handleDeleteTagging(e, el.id)
+                          }
+                        >
+                          <AiOutlineClose size={18} />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className='mt-[5em] flex justify-between'>
+            <div className="btn-cancel">
+              <Button
+                variant="xl"
+                type="secondary"
+                className="button-container mb-2 mt-5"
+                rounded
+                onClick={onClose}
+              >
+                <div className="flex px-6 text-[#002DBB] font-Nunito">
+                  <span className="button-text text-xl-base">Batal</span>
+                </div>
+              </Button>
             </div>
-            <div className='mt-[5em] flex justify-between'>
-              <div className="btn-cancel">
+            <div className='flex space-x-4'>
+              <div className="btn-cancell">
                 <Button
                   variant="xl"
-                  type="secondary"
                   className="button-container mb-2 mt-5"
                   rounded
-                  onClick={onClose}
+                  onClick={handleSubmit}
+                  loading={loading}
                 >
-                  <div className="flex px-6 text-[#002DBB] font-Nunito">
-                    <span className="button-text text-xl-base">Batal</span>
+                  <div className="flex px-6 text-white font-Nunito">
+                    <span className="button-text">Tambah / Update</span>
                   </div>
                 </Button>
               </div>
-              <div className='flex space-x-4'>
-                <div className="btn-cancell">
-                  <Button
-                    variant="xl"
-                    className="button-container mb-2 mt-5"
-                    rounded
-                    onClick={handleSubmit}
-                    loading={loading}
-                  >
-                    <div className="flex px-6 text-white font-Nunito">
-                      <span className="button-text">Tambah / Update</span>
-                    </div>
-                  </Button>
-                </div>
-              </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </CommonModal >
   )
 }

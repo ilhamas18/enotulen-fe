@@ -68,8 +68,8 @@ const Arsip = () => {
             id: i + 1,
             id_notulen: el.id,
             index: el.id,
-            opd: el.Perangkat_Daerah.nama_opd,
-            tagging: el.Taggings.length !== 0 ? el.Taggings.map((el: any) => el.nama_tagging) : "-",
+            opd: el.Uuid.Perangkat_Daerah.nama_opd,
+            tagging: el.Uuid.Taggings.length !== 0 ? el.Uuid.Taggings.map((el: any) => el.nama_tagging) : "-",
             tanggal: el.tanggal[0]?.startDate !== el.tanggal[0]?.endDate
               ? getShortDate(el.tanggal[0]?.startDate) +
               " - " +
@@ -77,7 +77,7 @@ const Arsip = () => {
               : getShortDate(el.tanggal[0]?.startDate),
             waktu: getTime(el.waktu) + " WIB",
             acara: el.acara,
-            sasaran: el.Sasarans.length !== 0 ? el.Sasarans.map((data: any) => data.sasaran) : "-",
+            sasaran: el.Uuid.Sasarans.length !== 0 ? el.Uuid.Sasarans.map((data: any) => data.sasaran) : "-",
             lokasi: el.lokasi,
             status: el.status,
             foto: el.link_img_foto !== null ? "V" : "X",

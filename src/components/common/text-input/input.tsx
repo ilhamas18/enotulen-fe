@@ -212,9 +212,8 @@ const TextInput = ({
           onChange={change}
           placeholder={placeholder}
           className={`
-            ${errors && touched ? "error" : ""}`
+        ${errors && touched ? "error" : ""}`
           }
-        // classNamePrefix="react-select"
         />
       )}
       {type === "date-picker" && (

@@ -527,11 +527,7 @@ const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
             {profile.role == 1 ? (
               <StyledDataGrid
                 {...dataRowsAdmin}
-                onCellClick={
-                  profile.role == 1 ||
-                    profile.role == 2 ? handleAddTagging : profile.role == 3 ||
-                      profile.role == 4 ? handleAddSasaran : handleOnCellClick
-                }
+                onCellClick={handleOnCellClick}
                 getRowClassName={(params) => `super-app-theme--${params.row.status}`}
                 initialState={{
                   pagination: {
@@ -544,11 +540,7 @@ const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
             ) : profile.role == 2 ? (
               <StyledDataGrid
                 {...dataRowsAdmin2}
-                onCellClick={
-                  profile.role == 1 ||
-                    profile.role == 2 ? handleAddTagging : profile.role == 3 ||
-                      profile.role == 4 ? handleAddSasaran : handleOnCellClick
-                }
+                onCellClick={handleOnCellClick}
                 getRowClassName={(params) => `super-app-theme--${params.row.status}`}
                 initialState={{
                   pagination: {
@@ -561,7 +553,7 @@ const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
             ) : (
               <StyledDataGrid
                 {...dataRows}
-                onCellClick={profile.role == 1 || profile.role == 2 ? handleAddTagging : profile.role == 3 || profile.role == 4 ? handleAddSasaran : handleOnCellClick}
+                onCellClick={handleOnCellClick}
                 getRowClassName={(params) => `super-app-theme--${params.row.status}`}
                 initialState={{
                   pagination: {
