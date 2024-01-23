@@ -144,6 +144,7 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
       }
     })
   }
+  // console.log(data);
 
   return (
     <React.Fragment>
@@ -169,7 +170,7 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
                   <div className="border bg-white border-danger text-danger hover:shadow-lg rounded-lg px-8 py-1 hover:shadow-lg hover:cursor-pointer" onClick={handleBack}>
                     Kembali
                   </div>
-                  <div className={`${data.Pegawai?.nip === profile.nip ? 'block' : 'hidden'} border border-none rounded-lg px-8 py-1 hover:shadow-lg bg-warning text-white hover:cursor-pointer`} onClick={() => setIsOpenEdit(true)}>
+                  <div className={`${data.Uuid.Pegawai?.nip === profile.nip ? 'block' : 'hidden'} border border-none rounded-lg px-8 py-1 hover:shadow-lg bg-warning text-white hover:cursor-pointer`} onClick={() => setIsOpenEdit(true)}>
                     Edit
                   </div>
                   <div className={`border border-none rounded-lg px-8 py-1 hover:shadow-lg bg-danger text-white hover:cursor-pointer`} onClick={() => data.status !== 'archieve' ? handleArchieve() : handleDelete()}>
@@ -198,8 +199,8 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-10">
                     <ul>
-                      {data.Taggings.length != 0 ? (
-                        data.Taggings?.map((el: any, i: number) => (
+                      {data.Uuid.Taggings.length != 0 ? (
+                        data.Uuid.Taggings?.map((el: any, i: number) => (
                           <li className="list-decimal" key={i}>
                             <div>{el.nama_tagging} <span className="px-8">{el.kode_opd !== '1234567890' ? '(Tagging OPD)' : '(Tagging Kota)'}</span></div>
                           </li>
@@ -208,6 +209,21 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
                         <div>-</div>
                       )}
                     </ul>
+                  </div>
+                </div>
+              </div>
+              <div className="body flex md:flex-row flex-col items-center justify-between">
+                <div className="text-label md:w-[20%] w-full md:text-left text-center">
+                  Nama Pembuat
+                </div>
+                <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+                  <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                    <div className="flex gap-4">
+                      <div className="flex gap-4">
+                        <span>{data.Uuid.Pegawai.nama}</span>
+                        <span>({data.Uuid.Pegawai.nip})</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -356,7 +372,7 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-10">
                     <ul>
-                      {data.Sasarans?.map((el: any, i: number) => (
+                      {data.Uuid.Sasarans?.map((el: any, i: number) => (
                         <li className="list-decimal" key={i}>
                           {el.sasaran}
                         </li>
@@ -397,7 +413,7 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
                 </div>
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                    {data.hari} {formatMonth[data.bulan - 1]} {data.tahun}
+                    {data.Uuid.hari} {formatMonth[data.Uuid.bulan - 1]} {data.Uuid.tahun}
                   </div>
                 </div>
               </div>
@@ -526,9 +542,7 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
               ) : null}
             </div>
           </div>
-          <div className={`${isOpenEdit ? 'block' : 'hidden'}`}>
-            <EditNotulenForm dataNotulen={data} />
-          </div>
+          {isOpenEdit && <EditNotulenForm dataNotulen={data} />}
         </>
       )}
 

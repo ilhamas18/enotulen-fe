@@ -25,8 +25,6 @@ const XAddTagging = ({
   data,
   fetchData
 }: PropTypes) => {
-  console.log(data);
-
   const router = useRouter();
   const [reason, setReason] = useState<string>('');
   const [agree, setAgree] = useState<boolean>(false);
@@ -80,7 +78,7 @@ const XAddTagging = ({
   const fetchTagging = async () => {
     setLoading(true);
     const response = await fetchApi({
-      url: `/data/getNotulenDetail/${data.id_notulen}`,
+      url: `/notulen/getNotulenDetail/${data.id_notulen}`,
       method: "get",
       type: "auth"
     })
@@ -97,7 +95,7 @@ const XAddTagging = ({
       if (response.data.code == 200) {
         const { data } = response.data;
 
-        setDataTagging(data?.Taggings)
+        setDataTagging(data?.Uuid.Taggings)
         setLoading(false);
       }
     }

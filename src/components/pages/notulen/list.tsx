@@ -515,7 +515,6 @@ const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
       "ariaV7": true
     }
   }
-  console.log(notulen, 'not');
 
   return (
     <React.Fragment>
@@ -579,7 +578,7 @@ const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
             <XAddTagging
               openAddTagging={openAddTagging}
               setOpenAddTagging={setOpenAddTagging}
-              data={data}
+              data={notulen}
               fetchData={fetchData}
             />
           )}
@@ -587,7 +586,7 @@ const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
             <XAddSasaran
               openAddSasaran={openAddSasaran}
               setOpenAddSasaran={setOpenAddSasaran}
-              data={data}
+              data={notulen}
               fetchData={fetchData}
             />
           )}

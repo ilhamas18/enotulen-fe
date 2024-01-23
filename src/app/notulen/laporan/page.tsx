@@ -63,7 +63,6 @@ const LaporanNotulen = () => {
     } else {
       if (response.data.code == 200) {
         const { data } = response.data;
-        console.log(data);
 
         const temp: any = [];
         data.map((el: any, i: number) => {
@@ -82,7 +81,7 @@ const LaporanNotulen = () => {
               : getShortDate(el.tanggal[0]?.startDate),
             waktu: getTime(el.waktu) + " WIB",
             acara: el.acara,
-            sasaran: el.Uuid.Sasarans.length !== 0 ? el.Sasarans.map((data: any) => data.sasaran) : "-",
+            sasaran: el.Uuid.Sasarans.length !== 0 ? el.Uuid.Sasarans.map((data: any) => data.sasaran) : "-",
             lokasi: el.lokasi,
             status: el.status,
             foto: el.link_img_foto !== null ? "V" : "X",

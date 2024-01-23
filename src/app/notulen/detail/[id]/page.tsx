@@ -43,6 +43,7 @@ const NotulenDetail = ({ params }: { params: { id: number } }) => {
     } else {
       if (response.data.code == 200) {
         const { data } = response.data;
+
         setNotulenDetail(data)
         setLoading(false);
       }

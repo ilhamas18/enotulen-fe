@@ -76,6 +76,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     handleSubmit,
     isSubmitting,
     dataAtasan,
+    payload,
     step,
     ref,
   } = props;

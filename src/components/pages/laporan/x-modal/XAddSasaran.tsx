@@ -104,7 +104,8 @@ const XAddSasaran = ({
     } else {
       if (response.data.code == 200) {
         const { data } = response.data;
-        setDataSasaran(data?.Sasarans)
+
+        setDataSasaran(data?.Uuid.Sasarans)
         setLoading(false);
       }
     }
@@ -116,13 +117,13 @@ const XAddSasaran = ({
     setSasaran('');
   }
 
-  const handleChange = (e: any) => setSasaran(e.target.value)
+  const handleChange = (e: any) => setSasaran(e.target.value);
 
   const handleSeeDetail = () => router.push(`/notulen/detail/${data.id}`);
 
   const handleSubmit = async () => {
     setLoading(true);
-    if (sasaran.length != 0) {
+    if (sasaran !== null) {
       let payload: any = {
         id_sasaran: sasaran?.value,
         id_uuid: data.uuid,
@@ -190,7 +191,7 @@ const XAddSasaran = ({
         }
       }
     } else {
-      if (idSasaran != 0) {
+      if (idSasaran.length != 0) {
         const payload2 = {
           id_sasaran: idSasaran
         }
@@ -225,7 +226,7 @@ const XAddSasaran = ({
     }
   };
 
-  const handleDeleteSasaran = (e: any, id: number) => {
+  const handleDeleteSasaran = (e: any, id: string) => {
     e.preventDefault();
     const newArray = dataSasaran.filter(
       (item: any) => item.id_sasaran !== id
@@ -249,7 +250,7 @@ const XAddSasaran = ({
                 <GrClose size={17} />
               </div>
             </div>
-            {data?.Pegawai.nip === profile.nip ? (
+            {data?.Uuid.Pegawai.nip === profile.nip ? (
               <div className="btn my-6 flex items-center justify-between">
                 <div className="btn-detail">
                   <Button

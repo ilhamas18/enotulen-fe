@@ -25,6 +25,7 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
   const { id } = params;
   const [laporan, setLaporan] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  console.log(laporan);
 
   const printRef: any = useRef();
 
@@ -110,24 +111,24 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                     PEMERINTAH KOTA MADIUN
                   </div>
                   <div className="text-black dark:text-white font-bold text-title-ss uppercase">
-                    {laporan?.Perangkat_Daerah?.nama_opd}
+                    {laporan?.Uuid.Perangkat_Daerah?.nama_opd}
                     {/* BADAN PERENCANAAN, PENELITIAN DAN PEMBANGUNAN DAERAH */}
                   </div>
                   <div className="text-black dark:text-white font-bold text-title-xsm tracking-widest">
-                    ({laporan?.Perangkat_Daerah?.singkatan})
+                    ({laporan?.Uuid.Perangkat_Daerah?.singkatan})
                     {/* (BAPPELITBANGDA) */}
                   </div>
                   <div className="text-black dark:text-white font-bold text-title-ss">
-                    {laporan?.Perangkat_Daerah?.alamat}
+                    {laporan?.Uuid.Perangkat_Daerah?.alamat}
                     {/* Jl Mayjen Panjaitan No. 17 Lt II, Kode Pos: 63137, Jawa
                     Timur */}
                   </div>
                   <div className="text-black dark:text-white font-bold text-title-ss">
                     {/* TELP : ( 0351 ) 471535 / FAX: ( 0351 ) 471535 */}
-                    TELP : {laporan?.Perangkat_Daerah?.telepon}/Email. {laporan?.Perangkat_Daerah?.faximile}
+                    TELP : {laporan?.Uuid.Perangkat_Daerah?.telepon}/Email. {laporan?.Uuid.Perangkat_Daerah?.faximile}
                   </div>
                   <div className="text-black dark:text-white text-title-ss">
-                    Website : {laporan?.Perangkat_Daerah?.website}
+                    Website : {laporan?.Uuid.Perangkat_Daerah?.website}
                     {/* Website : http://www. madiunkota.go.id */}
                   </div>
                 </div>
@@ -304,7 +305,7 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
               <div className="flex flex-col items-center justify-between text-center w-[45%] h-[25em]">
                 <div className="text-right mt-12">
                   <div className="text-black dark:text-white text-title-xsm">
-                    Madiun, {laporan.hari} {formatMonth[laporan.bulan - 1]} {laporan.tahun}
+                    Madiun, {laporan.Uuid.hari} {formatMonth[laporan.Uuid.bulan - 1]} {laporan.Uuid.tahun}
                   </div>
                 </div>
                 <div className="mt-[2em]">
@@ -319,14 +320,14 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                 )}
                 <div>
                   <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
-                    {laporan.Pegawai?.nama}
+                    {laporan.Uuid.Pegawai?.nama}
                   </div>
                   <div className="text-black dark:text-white text-title-ss mt-1">
                     {" "}
-                    {laporan.Pegawai?.nama_pangkat}{" "}
+                    {laporan.Uuid.Pegawai?.nama_pangkat}{" "}
                   </div>
                   <div className="font-bold text-black dark:text-white text-title-ss mt-1">
-                    NIP. {laporan.Pegawai?.nip}
+                    NIP. {laporan.Uuid.Pegawai?.nip}
                   </div>
                 </div>
               </div>

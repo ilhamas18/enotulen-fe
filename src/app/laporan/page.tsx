@@ -59,27 +59,29 @@ const Laporan = () => {
       const { data } = response.data;
 
       const temp: any = [];
-      data.map((el: any) => {
-        temp.push({
-          opd: el.Perangkat_Daerah.nama_opd,
-          pembuat: el.Pegawai.nama,
-          acara: el.Undangan !== null ? el.Undangan.acara : el.Notulen !== null ? el.Notulen.acara : '-',
-          tanggal: el.Undangan !== null ?
-            (el.Undangan.tanggal[0]?.startDate !== el.Undangan.tanggal[0]?.endDate
-              ? getShortDate(el.Undangan.tanggal[0]?.startDate) +
-              " - " +
-              getShortDate(el.Undangan.tanggal[0]?.endDate)
-              : getShortDate(el.Undangan.tanggal[0]?.startDate)) : el.Notulen !== null ?
-              (el.Notulen.tanggal[0]?.startDate !== el.Notulen.tanggal[0]?.endDate
-                ? getShortDate(el.Notulen.tanggal[0]?.startDate) +
-                " - " +
-                getShortDate(el.Notulen.tanggal[0]?.endDate)
-                : getShortDate(el.Notulen.tanggal[0]?.startDate)) : '-',
-          undangan: el.Undangan,
-          notulen: el.Notulen
-        })
-      })
-      setLaporan(temp);
+      // data.map((el: any) => {
+      //   temp.push({
+      //     opd: el.Perangkat_Daerah.nama_opd,
+      //     pembuat: el.Pegawai.nama,
+      //     acara: el.Undangan !== null ? el.Undangan.acara : el.Notulen !== null ? el.Notulen.acara : '-',
+      //     tanggal: el.Undangan !== null ?
+      //       (el.Undangan.tanggal[0]?.startDate !== el.Undangan.tanggal[0]?.endDate
+      //         ? getShortDate(el.Undangan.tanggal[0]?.startDate) +
+      //         " - " +
+      //         getShortDate(el.Undangan.tanggal[0]?.endDate)
+      //         : getShortDate(el.Undangan.tanggal[0]?.startDate)) : el.Notulen !== null ?
+      //         (el.Notulen.tanggal[0]?.startDate !== el.Notulen.tanggal[0]?.endDate
+      //           ? getShortDate(el.Notulen.tanggal[0]?.startDate) +
+      //           " - " +
+      //           getShortDate(el.Notulen.tanggal[0]?.endDate)
+      //           : getShortDate(el.Notulen.tanggal[0]?.startDate)) : '-',
+      //     tagging: el.Taggings.length !== 0 ? el.Taggings.map((el: any) => el.nama_tagging) : "-",
+      //     sasaran: el.Sasarans.length !== 0 ? el.Sasarans.map((data: any) => data.sasaran) : "-",
+      //     undangan: el.Undangan,
+      //     notulen: el.Notulen
+      //   })
+      // })
+      setLaporan(data);
       setLoading(false);
     }
   }

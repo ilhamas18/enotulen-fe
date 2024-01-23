@@ -1033,9 +1033,10 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
 
     formattedDate();
   }, []);
+  console.log(dataNotulen);
 
   const formattedDate = () => {
-    let tempDate: any = dataNotulen.hari + '/' + Number(dataNotulen.bulan - 1) + '/' + dataNotulen.tahun;
+    let tempDate: any = dataNotulen.Uuid.hari + '/' + Number(dataNotulen.Uuid.bulan - 1) + '/' + dataNotulen.Uuid.tahun;
     const dateParts = tempDate.split('/');
     const day = parseInt(dateParts[0], 10);
     const month = parseInt(dateParts[1], 10); // Months are 0-based (0 = January, 1 = February, etc.)
