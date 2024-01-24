@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Breadcrumb from "@/components/global/Breadcrumbs/Breadcrumb";
 import { Metadata } from "next";
-import { fetchApi } from '@/components/mixins/request';
+import { fetchApi } from '@/app/api/request';
 import Swal from 'sweetalert2';
 import { shallowEqual, useSelector } from 'react-redux';
 import { State } from '@/store/reducer';

@@ -7,7 +7,7 @@ import { Button } from "@/components/common/button/button";
 import dynamic from "next/dynamic";
 import SignatureCanvas from 'react-signature-canvas';
 import { AiFillPlusCircle } from "react-icons/ai";
-import { fetchApi } from "@/components/mixins/request";
+import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
 import DateRangePicker from "../laporan/x-modal/XDateRangePicker";
 import { formatDate, getShortDate, getShortDate2, getTime } from "@/components/hooks/formatDate";

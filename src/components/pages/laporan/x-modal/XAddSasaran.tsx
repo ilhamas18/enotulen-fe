@@ -5,7 +5,7 @@ import { useSelector, shallowEqual } from 'react-redux';
 import { CommonModal } from '@/components/common/common-modal/modal';
 import TextInput from '@/components/common/text-input/input';
 import { Button } from '@/components/common/button/button';
-import { fetchApi } from '@/components/mixins/request';
+import { fetchApi } from '@/app/api/request';
 import Swal from 'sweetalert2';
 import Select from "react-select";
 import { State } from '@/store/reducer';

@@ -1,31 +1,19 @@
 "use client";
 import React from "react";
-import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
-import generatePDF, { Resolution, Margin, Options } from "react-to-pdf";
 import { useReactToPrint } from "react-to-print";
-import { fetchApi } from "@/components/mixins/request";
-import { OutputData } from "@editorjs/editorjs";
+import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
 import { BsPrinter } from "react-icons/bs";
 import { formatDate, getTime } from "@/components/hooks/formatDate";
-import Laporan from "@/app/notulen/laporan/page";
 import withAuth from "@/components/hocs/withAuth";
-import edjsHTML from "editorjs-html";
 import Blocks from 'editorjs-blocks-react-renderer';
 import { formatMonth } from "@/components/helpers/formatMonth";
-
-const editorJsHtml = require("editorjs-html");
-const EditorJsToHtml = editorJsHtml();
-
-
-type ParsedContent = string | JSX.Element;
 
 const CetakNotulen = ({ params }: { params: { id: number } }) => {
   const { id } = params;
   const [laporan, setLaporan] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  console.log(laporan);
 
   const printRef: any = useRef();
 

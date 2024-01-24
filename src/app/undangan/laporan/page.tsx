@@ -3,7 +3,7 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import withAuth from "@/components/hocs/withAuth";
 import { shallowEqual, useSelector } from "react-redux";
-import { fetchApi } from "@/components/mixins/request";
+import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
 import Loading from "@/components/global/Loading/loading";
 import { State } from "@/store/reducer";
@@ -65,6 +65,7 @@ const LaporanUndangan = () => {
           id_undangan: el.id,
           opd: el.Uuid.Perangkat_Daerah.nama_opd,
           pembuat: el.Uuid.Pegawai.nama,
+          sifat: el.sifat,
           tanggal: el.tanggal[0]?.startDate !== el.tanggal[0]?.endDate
             ? getShortDate(el.tanggal[0]?.startDate) +
             " - " +

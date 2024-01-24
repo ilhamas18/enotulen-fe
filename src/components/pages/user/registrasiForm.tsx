@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import EditForm from './editForm';
 import TextInput from "@/components/common/text-input/input";
 import { Button } from '@/components/common/button/button';
-import { fetchApi } from '@/components/mixins/request';
+import { fetchApi } from '@/app/api/request';
 import Swal from 'sweetalert2';
 
 interface PropTypes {

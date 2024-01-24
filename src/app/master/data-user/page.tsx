@@ -7,7 +7,7 @@ import { useSelector, shallowEqual } from 'react-redux';
 import Breadcrumb from '@/components/global/Breadcrumbs/Breadcrumb';
 import { BsPersonFillAdd } from 'react-icons/bs';
 import { IoPeopleSharp } from 'react-icons/io5';
-import { fetchApi } from '@/components/mixins/request';
+import { fetchApi } from '@/app/api/request';
 import DataListUser from '@/components/pages/user/list';
 import Swal from 'sweetalert2';
 

@@ -2,7 +2,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { fetchApi } from "@/components/mixins/request";
+import { fetchApi } from "@/app/api/request";
 import LaporanNotulenAuth from "@/components/pages/notulen/list";
 import Breadcrumb from "@/components/global/Breadcrumbs/Breadcrumb";
 import { getShortDate, getTime } from "@/components/hooks/formatDate";

@@ -2,7 +2,7 @@ import React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { OutputData } from "@editorjs/editorjs";
 import { BsPrinter } from "react-icons/bs";
-import { fetchApi } from "@/components/mixins/request";
+import { fetchApi } from "@/app/api/request";
 import { shallowEqual, useSelector } from "react-redux";
 import { State } from "@/store/reducer";
 import { useState } from "react";
@@ -26,7 +26,6 @@ type ParsedContent = string | JSX.Element;
 
 interface DetailProps {
   data: any;
-  listTagging: any;
 }
 
 const NotulenDetailProps = ({ data }: DetailProps) => {
@@ -144,7 +143,6 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
       }
     })
   }
-  // console.log(data);
 
   return (
     <React.Fragment>

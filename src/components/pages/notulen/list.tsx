@@ -4,10 +4,6 @@ import { useRouter } from 'next/navigation';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import { darken, lighten, styled } from '@mui/material/styles';
-import { fetchApi } from '@/components/mixins/request';
-import Swal from 'sweetalert2';
-import XAddTagging from '../laporan/x-modal/XAddTagging';
-import XAddSasaran from '../laporan/x-modal/XAddSasaran';
 import Loading from '@/components/global/Loading/loading';
 
 interface PropTypes {
@@ -18,42 +14,9 @@ interface PropTypes {
 
 const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
   const router = useRouter();
-  const [openAddTagging, setOpenAddTagging] = useState<boolean>(false);
-  const [openAddSasaran, setOpenAddSasaran] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [notulen, setNotulen] = useState<number>(0);
 
-  const handleAddTagging = (params: any) => {
-    setNotulen(params.row);
-    setOpenAddTagging(true);
-  }
-
-  const handleAddSasaran = async (params: any) => {
-    setLoading(true);
-    const response = await fetchApi({
-      url: `/notulen/getNotulenDetail/${params.row.index}`,
-      method: "get",
-      type: "auth"
-    })
-
-    if (!response.success) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Koneksi bermasalah!',
-      })
-      setLoading(false);
-    } else {
-      const { data } = response.data;
-      setNotulen(data)
-      setLoading(false);
-      setOpenAddSasaran(true);
-    }
-  }
-
-  const handleOnCellClick = (params: any) => {
-    router.push(`/notulen/detail/${params.row.index}`);
-  }
+  const handleOnCellClick = (params: any) => router.push(`/notulen/detail/${params.row.index}`);
 
   const getBackgroundColor = (color: string, mode: string) =>
     mode === 'dark' ? darken(color, 0.7) : lighten(color, 0.7);
@@ -565,23 +528,6 @@ const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
               />
             )}
           </Box>
-
-          {openAddTagging && (
-            <XAddTagging
-              openAddTagging={openAddTagging}
-              setOpenAddTagging={setOpenAddTagging}
-              data={notulen}
-              fetchData={fetchData}
-            />
-          )}
-          {openAddSasaran && (
-            <XAddSasaran
-              openAddSasaran={openAddSasaran}
-              setOpenAddSasaran={setOpenAddSasaran}
-              data={notulen}
-              fetchData={fetchData}
-            />
-          )}
         </div>
       )}
     </React.Fragment>

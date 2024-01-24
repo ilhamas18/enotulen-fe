@@ -1,5 +1,5 @@
 'use client';
-import { fetchApi } from '@/components/mixins/request';
+import { fetchApi } from '@/app/api/request';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import NotulenDetailProps from '@/components/pages/notulen/detail';
@@ -13,7 +13,6 @@ import { State } from '@/store/reducer';
 const NotulenDetail = ({ params }: { params: { id: number } }) => {
   const { id } = params;
   const [notulenDetail, setNotulenDetail] = useState<any>(null);
-  const [listTagging, setListTagging] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   const { profile } = useSelector((state: State) => ({
@@ -63,7 +62,7 @@ const NotulenDetail = ({ params }: { params: { id: number } }) => {
             <div>Verifikasi Notulen</div>
           )}
         </div>
-        <div className='text-title-xsm2'><div>{notulenDetail?.Pegawai?.nama}</div>
+        <div className='text-title-xsm2'><div>{notulenDetail?.Uuid?.Pegawai?.nama}</div>
         </div>
         {/* <div className='text-title-xsm'>PEMERINTAH KOTA MADIUN</div> */}
       </div>
@@ -73,7 +72,7 @@ const NotulenDetail = ({ params }: { params: { id: number } }) => {
         notulenDetail === null ? (
           <div>Maaf, Data Notulen Kosong !</div>
         ) : (
-          <NotulenDetailProps data={notulenDetail} listTagging={listTagging} />
+          <NotulenDetailProps data={notulenDetail} />
         )
       )}
     </div>

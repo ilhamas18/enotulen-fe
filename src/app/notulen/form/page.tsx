@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import AddNotulenForm from "@/components/pages/notulen/form"
 import { FaWpforms } from "react-icons/fa";
 import withAuth from "@/components/hocs/withAuth";
-import { fetchApi } from "@/components/mixins/request";
+import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
 import Loading from "@/components/global/Loading/loading";
 import StepsWrapper from "@/components/global/Steps";

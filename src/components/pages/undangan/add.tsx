@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import TextInput from "@/components/common/text-input/input";
 import { Button } from "@/components/common/button/button";
 import dynamic from "next/dynamic";
-import { fetchApi } from "@/components/mixins/request";
+import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
 import DateRangePicker from "../laporan/x-modal/XDateRangePicker";
 import { formatDate } from "@/components/hooks/formatDate";
@@ -27,6 +27,7 @@ interface FormValues {
   sifat: any;
   perihal: string;
   pendahuluan: any;
+  isiUndangan: any;
   rangeTanggal: any;
   jam: any;
   tempat: string;
@@ -162,6 +163,20 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   });
                 }}
                 holder="editorjs-containe"
+              />
+            </div>
+          </div>
+          <div>
+            <div className="text-deep-gray">Isi Undangan</div>
+            <div className="container border-2 border-light-gray rounded-lg">
+              <EditorBlock
+                data={values.isiUndangan}
+                onChange={(e) => {
+                  handleChange({
+                    target: { name: "isiUndangan", value: e },
+                  });
+                }}
+                holder="editorjs-container"
               />
             </div>
           </div>
@@ -343,6 +358,7 @@ function CreateForm({ handleSubmit, ...otherProps }: MyFormProps) {
       sifat: null,
       perihal: "",
       pendahuluan: null,
+      isiUndangan: null,
       rangeTanggal: [
         {
           startDate: null,
@@ -375,6 +391,8 @@ function CreateForm({ handleSubmit, ...otherProps }: MyFormProps) {
         .required("Harap isi perihal"),
       pendahuluan: Yup.mixed()
         .required("Harap isi pendahuluan !"),
+      isiUndangan: Yup.mixed()
+        .required("Harap mengisi isi rapat !"),
       rangeTanggal: Yup.mixed()
         .nullable()
         .required("Tanggal tidak boleh kosong !"),
@@ -427,6 +445,7 @@ const AddUndanganForm = ({
       sifat: values.sifat.value,
       perihal: values.perihal,
       pendahuluan: JSON.stringify(values.pendahuluan),
+      isi_undangan: JSON.stringify(values.isiUndangan),
       tanggal: values.rangeTanggal,
       waktu: values.jam,
       tempat: values.tempat,
@@ -437,6 +456,7 @@ const AddUndanganForm = ({
       hari: new Date(values.tanggalSurat).getDate(),
       bulan: new Date(values.tanggalSurat).getMonth() + 1,
       tahun: new Date(values.tanggalSurat).getFullYear(),
+      signature: "-",
       kode_opd: profile.Perangkat_Daerah.kode_opd,
       nip_pegawai: profile.nip,
       nip_atasan: values.atasan.value

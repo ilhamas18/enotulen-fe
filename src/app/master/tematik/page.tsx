@@ -15,7 +15,7 @@ import TematikForm from "@/components/pages/tematik/form";
 import TematikDetail from '@/components/pages/tematik/detail';
 import TematikEditForm from '@/components/pages/tematik/edit';
 import Swal from 'sweetalert2';
-import { fetchApi } from '@/components/mixins/request';
+import { fetchApi } from '@/app/api/request';
 import Loading from '@/components/global/Loading/loading';
 import { shallowEqual, useSelector } from 'react-redux';
 import { State } from '@/store/reducer';

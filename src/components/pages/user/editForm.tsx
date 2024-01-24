@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import TextInput from "@/components/common/text-input/input";
 import { Button } from '@/components/common/button/button';
-import { fetchApi } from '@/components/mixins/request';
+import { fetchApi } from '@/app/api/request';
 import Swal from 'sweetalert2';
 import { withFormik, FormikProps, FormikBag } from "formik";
 import * as Yup from "yup";

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import { darken, lighten, styled } from '@mui/material/styles';
-import { fetchApi } from '@/components/mixins/request';
+import { fetchApi } from '@/app/api/request';
 import Swal from 'sweetalert2';
 import Loading from '@/components/global/Loading/loading';
 
@@ -17,7 +17,7 @@ interface PropTypes {
 const LaporanUndanganList = ({ data, profile, fetchData }: PropTypes) => {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
-  const [undangan, setNotulen] = useState<number>(0);
+  const [undangan, setUndangan] = useState<number>(0);
 
   const getBackgroundColor = (color: string, mode: string) =>
     mode === 'dark' ? darken(color, 0.7) : lighten(color, 0.7);
@@ -333,7 +333,7 @@ const LaporanUndanganList = ({ data, profile, fetchData }: PropTypes) => {
     }
   }
 
-  const handleOnCellClick = () => { }
+  const handleOnCellClick = async (params: any) => router.push(`/undangan/detail/${params.row.id}`)
 
   return (
     <React.Fragment>

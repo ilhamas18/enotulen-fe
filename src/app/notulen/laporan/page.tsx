@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { fetchApi } from "@/components/mixins/request";
+import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
 import LaporanNotulenList from "@/components/pages/notulen/list";
 import Breadcrumb from "@/components/global/Breadcrumbs/Breadcrumb";

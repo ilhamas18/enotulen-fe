@@ -15,6 +15,9 @@ module.exports = {
   //   return config;
   // },
   output: 'standalone',
+  experimental: {
+    serverActions: true,
+  },
   sassOptions: {
     includePaths: [path.join(__dirname, "styles")],
   },

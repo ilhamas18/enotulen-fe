@@ -6,7 +6,7 @@ import { Button } from "@/components/common/button/button";
 import Swal from 'sweetalert2'
 import { withFormik, FormikProps, FormikBag } from 'formik';
 import * as Yup from 'yup';
-import { fetchApi } from "@/components/mixins/request";
+import { fetchApi } from "@/app/api/request";
 import { CommonModal } from "@/components/common/common-modal/modal";
 
 interface PropTypes {

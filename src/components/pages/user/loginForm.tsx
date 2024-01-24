@@ -11,7 +11,7 @@ import Loading from "@/components/global/Loading/loading";
 import { withFormik, FormikProps, FormikBag } from 'formik';
 import * as Yup from 'yup';
 import { setCookie, getCookie, getCookies } from "cookies-next";
-import { fetchApi } from "@/components/mixins/request";
+import { fetchApi } from "@/app/api/request";
 import { useDispatch } from "react-redux";
 import { setProfile } from "@/store/profile/action";
 import { deleteCookie } from "cookies-next";

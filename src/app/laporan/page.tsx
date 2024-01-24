@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { State } from '@/store/reducer';
 import withAuth from '@/components/hocs/withAuth';
-import { fetchApi } from '@/components/mixins/request';
+import { fetchApi } from '@/app/api/request';
 import Swal from 'sweetalert2';
 import { getShortDate } from '@/components/hooks/formatDate';
 import Breadcrumb from '@/components/global/Breadcrumbs/Breadcrumb';

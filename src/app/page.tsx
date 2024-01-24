@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { fetchApi } from '@/components/mixins/request';
+import { fetchApi } from '@/app/api/request';
 import LaporanNotulen from '@/components/pages/laporan/laporanNotulen';
 import withAuth from '@/components/hocs/withAuth'
 import Swal from 'sweetalert2';

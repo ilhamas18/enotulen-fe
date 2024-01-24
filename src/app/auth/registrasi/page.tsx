@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { State } from '@/store/reducer';
 import Breadcrumb from '@/components/global/Breadcrumbs/Breadcrumb';
-import { fetchApi } from '@/components/mixins/request';
+import { fetchApi } from '@/app/api/request';
 import RegistrasiForm from '@/components/pages/user/registrasiForm';
 import EditForm from '@/components/pages/user/editForm';
 import Loading from '@/components/global/Loading/loading';

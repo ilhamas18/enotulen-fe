@@ -5,7 +5,7 @@ import { State } from "@/store/reducer";
 import { useEffect, useState } from "react";
 import { FaWpforms } from "react-icons/fa";
 import withAuth from "@/components/hocs/withAuth";
-import { fetchApi } from "@/components/mixins/request";
+import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
 import AddUndanganForm from "@/components/pages/undangan/add";
 import Loading from "@/components/global/Loading/loading";
