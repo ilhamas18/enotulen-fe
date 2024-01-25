@@ -333,7 +333,7 @@ const LaporanUndanganList = ({ data, profile, fetchData }: PropTypes) => {
     }
   }
 
-  const handleOnCellClick = async (params: any) => router.push(`/undangan/detail/${params.row.id}`)
+  const handleOnCellClick = async (params: any) => router.push(`/undangan/detail/${params.row.id_undangan}`)
 
   return (
     <React.Fragment>

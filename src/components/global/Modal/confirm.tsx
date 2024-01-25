@@ -11,6 +11,8 @@ interface PropTypes {
   text: string;
   handleCancel?: any;
   handleNext?: any;
+  setLoading?: any;
+  payload?: any;
 }
 
 const ModalConfirm = ({
@@ -20,7 +22,9 @@ const ModalConfirm = ({
   title,
   text,
   handleCancel,
-  handleNext
+  handleNext,
+  setLoading,
+  payload
 }: PropTypes) => {
   return (
     <CommonModal isOpen={openModal} onClose={setOpenModal} animate={true}>
@@ -44,6 +48,7 @@ const ModalConfirm = ({
               type="secondary"
               className="button-container"
               rounded
+              onClick={handleCancel}
             >
               <div className="flex justify-center items-center text-[#002DBB] font-Nunito" onClick={handleCancel}>
                 <span className="button-text">Tidak</span>

@@ -142,6 +142,53 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
               </div>
               <div className="body flex flex-row md:flex-row flex-col items-center justify-between">
                 <div className="text-label md:w-[20%] w-full md:text-left text-center">
+                  Nomor
+                </div>
+                <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+                  <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                    {data.nomor_surat}
+                  </div>
+                </div>
+              </div>
+              <div className="body flex flex-row md:flex-row flex-col items-center justify-between">
+                <div className="text-label md:w-[20%] w-full md:text-left text-center">
+                  Sifat
+                </div>
+                <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+                  <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                    {data.sifat}
+                  </div>
+                </div>
+              </div>
+              <div className="body flex flex-row md:flex-row flex-col items-center justify-between">
+                <div className="text-label md:w-[20%] w-full md:text-left text-center">
+                  Perihal
+                </div>
+                <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+                  <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                    {data.perihal}
+                  </div>
+                </div>
+              </div>
+              <div className="body flex flex-row md:flex-row flex-col items-center justify-between">
+                <div className="text-label md:w-[20%] w-full md:text-left text-center">
+                  Ditujukan Kepada
+                </div>
+                <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+                  <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                    <ul className="flex flex-col gap-2">
+                      {data.ditujukan.map((el: any, i: number) => (
+                        <li className="flex gap-3">
+                          <div>{i + 1}.</div>
+                          <div>{el.nama}</div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div className="body flex flex-row md:flex-row flex-col items-center justify-between">
+                <div className="text-label md:w-[20%] w-full md:text-left text-center">
                   Pendahuluan
                 </div>
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">

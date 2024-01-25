@@ -16,12 +16,12 @@ import * as Yup from "yup";
 import { v4 as uuidv4 } from 'uuid';
 import { setPayload } from "@/store/payload/action";
 import ModalConfirm from "@/components/global/Modal/confirm";
-import { FiCheckCircle } from "react-icons/fi";
+import { AiFillPlusCircle, AiOutlineClose } from "react-icons/ai";
 
 const EditorBlock = dynamic(() => import("../../hooks/editor"));
 
 interface FormValues {
-  ditujukan: string;
+  ditujukan: any;
   tanggalSurat: any;
   nomorSurat: string;
   sifat: any;
@@ -44,6 +44,10 @@ interface OtherProps {
   dataAtasan?: any;
   loading?: boolean;
   step?: string;
+  sifat?: any;
+  atasan?: any;
+  payload?: any;
+  dibuatTanggal?: any;
 }
 
 interface MyFormProps extends OtherProps {
@@ -69,6 +73,9 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   } = props;
 
   const [openDateRange, setOpenDateRange] = useState<boolean>(false);
+  const [pesertaRapat, setPesertaRapat] = useState<string>("");
+  const [idPesertaRapat, setIdPesertaRapat] = useState<number>(1);
+  const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
 
   const dataSifat = [
     {
@@ -89,6 +96,30 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     }
   ]
 
+  const handleAddParticipant = (e: any) => {
+    e.preventDefault();
+    setOpenAddParticipant(false);
+
+    if (pesertaRapat !== "") {
+      let temp = values.ditujukan;
+      temp.push({ id: idPesertaRapat, nama: pesertaRapat });
+      handleChange({
+        target: { name: "ditujukan", value: temp },
+      });
+    }
+    setPesertaRapat("");
+  };
+
+  const handleDeletePesertaArray = (e: any, nama: string) => {
+    e.preventDefault();
+    const newArray = values.ditujukan.filter(
+      (item: any) => item.nama !== nama
+    );
+    handleChange({
+      target: { name: "ditujukan", value: newArray },
+    });
+  };
+
   return (
     <div className="form-container relative bg-white rounded-lg">
       <div className="form-wrapper-general">
@@ -106,19 +137,62 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               errors={errors.nomorSurat}
             />
           </div>
-          <div className="data flex flex-row w-full">
-            <TextInput
-              type="text"
-              id="ditujukan"
-              name="ditujukan"
-              touched={touched.ditujukan}
-              label="Ditujukan Kepada"
-              placeholder="Kepada Yth."
-              change={handleChange}
-              value={values.ditujukan}
-              handleBlur={handleBlur}
-              errors={errors.ditujukan}
-            />
+          <div className="flex flex-col justify-center mb-2">
+            <div>
+              <div className="flex flex-col w-full">
+                <TextInput
+                  type="text"
+                  id="ditujukan"
+                  name="ditujukan"
+                  label="Ditujukan Kepada"
+                  change={(e: any) => setPesertaRapat(e.target.value)}
+                  value={pesertaRapat}
+                  errors={errors.ditujukan}
+                  placeholder="Kepada Yth."
+                  handleBlur={handleBlur}
+                />
+                <div className="flex justify-center items-center md:gap-8 md:mx-10 mt-3">
+                  <button
+                    className="text-xl-pink"
+                    onClick={(e) => handleAddParticipant(e)}
+                  >
+                    Batal
+                  </button>
+                  <button
+                    className="text-xl-base"
+                    onClick={(e) => handleAddParticipant(e)}
+                  >
+                    Tambah
+                  </button>
+                </div>
+              </div>
+            </div>
+            <ul className="mt-4 ml-4">
+              {values.ditujukan.map((el: any, i: number) => (
+                <li className="font flex flex-col gap-2" key={i}>
+                  <div className="flex justify-between">
+                    <div className="flex gap-2">
+                      <div
+                        className={`${values.ditujukan.length > 1 ? "block" : "hidden"
+                          }`}
+                      >
+                        {i + 1} .
+                      </div>
+                      <div>{el.nama}</div>
+                    </div>
+                    <div>
+                      <button
+                        onClick={(e: any) =>
+                          handleDeletePesertaArray(e, el.nama)
+                        }
+                      >
+                        <AiOutlineClose size={18} />
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
           <div className="data flex flex-row">
             <TextInput
@@ -129,6 +203,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               touched={touched.sifat}
               errors={errors.sifat}
               placeholder="Sifat"
+              value={values.sifat}
               options={dataSifat}
               handleBlur={handleBlur}
               setValueSelected={handleChange}
@@ -277,6 +352,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               errors={errors.atasan}
               placeholder="Ketik dan pilih atasan"
               options={dataAtasan}
+              value={values.atasan}
               handleBlur={handleBlur}
               setValueSelected={handleChange}
               change={(selectedOption: any) => {
@@ -286,24 +362,43 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               }}
             />
           </div>
-          <div className="data flex flex-row w-full mt-2">
-            <div className="flex flex-col gap-3">
-              <div>Undangan ini dibuat pada tanggal :</div>
-              <TextInput
-                type="date-picker"
-                id="tanggalSurat"
-                name="tanggalSurat"
-                touched={touched.tanggalSurat}
-                change={(e: any) => {
-                  handleChange({
-                    target: { name: "tanggalSurat", value: e.$d },
-                  });
-                }}
-                value={values.tanggalSurat}
-                errors={errors.tanggalSurat}
-              />
+          {values.tanggalSurat !== null ? (
+            <div className="data items-center flex md:flex-row flex-col md:gap-4 w-full">
+              <div className="data flex flex-row mt-4 md:mt-0 md:w-[25%] w-full">
+                <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                  <span>{formatDate(values.tanggalSurat)}</span>
+                </div>
+              </div>
+              <div className="w-[15%] text-right">Edit Waktu Pembuatan: </div>
+              <div className="w-[60%] mb-2">
+                <TextInput
+                  type="date-picker"
+                  id="tanggalSurat"
+                  name="tanggalSurat"
+                  touched={touched.tanggalSurat}
+                  change={(e: any) => {
+                    handleChange({
+                      target: { name: "tanggalSurat", value: e.$d },
+                    });
+                  }}
+                  errors={errors.tanggalSurat}
+                />
+              </div>
             </div>
-          </div>
+          ) : (
+            <TextInput
+              type="date-picker"
+              id="tanggalSurat"
+              name="tanggalSurat"
+              touched={touched.tanggalSurat}
+              change={(e: any) => {
+                handleChange({
+                  target: { name: "tanggalSurat", value: e.$d },
+                });
+              }}
+              errors={errors.tanggalSurat}
+            />
+          )}
         </div>
         <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
           <div className="w-[8em]">
@@ -311,6 +406,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               variant="xl"
               type="secondary"
               className="button-container"
+              onClick={handleCancel}
               rounded
             >
               <div className="flex justify-center items-center text-[#002DBB] font-Nunito" onClick={handleCancel}>
@@ -349,32 +445,32 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   )
 }
 
-function CreateForm({ handleSubmit, ...otherProps }: MyFormProps) {
+function CreateForm({ handleSubmit, sifat, atasan, dibuatTanggal, payload, ...otherProps }: MyFormProps) {
   const FormWithFormik = withFormik({
     mapPropsToValues: () => ({
-      ditujukan: "",
-      tanggalSurat: null,
-      nomorSurat: "",
-      sifat: null,
-      perihal: "",
-      pendahuluan: null,
-      isiUndangan: null,
+      ditujukan: payload?.length != 0 ? payload?.ditujukan !== null ? payload?.ditujukan : [] : [],
+      tanggalSurat: dibuatTanggal !== null ? dibuatTanggal : null,
+      nomorSurat: payload?.length != 0 ? payload?.nomor_surat !== null ? payload?.nomor_surat : null : null,
+      sifat: payload?.sifat !== null ? sifat : null,
+      perihal: payload?.length != 0 ? payload?.perihal !== null ? payload?.perihal : null : null,
+      pendahuluan: payload?.length != 0 ? payload?.pendahuluan !== null ? JSON.parse(payload?.pendahuluan) : "" : "",
+      isiUndangan: payload?.length != 0 ? payload?.isi_undangan !== null ? JSON.parse(payload?.isi_undangan) : "" : "",
       rangeTanggal: [
         {
-          startDate: null,
-          endDate: null,
+          startDate: payload?.length != 0 ? payload?.tanggal[0]?.startDate != null ? new Date(payload?.tanggal[0]?.startDate) : null : null,
+          endDate: payload?.length != 0 ? payload?.tanggal[0]?.endDate != null ? new Date(payload?.tanggal[0]?.endDate) : null : null,
           key: "selection",
         },
       ],
-      jam: null,
-      tempat: "",
-      acara: "",
-      penutup: null,
-      atasan: null,
+      jam: payload?.length != 0 ? payload?.waktu !== null ? payload?.waktu : null : null,
+      tempat: payload?.length != 0 ? payload?.tempat !== null ? payload?.tempat : null : null,
+      acara: payload?.length != 0 ? payload?.acara !== null ? payload?.acara : null : null,
+      penutup: payload?.length != 0 ? payload?.penutup !== null ? JSON.parse(payload?.penutup) : "" : "",
+      atasan: payload?.atasan !== null ? atasan : null,
     }),
     validationSchema: Yup.object().shape({
-      ditujukan: Yup.string()
-        .required("Bagian diperlukan"),
+      ditujukan: Yup.array()
+        .required("Harap isi peserta !"),
       tanggalSurat: Yup.mixed()
         .nullable()
         .required("Tanggal tidak boleh kosong !"),
@@ -423,21 +519,75 @@ interface PropTypes {
   profile: any;
   dataAtasan: any;
   step: string;
+  undangan: any;
 }
 
 const AddUndanganForm = ({
   profile,
   dataAtasan,
-  step
+  step,
+  undangan
 }: PropTypes) => {
-  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   const dispatch = useDispatch();
-  const [response, setResponse] = useState<any>([]);
+  const [atasan, setAtasan] = useState<any>(null);
+  const [sifat, setSifat] = useState<any>(null);
+  const [dataPayload, setDataPayload] = useState<any>([]);
+  const [dibuatTanggal, setDibuatTanggal] = useState<any>(null);
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (undangan.length != 0) {
+      setAtasan({
+        label: undangan.atasan.nama,
+        value: undangan.atasan.nip,
+        data: {
+          nama: undangan.atasan.nama,
+          nip: undangan.atasan.nip,
+          pangkat: undangan.atasan.pangkat,
+          namaPangkat: undangan.atasan.nama_pangkat,
+          jabatan: undangan.atasan.jabatan
+        },
+      })
+      setSifat({
+        label: undangan.sifat,
+        value: undangan.sifat
+      })
+      formattedDate();
+    }
+  }, []);
+
+  const formattedDate = () => {
+    let tempDate: any = undangan.hari + '/' + Number(undangan.bulan - 1) + '/' + undangan.tahun;
+    const dateParts = tempDate.split('/');
+    const day = parseInt(dateParts[0], 10);
+    const month = parseInt(dateParts[1], 10); // Months are 0-based (0 = January, 1 = February, etc.)
+    const year = parseInt(dateParts[2], 10);
+    // Create a Date object with the parsed values
+    const formattedDate = new Date(year, month, day);
+
+    // Define a formatting option for the date
+    const options: any = {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZoneName: 'long',
+      timeZone: 'Asia/Jakarta' // Set the desired time zone
+    };
+
+    // Format the date using the Intl.DateTimeFormat API
+    const formatter = new Intl.DateTimeFormat('en-US', options);
+    const formattedDateString = formatter.format(formattedDate);
+    setDibuatTanggal(formattedDate);
+  }
 
   const handleSubmmit = async (values: FormValues) => {
-    setLoading(true);
+    setOpenConfirm(true);
     const payload = {
       uuid: uuidv4(),
       ditujukan: values.ditujukan,
@@ -461,12 +611,25 @@ const AddUndanganForm = ({
       nip_pegawai: profile.nip,
       nip_atasan: values.atasan.value
     }
+    setDataPayload(payload);
+  }
+  console.log(undangan);
 
+  const handleNext = () => {
+    const storedData = {
+      step1: dataPayload
+    }
+    dispatch(setPayload(storedData));
+    router.push('/notulen/form?step=2');
+  }
+
+  const handleNo = async () => {
+    setLoading(true);
     const response = await fetchApi({
-      url: `/undangan/addUndangan`,
-      method: "post",
-      body: payload,
-      type: "auth",
+      url: '/undangan/addUndangan',
+      method: 'post',
+      type: 'auth',
+      body: dataPayload
     })
 
     if (!response.success) {
@@ -475,14 +638,7 @@ const AddUndanganForm = ({
         Swal.fire({
           icon: "error",
           title: "Oops...",
-          text: "Periksa kembali data undangan!",
-        });
-      } else if (response.data.code == 400) {
-        setLoading(false);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Periksa kembali data Anda!",
+          text: "Periksa kembali data Undangan!",
         });
       } else if (response.data.code == 500) {
         setLoading(false);
@@ -493,22 +649,19 @@ const AddUndanganForm = ({
         });
       }
     } else {
-      if (step !== null) {
-        setLoading(false);
-        setResponse(response);
-        setOpenConfirm(true);
-      } else {
-        router.push('/undangan/laporan');
-      }
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Berhasil menambahkan undangan",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      dispatch(setPayload([]));
+      router.push("/undangan/laporan");
     }
   }
 
-  const handleNext = () => {
-    router.push('/notulen/form?step=2');
-    dispatch(setPayload(response.data.data));
-  }
-
-  const handleCancel = () => router.push('/undangan/laporan');
+  const handleCancel = async () => dispatch(setPayload([]));
 
   return (
     <React.Fragment>
@@ -520,7 +673,11 @@ const AddUndanganForm = ({
           handleCancel={handleCancel}
           dataAtasan={dataAtasan}
           loading={loading}
+          atasan={atasan}
+          dibuatTanggal={dibuatTanggal}
+          payload={undangan}
           step={step}
+          sifat={sifat}
         />
       )}
       <ModalConfirm
@@ -529,8 +686,10 @@ const AddUndanganForm = ({
         condition="success"
         title="Berhasil Simpan Undangan"
         text="Ingin Menambah Notulen ?"
-        handleCancel={handleCancel}
+        handleCancel={handleNo}
         handleNext={handleNext}
+        payload={dataPayload}
+        setLoading={setLoading}
       />
     </React.Fragment>
   )

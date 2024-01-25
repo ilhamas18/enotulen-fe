@@ -17,6 +17,10 @@ const TambahUndangan = () => {
   const [dataAtasan, setDataAtasan] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
+  const { payload } = useSelector((state: State) => ({
+    payload: state.payload.payload
+  }), shallowEqual);
+
   const step: any = searchParams.get('step');
 
   const { profile } = useSelector((state: State) => ({
@@ -93,6 +97,7 @@ const TambahUndangan = () => {
           profile={profile}
           dataAtasan={dataAtasan}
           step={step}
+          undangan={payload?.step1}
         />
       )}
     </div>

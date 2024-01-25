@@ -23,6 +23,7 @@ import { getCookies } from "cookies-next";
 import { IoMdClose } from "react-icons/io";
 import { v4 as uuidv4 } from 'uuid';
 import ModalConfirm from "@/components/global/Modal/confirm";
+import { setPayload } from "@/store/payload/action";
 
 const EditorBlock = dynamic(() => import("../../hooks/editor"));
 
@@ -803,7 +804,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               )}
             </div>
             <div className="signature px-8 mt-6">
-              {values.signature === '' ? (
+              {values.signature === null ? (
                 <>
                   <div className="text-title-xsm2 mb-2">Bubuhkan Tanda tangan (opsional)</div>
                   <div className="md:w-[500px] w-full md:h-[200px] h-[130px] border-2 border-light-gray rounded rounded-lg">
@@ -896,11 +897,11 @@ function CreateForm({ handleSubmit, atasan, dibuatTanggal, payload, ...otherProp
         },
       ],
       jam: payload.length != 0 ? payload.waktu !== null ? payload.waktu : null : null,
-      pendahuluan: payload.length != 0 ? payload.pendahuluan !== null ? JSON.parse(payload.pendahuluan) : "" : "",
-      pimpinanRapat: "",
-      pesertaArray: [],
-      isiRapat: null,
-      tindakLanjut: null,
+      pendahuluan: payload.length != 0 ? payload.pendahuluan !== null ? JSON.parse(payload.pendahuluan) : null : null,
+      pimpinanRapat: payload.length != 0 ? payload.pimpinan_rapat !== null ? payload.pimpinan_rapat : "" : "",
+      pesertaArray: payload.length != 0 ? payload.peserta_rapat !== undefined ? payload.peserta_rapat : [] : [],
+      isiRapat: payload.length != 0 ? payload.pendahuluan !== null ? JSON.parse(payload.pendahuluan) : null : null,
+      tindakLanjut: payload.length != 0 ? payload.tindak_lanjut !== undefined ? JSON.parse(payload.tindak_lanjut) : null : null,
       lokasi: payload.length != 0 ? payload.tempat !== "" ? payload.tempat : "" : "",
       acara: payload.length != 0 ? payload.acara !== "" ? payload.acara : "" : "",
       atasan: payload.atasan != 0 ? payload.atasan !== null ? atasan : null : null,
@@ -909,7 +910,7 @@ function CreateForm({ handleSubmit, atasan, dibuatTanggal, payload, ...otherProp
       spj: null,
       foto: null,
       pendukung: null,
-      signature: '',
+      signature: payload.signature !== undefined ? payload.signature !== '-' ? payload.signature : null : null,
       dibuatTanggal: dibuatTanggal !== null ? dibuatTanggal : null
     }),
     validationSchema: Yup.object().shape({
@@ -956,11 +957,14 @@ interface PropTypes {
 
 const AddNotulenForm = ({ profile, payload, dataAtasan, step }: PropTypes) => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [atasan, setAtasan] = useState<any>(null);
   const [dibuatTanggal, setDibuatTanggal] = useState<any>(null);
+  const [dataPayload, setDataPayload] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [response, setResponse] = useState<any>([]);
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
+  console.log(payload.tindak_lanjut === undefined, '???undeinde');
 
   useEffect(() => {
     if (payload.length != 0) {
@@ -987,6 +991,7 @@ const AddNotulenForm = ({ profile, payload, dataAtasan, step }: PropTypes) => {
     const year = parseInt(dateParts[2], 10);
     // Create a Date object with the parsed values
     const formattedDate = new Date(year, month, day);
+    console.log(payload);
 
     // Define a formatting option for the date
     const options: any = {
@@ -1008,7 +1013,7 @@ const AddNotulenForm = ({ profile, payload, dataAtasan, step }: PropTypes) => {
   }
 
   const handleSubmit = async (values: FormValues) => {
-    setLoading(true);
+    setOpenConfirm(true);
     const dataNotulen = {
       uuid: payload.length != 0 ? payload.uuid : uuidv4(),
       tanggal: values.rangeTanggal,
@@ -1035,41 +1040,52 @@ const AddNotulenForm = ({ profile, payload, dataAtasan, step }: PropTypes) => {
       nip_pegawai: profile.nip,
       nip_atasan: values.atasan.value
     };
+    setDataPayload(dataNotulen);
+    // const response = await fetchApi({
+    //   url: `/notulen/addNotulen`,
+    //   method: "post",
+    //   body: dataNotulen,
+    //   type: "auth",
+    // });
 
-    const response = await fetchApi({
-      url: `/notulen/addNotulen`,
-      method: "post",
-      body: dataNotulen,
-      type: "auth",
-    });
-
-    if (!response.success) {
-      if (response.data.code == 400) {
-        setLoading(false);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Periksa kembali data Notulen!",
-        });
-      } else if (response.data.code == 500) {
-        setLoading(false);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Koneksi bermasalah!",
-        });
-      }
-    } else {
-      if (step !== null) {
-        setLoading(false);
-        setOpenConfirm(true);
-      } else {
-        router.push("/notulen/laporan");
-      }
-    }
+    // if (!response.success) {
+    //   if (response.data.code == 400) {
+    //     setLoading(false);
+    //     Swal.fire({
+    //       icon: "error",
+    //       title: "Oops...",
+    //       text: "Periksa kembali data Notulen!",
+    //     });
+    //   } else if (response.data.code == 500) {
+    //     setLoading(false);
+    //     Swal.fire({
+    //       icon: "error",
+    //       title: "Oops...",
+    //       text: "Koneksi bermasalah!",
+    //     });
+    //   }
+    // } else {
+    //   if (step !== null) {
+    //     setLoading(false);
+    //     setOpenConfirm(true);
+    //   } else {
+    //     router.push("/notulen/laporan");
+    //   }
+    // }
   };
 
-  const handleNext = () => { }
+  const handleNext = () => {
+    const storedData: any = {
+      pimpinan_rapat: dataPayload.pimpinan_rapat,
+      isi_rapat: dataPayload.isi_rapat,
+      tindak_lanjut: dataPayload.tindak_lanjut,
+      peserta_rapat: dataPayload.peserta_rapat,
+      signature: dataPayload.signature
+    }
+    const combinedData = { ...payload, ...storedData };
+    dispatch(setPayload(combinedData));
+    router.push('/peserta?step=3');
+  }
 
   const handleCancel = () => router.push("/notulen/laporan");
 
