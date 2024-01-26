@@ -14,24 +14,23 @@ import StepsWrapper from "@/components/global/Steps";
 const TambahUndangan = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [undangan, setUndangan] = useState<any>([]);
   const [dataAtasan, setDataAtasan] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { payload } = useSelector((state: State) => ({
+  const { profile, payload } = useSelector((state: State) => ({
+    profile: state.profile.profile,
     payload: state.payload.payload
   }), shallowEqual);
 
   const step: any = searchParams.get('step');
-
-  const { profile } = useSelector((state: State) => ({
-    profile: state.profile.profile
-  }), shallowEqual);
+  console.log(payload);
 
   useEffect(() => {
-    if (profile.role != 2 && profile.role != 3 && profile.role != 4) {
-      router.push('/unauthorized')
-    }
+    if (profile.role != 2 && profile.role != 3 && profile.role != 4) router.push('/unauthorized');
     fetchDataAtasan();
+    if (payload.step1 !== undefined) setUndangan(payload.step1);
+    else if (payload.step2 !== undefined) setUndangan(payload.step2);
   }, []);
 
   const fetchDataAtasan = async () => {
@@ -95,9 +94,10 @@ const TambahUndangan = () => {
       ) : (
         <AddUndanganForm
           profile={profile}
+          undangan={undangan}
           dataAtasan={dataAtasan}
           step={step}
-          undangan={payload?.step1}
+          payload={payload}
         />
       )}
     </div>

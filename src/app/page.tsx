@@ -6,7 +6,7 @@ import { fetchApi } from '@/app/api/request';
 import LaporanNotulen from '@/components/pages/laporan/laporanNotulen';
 import withAuth from '@/components/hocs/withAuth'
 import Swal from 'sweetalert2';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { State } from '@/store/reducer';
 import {
   Chart as ChartJS,
@@ -26,6 +26,7 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { Line } from 'react-chartjs-2';
 import WelcomeBanner from '@/components/global/Banner/WelcomeBanner';
 import SEO from '@/components/global/seo';
+import { setPayload } from '@/store/payload/action';
 
 ChartJS.register(
   CategoryScale,
@@ -39,6 +40,7 @@ ChartJS.register(
 
 function Home() {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [notulens, setNotulens] = useState<any>([]);
   const [notulenLength, setNotulenLength] = useState<any>([]);
   const [notulensVerifLength, setNotulensVerifLength] = useState<any>([]);
@@ -80,6 +82,7 @@ function Home() {
       default:
         setTitle('');
     }
+    dispatch(setPayload([]));
   }, [month]);
 
   const fetchData = async () => {

@@ -44,14 +44,20 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
 
   const handleClickAddForm = (data: any, type: string) => {
     if (type === 'undangan') {
-      dispatch(setPayload(data.Notulen));
-      router.push('/undangan/add')
+      let temp: any = data.Notulen;
+      temp.hari = data.hari;
+      temp.bulan = data.bulan;
+      temp.tahun = data.tahun;
+      const stored = { step1: temp };
+      dispatch(setPayload(stored));
+      router.push('/undangan/tambah')
     } else if (type === 'notulen') {
       let temp: any = data.Undangan;
       temp.hari = data.hari;
       temp.bulan = data.bulan;
       temp.tahun = data.tahun;
-      dispatch(setPayload(temp));
+      const stored = { step2: temp };
+      dispatch(setPayload(stored));
       router.push('/notulen/form');
     }
   }

@@ -902,14 +902,14 @@ function CreateForm({ handleSubmit, atasan, dibuatTanggal, payload, ...otherProp
       pesertaArray: payload.length != 0 ? payload.peserta_rapat !== undefined ? payload.peserta_rapat : [] : [],
       isiRapat: payload.length != 0 ? payload.pendahuluan !== null ? JSON.parse(payload.pendahuluan) : null : null,
       tindakLanjut: payload.length != 0 ? payload.tindak_lanjut !== undefined ? JSON.parse(payload.tindak_lanjut) : null : null,
-      lokasi: payload.length != 0 ? payload.tempat !== "" ? payload.tempat : "" : "",
+      lokasi: payload.length != 0 ? payload.lokasi !== "" ? payload.lokasi : "" : "",
       acara: payload.length != 0 ? payload.acara !== "" ? payload.acara : "" : "",
-      atasan: payload.atasan != 0 ? payload.atasan !== null ? atasan : null : null,
-      suratUndangan: null,
-      daftarHadir: null,
-      spj: null,
-      foto: null,
-      pendukung: null,
+      atasan: payload.length != 0 ? atasan : null,
+      suratUndangan: payload.link_img_surat_undangan !== null ? payload.link_img_surat_undangan : null,
+      daftarHadir: payload.link_img_daftar_hadir !== null ? payload.link_img_daftar_hadir : null,
+      spj: payload.link_img_spj !== null ? payload.link_img_spj : null,
+      foto: payload.link_img_foto !== null ? payload.link_img_foto : null,
+      pendukung: payload.link_img_pendukung !== null ? payload.link_img_pendukung : null,
       signature: payload.signature !== undefined ? payload.signature !== '-' ? payload.signature : null : null,
       dibuatTanggal: dibuatTanggal !== null ? dibuatTanggal : null
     }),
@@ -951,47 +951,46 @@ function CreateForm({ handleSubmit, atasan, dibuatTanggal, payload, ...otherProp
 interface PropTypes {
   profile: any;
   payload: any;
+  notulen: any;
   dataAtasan: any;
   step: string
 }
 
-const AddNotulenForm = ({ profile, payload, dataAtasan, step }: PropTypes) => {
+const AddNotulenForm = ({ profile, payload, notulen, dataAtasan, step }: PropTypes) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [atasan, setAtasan] = useState<any>(null);
   const [dibuatTanggal, setDibuatTanggal] = useState<any>(null);
-  const [dataPayload, setDataPayload] = useState<any>(null);
+  const [dataPayload, setDataPayload] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [response, setResponse] = useState<any>([]);
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
-  console.log(payload.tindak_lanjut === undefined, '???undeinde');
 
   useEffect(() => {
-    if (payload.length != 0) {
+    if (notulen.length != 0) {
       setAtasan({
-        label: payload.atasan.nama,
-        value: payload.atasan.nip,
+        label: notulen.atasan.nama,
+        value: notulen.atasan.nip,
         data: {
-          nama: payload.atasan.nama,
-          nip: payload.atasan.nip,
-          pangkat: payload.atasan.pangkat,
-          namaPangkat: payload.atasan.nama_pangkat,
-          jabatan: payload.atasan.jabatan
+          nama: notulen.atasan.nama,
+          nip: notulen.atasan.nip,
+          pangkat: notulen.atasan.pangkat,
+          namaPangkat: notulen.atasan.nama_pangkat,
+          jabatan: notulen.atasan.jabatan
         },
       })
       formattedDate();
     }
-  }, []);
+    setLoading(false);
+  }, [])
 
   const formattedDate = () => {
-    let tempDate: any = payload.hari + '/' + Number(payload.bulan - 1) + '/' + payload.tahun;
+    let tempDate: any = notulen.hari + '/' + Number(notulen.bulan - 1) + '/' + notulen.tahun;
     const dateParts = tempDate.split('/');
     const day = parseInt(dateParts[0], 10);
     const month = parseInt(dateParts[1], 10); // Months are 0-based (0 = January, 1 = February, etc.)
     const year = parseInt(dateParts[2], 10);
     // Create a Date object with the parsed values
     const formattedDate = new Date(year, month, day);
-    console.log(payload);
 
     // Define a formatting option for the date
     const options: any = {
@@ -1013,9 +1012,8 @@ const AddNotulenForm = ({ profile, payload, dataAtasan, step }: PropTypes) => {
   }
 
   const handleSubmit = async (values: FormValues) => {
-    setOpenConfirm(true);
     const dataNotulen = {
-      uuid: payload.length != 0 ? payload.uuid : uuidv4(),
+      uuid: notulen.length != 0 ? notulen.uuid : uuidv4(),
       tanggal: values.rangeTanggal,
       waktu: values.jam,
       pendahuluan: JSON.stringify(values.pendahuluan),
@@ -1041,53 +1039,93 @@ const AddNotulenForm = ({ profile, payload, dataAtasan, step }: PropTypes) => {
       nip_atasan: values.atasan.value
     };
     setDataPayload(dataNotulen);
-    // const response = await fetchApi({
-    //   url: `/notulen/addNotulen`,
-    //   method: "post",
-    //   body: dataNotulen,
-    //   type: "auth",
-    // });
-
-    // if (!response.success) {
-    //   if (response.data.code == 400) {
-    //     setLoading(false);
-    //     Swal.fire({
-    //       icon: "error",
-    //       title: "Oops...",
-    //       text: "Periksa kembali data Notulen!",
-    //     });
-    //   } else if (response.data.code == 500) {
-    //     setLoading(false);
-    //     Swal.fire({
-    //       icon: "error",
-    //       title: "Oops...",
-    //       text: "Koneksi bermasalah!",
-    //     });
-    //   }
-    // } else {
-    //   if (step !== null) {
-    //     setLoading(false);
-    //     setOpenConfirm(true);
-    //   } else {
-    //     router.push("/notulen/laporan");
-    //   }
-    // }
+    if (step !== null) setOpenConfirm(true);
+    else handleConfirmSubmit(dataNotulen);
   };
 
   const handleNext = () => {
-    const storedData: any = {
-      pimpinan_rapat: dataPayload.pimpinan_rapat,
-      isi_rapat: dataPayload.isi_rapat,
-      tindak_lanjut: dataPayload.tindak_lanjut,
-      peserta_rapat: dataPayload.peserta_rapat,
-      signature: dataPayload.signature
+    const storedData = {
+      ...payload,
+      step2: dataPayload
     }
-    const combinedData = { ...payload, ...storedData };
-    dispatch(setPayload(combinedData));
+    dispatch(setPayload(storedData));
     router.push('/peserta?step=3');
   }
 
-  const handleCancel = () => router.push("/notulen/laporan");
+  const handleConfirmSubmit = async (data: any) => {
+    setLoading(true);
+    const response = await fetchApi({
+      url: `/notulen/addNotulen`,
+      method: "post",
+      type: "auth",
+      body: dataPayload.length == 0 ? data : dataPayload
+    });
+
+    if (!response.success) {
+      if (response.data.code == 400) {
+        setLoading(false);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Periksa kembali data Notulen!",
+        });
+      } else if (response.data.code == 500) {
+        setLoading(false);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Koneksi bermasalah!",
+        });
+      }
+    } else {
+      if (step !== null) {
+        const response2 = await fetchApi({
+          url: '/undangan/addUndangan',
+          method: 'post',
+          type: 'auth',
+          body: payload.step1
+        })
+
+        if (!response2.success) {
+          if (response2.data.code == 400) {
+            setLoading(false);
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Periksa kembali data Undangan!",
+            });
+          } else if (response2.data.code == 500) {
+            setLoading(false);
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Koneksi bermasalah!",
+            });
+          }
+        } else {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Berhasil menambahkan notulen",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          dispatch(setPayload([]));
+          router.push("/notulen/laporan");
+        }
+      } else {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Berhasil menambahkan notulen",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        dispatch(setPayload([]));
+        router.push("/notulen/laporan");
+      }
+    }
+  }
 
   return (
     <div>
@@ -1099,7 +1137,7 @@ const AddNotulenForm = ({ profile, payload, dataAtasan, step }: PropTypes) => {
           dataAtasan={dataAtasan}
           atasan={atasan}
           dibuatTanggal={dibuatTanggal}
-          payload={payload}
+          payload={notulen}
           step={step}
         />
       )}
@@ -1109,7 +1147,7 @@ const AddNotulenForm = ({ profile, payload, dataAtasan, step }: PropTypes) => {
         condition="success"
         title="Berhasil Simpan Notulen"
         text="Ingin Menambah Daftar Hadir ?"
-        handleCancel={handleCancel}
+        handleCancel={handleConfirmSubmit}
         handleNext={handleNext}
       />
     </div>

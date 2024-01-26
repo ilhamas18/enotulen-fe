@@ -15,6 +15,7 @@ import StepsWrapper from "@/components/global/Steps";
 const Notulen = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [notulen, setNotulen] = useState<any>([]);
   const [dataAtasan, setDataAtasan] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -26,10 +27,10 @@ const Notulen = () => {
   }), shallowEqual);
 
   useEffect(() => {
-    if (profile.role != 2 && profile.role != 3 && profile.role != 4) {
-      router.push('/unauthorized')
-    }
+    if (profile.role != 2 && profile.role != 3 && profile.role != 4) router.push('/unauthorized');
     fetchDataAtasan();
+    if (payload.step2 !== undefined) setNotulen(payload.step2);
+    else if (payload.step1 !== undefined) setNotulen(payload.step1);
   }, []);
 
   const fetchDataAtasan = async () => {
@@ -94,6 +95,7 @@ const Notulen = () => {
         <AddNotulenForm
           profile={profile}
           payload={payload}
+          notulen={notulen}
           dataAtasan={dataAtasan}
           step={step}
         />

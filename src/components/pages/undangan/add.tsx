@@ -448,13 +448,13 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
 function CreateForm({ handleSubmit, sifat, atasan, dibuatTanggal, payload, ...otherProps }: MyFormProps) {
   const FormWithFormik = withFormik({
     mapPropsToValues: () => ({
-      ditujukan: payload?.length != 0 ? payload?.ditujukan !== null ? payload?.ditujukan : [] : [],
-      tanggalSurat: dibuatTanggal !== null ? dibuatTanggal : null,
-      nomorSurat: payload?.length != 0 ? payload?.nomor_surat !== null ? payload?.nomor_surat : null : null,
-      sifat: payload?.sifat !== null ? sifat : null,
-      perihal: payload?.length != 0 ? payload?.perihal !== null ? payload?.perihal : null : null,
-      pendahuluan: payload?.length != 0 ? payload?.pendahuluan !== null ? JSON.parse(payload?.pendahuluan) : "" : "",
-      isiUndangan: payload?.length != 0 ? payload?.isi_undangan !== null ? JSON.parse(payload?.isi_undangan) : "" : "",
+      ditujukan: payload?.length != 0 ? payload?.ditujukan !== undefined ? payload?.ditujukan : [] : [],
+      tanggalSurat: dibuatTanggal !== undefined ? dibuatTanggal : null,
+      nomorSurat: payload?.length != 0 ? payload?.nomor_surat !== undefined ? payload?.nomor_surat : null : null,
+      sifat: payload?.sifat !== undefined ? sifat : null,
+      perihal: payload?.length != 0 ? payload?.perihal !== undefined ? payload?.perihal : null : null,
+      pendahuluan: payload?.length != 0 ? payload?.pendahuluan !== undefined ? JSON.parse(payload?.pendahuluan) : "" : "",
+      isiUndangan: payload?.length != 0 ? payload?.isi_undangan !== undefined ? JSON.parse(payload?.isi_undangan) : "" : "",
       rangeTanggal: [
         {
           startDate: payload?.length != 0 ? payload?.tanggal[0]?.startDate != null ? new Date(payload?.tanggal[0]?.startDate) : null : null,
@@ -462,11 +462,11 @@ function CreateForm({ handleSubmit, sifat, atasan, dibuatTanggal, payload, ...ot
           key: "selection",
         },
       ],
-      jam: payload?.length != 0 ? payload?.waktu !== null ? payload?.waktu : null : null,
-      tempat: payload?.length != 0 ? payload?.tempat !== null ? payload?.tempat : null : null,
-      acara: payload?.length != 0 ? payload?.acara !== null ? payload?.acara : null : null,
-      penutup: payload?.length != 0 ? payload?.penutup !== null ? JSON.parse(payload?.penutup) : "" : "",
-      atasan: payload?.atasan !== null ? atasan : null,
+      jam: payload?.length != 0 ? payload?.waktu !== undefined ? payload?.waktu : null : null,
+      tempat: payload?.length != 0 ? payload?.lokasi !== undefined ? payload?.lokasi : null : null,
+      acara: payload?.length != 0 ? payload?.acara !== undefined ? payload?.acara : null : null,
+      penutup: payload?.length != 0 ? payload?.penutup !== undefined ? JSON.parse(payload?.penutup) : "" : "",
+      atasan: payload?.atasan !== undefined ? atasan : null,
     }),
     validationSchema: Yup.object().shape({
       ditujukan: Yup.array()
@@ -518,15 +518,17 @@ function CreateForm({ handleSubmit, sifat, atasan, dibuatTanggal, payload, ...ot
 interface PropTypes {
   profile: any;
   dataAtasan: any;
-  step: string;
   undangan: any;
+  step: string;
+  payload: any;
 }
 
 const AddUndanganForm = ({
   profile,
   dataAtasan,
+  undangan,
   step,
-  undangan
+  payload
 }: PropTypes) => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -587,9 +589,8 @@ const AddUndanganForm = ({
   }
 
   const handleSubmmit = async (values: FormValues) => {
-    setOpenConfirm(true);
-    const payload = {
-      uuid: uuidv4(),
+    const dataUndangan = {
+      uuid: undangan.length != 0 ? undangan.uuid : uuidv4(),
       ditujukan: values.ditujukan,
       nomor_surat: values.nomorSurat,
       sifat: values.sifat.value,
@@ -611,25 +612,28 @@ const AddUndanganForm = ({
       nip_pegawai: profile.nip,
       nip_atasan: values.atasan.value
     }
-    setDataPayload(payload);
+    setDataPayload(dataUndangan);
+    if (step !== null) setOpenConfirm(true);
+    else handleConfirmSubmit(dataUndangan);
   }
-  console.log(undangan);
 
   const handleNext = () => {
+    setOpenConfirm(true);
     const storedData = {
+      ...payload,
       step1: dataPayload
     }
     dispatch(setPayload(storedData));
     router.push('/notulen/form?step=2');
   }
 
-  const handleNo = async () => {
+  const handleConfirmSubmit = async (data: any) => {
     setLoading(true);
     const response = await fetchApi({
       url: '/undangan/addUndangan',
       method: 'post',
       type: 'auth',
-      body: dataPayload
+      body: dataPayload.length == 0 ? data : dataPayload
     })
 
     if (!response.success) {
@@ -661,7 +665,10 @@ const AddUndanganForm = ({
     }
   }
 
-  const handleCancel = async () => dispatch(setPayload([]));
+  const handleCancel = async () => {
+    dispatch(setPayload([]));
+    router.push('/undangan/laporan');
+  }
 
   return (
     <React.Fragment>
@@ -686,10 +693,8 @@ const AddUndanganForm = ({
         condition="success"
         title="Berhasil Simpan Undangan"
         text="Ingin Menambah Notulen ?"
-        handleCancel={handleNo}
+        handleCancel={handleConfirmSubmit}
         handleNext={handleNext}
-        payload={dataPayload}
-        setLoading={setLoading}
       />
     </React.Fragment>
   )
