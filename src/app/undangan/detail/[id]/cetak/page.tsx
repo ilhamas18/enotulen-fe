@@ -15,7 +15,6 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
   const { id } = params;
   const [laporan, setLaporan] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  console.log(laporan, '???');
 
   const printRef: any = useRef();
 
@@ -266,7 +265,7 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                       </div>
                       <div className="w-[5%]">:</div>
                       <div className="w-[70%]">
-                        {laporan.tempat}
+                        {laporan.lokasi}
                       </div>
                     </div>
                     <div className="flex gap-2 w-full">

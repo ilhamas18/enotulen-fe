@@ -17,26 +17,30 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { ImTable2 } from "react-icons/im";
 import StepsWrapper from "@/components/global/Steps";
 import { FaWpforms } from "react-icons/fa";
+import AddPesertaForm from "@/components/pages/peserta/form";
 
 const Peserta = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [data, setData] = useState<any>([]);
 
   const step: any = searchParams.get('step');
 
-  const { profile, undangan } = useSelector((state: State) => ({
+  const { profile, payload } = useSelector((state: State) => ({
     profile: state.profile.profile,
-    undangan: state.undangan.undangan
+    payload: state.payload.payload
   }), shallowEqual);
 
   useEffect(() => {
-    if (step === null) {
-      router.push('/unauthorized');
-    } else {
-      if (profile.role != 2 && profile.role != 3 && profile.role != 4) {
-        router.push('/unauthorized')
-      }
-    }
+    // if (step === null) {
+    //   router.push('/unauthorized');
+    // } else {
+    //   if (profile.role != 2 && profile.role != 3 && profile.role != 4) {
+    //     router.push('/unauthorized')
+    //   }
+    // }
+    if (payload.step2 !== undefined) setData(payload.step2);
+    else if (payload.step1 !== undefined) setData(payload.step1);
   }, []);
 
   const gradientStyle = {
@@ -53,6 +57,7 @@ const Peserta = () => {
           <div className='text-title-xsm'>Form Tambah Daftar Hadir</div>
         </div>
       </div>
+      {data.length != 0 && <AddPesertaForm payload={data} />}
     </div>
   )
 }

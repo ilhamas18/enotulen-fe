@@ -57,6 +57,7 @@ const LaporanUndangan = () => {
       });
     } else {
       const { data } = response.data;
+      console.log(data);
 
       const temp: any = [];
       data.map((el: any, i: number) => {
@@ -65,7 +66,9 @@ const LaporanUndangan = () => {
           id_undangan: el.id,
           opd: el.Uuid.Perangkat_Daerah.nama_opd,
           pembuat: el.Uuid.Pegawai.nama,
+          tagging: el.Uuid.Taggings.length !== 0 ? el.Uuid.Taggings.map((el: any) => el.nama_tagging) : "-",
           sifat: el.sifat,
+          perihal: el.perihal,
           tanggal: el.tanggal[0]?.startDate !== el.tanggal[0]?.endDate
             ? getShortDate(el.tanggal[0]?.startDate) +
             " - " +
@@ -73,7 +76,7 @@ const LaporanUndangan = () => {
             : getShortDate(el.tanggal[0]?.startDate),
           waktu: getTime(el.waktu) + " WIB",
           acara: el.acara,
-          tempat: el.tempat,
+          tempat: el.lokasi,
           status: el.status,
         })
       });

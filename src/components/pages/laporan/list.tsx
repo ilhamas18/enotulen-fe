@@ -96,7 +96,8 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                 <TableCell align="center" style={{ maxWidth: 220 }}>ACARA</TableCell>
                 <TableCell align="center" style={{ maxWidth: 180 }}>UNDANGAN</TableCell>
                 <TableCell align="center" style={{ maxWidth: 180 }}>NOTULEN</TableCell>
-                <TableCell align="center" style={{ maxWidth: 180 }}>AKSI</TableCell>
+                <TableCell align="center" style={{ maxWidth: 180 }}>DAFTAR HADIR</TableCell>
+                <TableCell align="center" style={{ maxWidth: 180 }}>PILIH REKIN</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -138,7 +139,7 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                           <div className='flex items-center justify-center'>
                             {row.Undangan === null ? (
                               <div
-                                className='border border-xl-base w-[50%] text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1 px-4'
+                                className='border border-xl-base w-[50%] text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1 px-auto'
                                 onClick={() => handleClickAddForm(row, 'undangan')}
                               >Tambah</div>
                             ) : (
@@ -150,12 +151,20 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                           <div className='flex items-center justify-center'>
                             {row.Notulen === null ? (
                               <div
-                                className='border border-xl-base w-[50%] text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1 px-4'
+                                className='border border-xl-base w-[50%] text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1 px-auto'
                                 onClick={() => handleClickAddForm(row, 'notulen')}
                               >Tambah</div>
                             ) : (
                               <div className='flex items-center justify-center text-meta-3'><FaCheck size={18} /></div>
                             )}
+                          </div>
+                        </TableCell>
+                        <TableCell align="center">
+                          <div className='flex items-center justify-center'>
+                            <div
+                              className='border border-xl-base w-[50%] text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1'
+                              onClick={() => handleClickAddForm(row, 'undangan')}
+                            >Tambah</div>
                           </div>
                         </TableCell>
                         <TableCell align="center">

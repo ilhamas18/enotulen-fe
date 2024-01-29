@@ -213,7 +213,7 @@ const XAddTagging = ({
               id="sasaran"
               name="sasaran"
               label="Sasaran"
-              placeholder="Ketik dan pilih atasan"
+              placeholder="Ketik dan pilih tagging"
               options={listTagging}
               handleFocus={() => setIsOnFocus(true)}
               handleBlur={() => setIsOnFocus(false)}

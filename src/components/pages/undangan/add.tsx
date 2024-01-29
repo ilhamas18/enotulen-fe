@@ -599,7 +599,7 @@ const AddUndanganForm = ({
       isi_undangan: JSON.stringify(values.isiUndangan),
       tanggal: values.rangeTanggal,
       waktu: values.jam,
-      tempat: values.tempat,
+      lokasi: values.tempat,
       acara: values.acara,
       atasan: values.atasan.data,
       penutup: JSON.stringify(values.penutup),

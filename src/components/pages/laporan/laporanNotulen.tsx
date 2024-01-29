@@ -10,8 +10,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { getTime, getShortDate } from '@/components/hooks/formatDate';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { FaEdit } from 'react-icons/fa'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {

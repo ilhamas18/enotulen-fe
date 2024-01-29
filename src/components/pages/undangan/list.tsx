@@ -137,8 +137,22 @@ const LaporanUndanganList = ({ data, profile, fetchData }: PropTypes) => {
         "align": "center"
       },
       {
+        "field": "tagging",
+        "headerName": "Tags",
+        "width": 180,
+        "headerAlign": "center",
+        "align": "center"
+      },
+      {
         "field": "opd",
         "headerName": "OPD",
+        "width": 180,
+        "headerAlign": "center",
+        "align": "center"
+      },
+      {
+        "field": "perihal",
+        "headerName": "Perihal",
         "width": 180,
         "headerAlign": "center",
         "align": "center"
@@ -208,8 +222,22 @@ const LaporanUndanganList = ({ data, profile, fetchData }: PropTypes) => {
         "align": "center"
       },
       {
+        "field": "tagging",
+        "headerName": "Tags",
+        "width": 180,
+        "headerAlign": "center",
+        "align": "center"
+      },
+      {
         "field": "pembuat",
         "headerName": "Pembuat",
+        "width": 180,
+        "headerAlign": "center",
+        "align": "center"
+      },
+      {
+        "field": "perihal",
+        "headerName": "Perihal",
         "width": 180,
         "headerAlign": "center",
         "align": "center"
@@ -275,6 +303,20 @@ const LaporanUndanganList = ({ data, profile, fetchData }: PropTypes) => {
         "field": "id",
         "headerName": "No",
         "maxWidth": 40,
+        "headerAlign": "center",
+        "align": "center"
+      },
+      {
+        "field": "tagging",
+        "headerName": "Tags",
+        "width": 180,
+        "headerAlign": "center",
+        "align": "center"
+      },
+      {
+        "field": "perihal",
+        "headerName": "Perihal",
+        "width": 180,
         "headerAlign": "center",
         "align": "center"
       },
