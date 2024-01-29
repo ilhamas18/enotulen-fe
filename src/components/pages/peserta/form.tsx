@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
 import { formatDate, getTime } from '@/components/hooks/formatDate';
 import { BsPrinter } from "react-icons/bs";
 import { setPayload } from '@/store/payload/action';
+import CancelBtn from '@/components/hooks/cancelBtn';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -45,6 +46,7 @@ const AddPesertaForm = ({ profile, payload }: PropTypes) => {
   const dispatch = useDispatch();
   const printRef: any = useRef();
   const [peserta, setPeserta] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
@@ -92,17 +94,11 @@ const AddPesertaForm = ({ profile, payload }: PropTypes) => {
     });
   }
 
-  const handleExit = () => {
-    dispatch(setPayload([]));
-    router.push('/laporan');
-  }
-  console.log(payload);
-  console.log(profile);
-
+  const handleNext = () => router.push('/notulen/form?step=3');
 
   return (
     <div className='p-8 bg-white dark:bg-meta-4 w-full'>
-      <div className='flex justify-between mt-14'>
+      <div className='flex justify-between mt-6'>
         <button
           className="border border-xl-base rounded-md w-[10%] px-4 py-1 flex items-center gap-2 bg-white dark:bg-meta-4 dark:text-white mb-2 hover:shadow-md hover:cursor-pointer"
           onClick={handlePrint}
@@ -121,7 +117,7 @@ const AddPesertaForm = ({ profile, payload }: PropTypes) => {
       >
         <div className='title flex flex-col text-center font-bold gap-2 text-title-xsm'>
           <div className='uppercase'>Daftar Hadir</div>
-          <div className='uppercase'>{payload.acara}</div>
+          <div className='uppercase'>{payload.perihal}</div>
         </div>
         <div className='text-black mt-[4em] text-ss font-medium'>
           <div className="flex gap-2 w-full">
@@ -232,23 +228,18 @@ const AddPesertaForm = ({ profile, payload }: PropTypes) => {
       </div>
       <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-10 space-x-3">
         <div className="w-[8em]">
-          <Button
-            variant="xl"
-            type="secondary"
-            className="button-container"
-            onClick={handleExit}
-            rounded
-          >
-            <div className="flex justify-center items-center text-[#002DBB]">
-              <span className="button-text">Keluar</span>
-            </div>
-          </Button>
+          <CancelBtn
+            title="Keluar"
+            data={payload}
+            url="/undangan/addUndangan"
+            setLoading={setLoading}
+          />
         </div>
         <div className="w-[8em]">
           <Button
             variant="xl"
             className="button-container"
-            onClick={handleExit}
+            onClick={handleNext}
             rounded
           >
             <div className="flex justify-center items-center text-white">

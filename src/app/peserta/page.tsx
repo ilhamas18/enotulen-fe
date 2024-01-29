@@ -46,7 +46,7 @@ const Peserta = () => {
 
   return (
     <div className="form-peserta-container">
-      <StepsWrapper step={step} />
+      {step !== null && <StepsWrapper step={step} />}
       <div style={gradientStyle} className='mt-8'>
         <div className='px-4 flex text-white py-4 space-x-6 font-bold items-center'>
           <FaWpforms size={20} />

@@ -24,6 +24,8 @@ import { IoMdClose } from "react-icons/io";
 import { v4 as uuidv4 } from 'uuid';
 import ModalConfirm from "@/components/global/Modal/confirm";
 import { setPayload } from "@/store/payload/action";
+import CancelBtn from "@/components/hooks/cancelBtn";
+import Blocks from "editorjs-blocks-react-renderer";
 
 const EditorBlock = dynamic(() => import("../../hooks/editor"));
 
@@ -54,6 +56,7 @@ interface OtherProps {
   ref?: any;
   handleSave?: any;
   dataAtasan?: any;
+  data?: any;
   atasan?: any;
   payload?: any;
   dibuatTanggal?: any;
@@ -77,14 +80,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     handleSubmit,
     isSubmitting,
     dataAtasan,
-    payload,
+    data,
     step,
+    payload,
     ref,
   } = props;
-  const { profile } = useSelector((state: State) => ({
-    profile: state.profile.profile
-  }), shallowEqual)
-
   const router = useRouter();
   const dispatch = useDispatch();
   const [openDateRange, setOpenDateRange] = useState<boolean>(false);
@@ -387,8 +387,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     setUploadMsgPendukung('');
   };
 
-  const handleCancel = () => router.push('/notulen/laporan');
-
   const handleDownloadFile = async (val: any, e: any) => router.push(`${process.env.BASE_URL}/notulen/getFile?pathname=${val}`);
 
   return (
@@ -403,7 +401,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <div
                   className={`flex border-2 ${errors.rangeTanggal ? "border-xl-pink" : "border-light-gray"
                     } rounded-lg w-full py-3 px-4`}
-                  onClick={() => setOpenDateRange(true)}
+                  onClick={() => step === null && setOpenDateRange(true)}
                 >
                   {values?.rangeTanggal[0]?.startDate === null ? (
                     <span>Pilih Hari / Tanggal</span>
@@ -437,8 +435,8 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                     handleChange({
                       target: { name: "jam", value: e.$d },
                     });
-                    // dispatch(setNotulen({ 'jam': e.$d }))
                   }}
+                  disabled={step !== null ? true : false}
                   value={values.jam}
                   errors={errors.jam}
                 />
@@ -453,23 +451,44 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   change={handleChange}
                   value={values.acara}
                   handleBlur={handleBlur}
+                  disabled={step !== null ? true : false}
                   errors={errors.acara}
                 />
               </div>
               <div className="mt-2 -pb-2 text-title-xsm font-bold">Penjelasan :</div>
               <div>
                 <div className="text-deep-gray">Pendahuluan</div>
-                <div className="container border-2 border-light-gray rounded-lg">
-                  <EditorBlock
-                    data={values.pendahuluan}
-                    onChange={(e) => {
-                      handleChange({
-                        target: { name: "pendahuluan", value: e },
-                      });
-                    }}
-                    holder="editorjs-containe"
-                  />
-                </div>
+                {step === null ? (
+                  <>
+                    <div className="container border-2 border-light-gray rounded-lg">
+                      <EditorBlock
+                        data={values.pendahuluan}
+                        onChange={(e) => {
+                          handleChange({
+                            target: { name: "pendahuluan", value: e },
+                          });
+                        }}
+                        holder="editorjs-containe"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div className="md:mt-0 mt-2 w-full">
+                    <div className="border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                      {values.pendahuluan !== null && <Blocks data={JSON.parse(data.pendahuluan)} config={{
+                        list: {
+                          className: "list-decimal ml-10"
+                        },
+                        paragraph: {
+                          className: "text-base text-opacity-75",
+                          actionsClassNames: {
+                            alignment: "text-justify",
+                          }
+                        }
+                      }} />}
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="data flex flex-row">
                 <TextInput
@@ -581,6 +600,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   label="Lokasi / tempat"
                   touched={touched.lokasi}
                   change={handleChange}
+                  disabled={step !== null ? true : false}
                   value={values.lokasi}
                   errors={errors.lokasi}
                   handleBlur={handleBlur}
@@ -595,9 +615,9 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   touched={touched.atasan}
                   errors={errors.atasan}
                   value={values.atasan}
-                  disabled={step !== undefined ? true : false}
                   placeholder="Ketik dan pilih atasan"
                   options={dataAtasan}
+                  disabled={step !== null ? true : false}
                   handleBlur={handleBlur}
                   setValueSelected={handleChange}
                   change={(selectedOption: any) => {
@@ -622,6 +642,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                         });
                       }}
                       value={values.dibuatTanggal}
+                      disabled={step !== null ? true : false}
                       errors={errors.dibuatTanggal}
                     />
                   </div>
@@ -854,16 +875,12 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
             </div>
           </div>
           <div className="w-[8em] pb-6 pt-2 pl-6">
-            <Button
-              variant="xl"
-              type="secondary"
-              className="button-container"
-              rounded
-            >
-              <div className="flex justify-center items-center text-[#002DBB] font-Nunito" onClick={handleCancel}>
-                <span className="button-text">Batal</span>
-              </div>
-            </Button>
+            <CancelBtn
+              title="Keluar"
+              data={data}
+              url="/undangan/addUndangan"
+              setLoading={setLoading}
+            />
           </div>
 
           <DateRangePicker
@@ -897,7 +914,7 @@ function CreateForm({ handleSubmit, atasan, dibuatTanggal, payload, ...otherProp
       pendahuluan: payload.length != 0 ? payload.pendahuluan !== null ? JSON.parse(payload.pendahuluan) : null : null,
       pimpinanRapat: payload.length != 0 ? payload.pimpinan_rapat !== null ? payload.pimpinan_rapat : "" : "",
       pesertaArray: payload.length != 0 ? payload.peserta_rapat !== undefined ? payload.peserta_rapat : [] : [],
-      isiRapat: payload.length != 0 ? payload.pendahuluan !== null ? JSON.parse(payload.pendahuluan) : null : null,
+      isiRapat: payload.length != 0 ? payload?.isi_rapat !== undefined ? JSON.parse(payload?.isi_rapat) : null : null,
       tindakLanjut: payload.length != 0 ? payload.tindak_lanjut !== undefined ? JSON.parse(payload.tindak_lanjut) : null : null,
       lokasi: payload.length != 0 ? payload.lokasi !== "" ? payload.lokasi : "" : "",
       acara: payload.length != 0 ? payload.acara !== "" ? payload.acara : "" : "",
@@ -958,9 +975,7 @@ const AddNotulenForm = ({ profile, payload, notulen, dataAtasan, step }: PropTyp
   const dispatch = useDispatch();
   const [atasan, setAtasan] = useState<any>(null);
   const [dibuatTanggal, setDibuatTanggal] = useState<any>(null);
-  const [dataPayload, setDataPayload] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [openConfirm, setOpenConfirm] = useState<boolean>(false);
 
   useEffect(() => {
     if (notulen.length != 0) {
@@ -1009,6 +1024,7 @@ const AddNotulenForm = ({ profile, payload, notulen, dataAtasan, step }: PropTyp
   }
 
   const handleSubmit = async (values: FormValues) => {
+    setLoading(true);
     const dataNotulen = {
       uuid: notulen.length != 0 ? notulen.uuid : uuidv4(),
       tanggal: values.rangeTanggal,
@@ -1035,27 +1051,12 @@ const AddNotulenForm = ({ profile, payload, notulen, dataAtasan, step }: PropTyp
       nip_pegawai: profile.nip,
       nip_atasan: values.atasan.value
     };
-    setDataPayload(dataNotulen);
-    if (step !== null) setOpenConfirm(true);
-    else handleConfirmSubmit(dataNotulen);
-  };
 
-  const handleNext = () => {
-    const storedData = {
-      ...payload,
-      step2: dataPayload
-    }
-    dispatch(setPayload(storedData));
-    router.push('/peserta?step=3');
-  }
-
-  const handleConfirmSubmit = async (data: any) => {
-    setLoading(true);
     const response = await fetchApi({
       url: `/notulen/addNotulen`,
       method: "post",
       type: "auth",
-      body: dataPayload.length == 0 ? data : dataPayload
+      body: dataNotulen
     });
 
     if (!response.success) {
@@ -1122,7 +1123,8 @@ const AddNotulenForm = ({ profile, payload, notulen, dataAtasan, step }: PropTyp
         router.push("/notulen/laporan");
       }
     }
-  }
+
+  };
 
   return (
     <div>
@@ -1132,21 +1134,13 @@ const AddNotulenForm = ({ profile, payload, notulen, dataAtasan, step }: PropTyp
         <CreateForm
           handleSubmit={handleSubmit}
           dataAtasan={dataAtasan}
+          data={notulen}
           atasan={atasan}
           dibuatTanggal={dibuatTanggal}
           payload={notulen}
           step={step}
         />
       )}
-      <ModalConfirm
-        openModal={openConfirm}
-        setOpenModal={setOpenConfirm}
-        condition="success"
-        title="Berhasil Simpan Notulen"
-        text="Ingin Menambah Daftar Hadir ?"
-        handleCancel={handleConfirmSubmit}
-        handleNext={handleNext}
-      />
     </div>
   );
 };

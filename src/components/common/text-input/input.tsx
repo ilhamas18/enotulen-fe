@@ -211,9 +211,8 @@ const TextInput = ({
           onBlur={handleBlur}
           onChange={change}
           placeholder={placeholder}
-          className={`
-        ${errors && touched ? "error" : ""}`
-          }
+          isDisabled={disabled}
+          className={` ${errors && touched ? "error" : ""}`}
         />
       )}
       {type === "date-picker" && (
@@ -223,6 +222,7 @@ const TextInput = ({
               label={label}
               value={value}
               onChange={change}
+              disabled={disabled}
             />
           </LocalizationProvider>
         </div>
@@ -236,6 +236,7 @@ const TextInput = ({
                 ampm={false}
                 value={value}
                 onChange={change}
+                disabled={disabled}
               />
             </DemoContainer>
           </LocalizationProvider>

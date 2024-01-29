@@ -31,7 +31,6 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
   const [openAddTagging, setOpenAddTagging] = useState<boolean>(false);
   const [openAddSasaran, setOpenAddSasaran] = useState<boolean>(false);
   const [notulen, setNotulen] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(false);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -42,23 +41,23 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
     setPage(0);
   };
 
-  const handleClickAddForm = (data: any, type: string) => {
-    if (type === 'undangan') {
+  const handleClickAddForm = (data: any, url: string) => {
+    if (data.Notulen !== null) {
       let temp: any = data.Notulen;
       temp.hari = data.hari;
       temp.bulan = data.bulan;
       temp.tahun = data.tahun;
       const stored = { step1: temp };
       dispatch(setPayload(stored));
-      router.push('/undangan/tambah')
-    } else if (type === 'notulen') {
+      router.push(url)
+    } else if (data.Undangan !== null) {
       let temp: any = data.Undangan;
       temp.hari = data.hari;
       temp.bulan = data.bulan;
       temp.tahun = data.tahun;
       const stored = { step2: temp };
       dispatch(setPayload(stored));
-      router.push('/notulen/form');
+      router.push(url);
     }
   }
 
@@ -113,11 +112,11 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                             row.Undangan.tanggal[0]?.startDate !== row.Undangan.tanggal[0]?.endDate
                               ? getShortDate(row.Undangan.tanggal[0]?.startDate) + "-" + getShortDate(row.Undangan.tanggal[0]?.endDate)
                               : getShortDate(row.Undangan.tanggal[0]?.startDate)
-                          ) : (
+                          ) : row.Notulen !== null ? (
                             row.Notulen.tanggal[0]?.startDate !== row.Notulen.tanggal[0]?.endDate
                               ? getShortDate(row.Notulen.tanggal[0]?.startDate) + "-" + getShortDate(row.Notulen.tanggal[0]?.endDate)
                               : getShortDate(row.Notulen.tanggal[0]?.startDate)
-                          )}
+                          ) : null}
                         </TableCell>
                         <TableCell align="center" width={150}>
                           <div className='flex gap-2 items-center justify-center'>
@@ -132,7 +131,7 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                         <TableCell align="center">
                           {row.Undangan !== null
                             ? row.Undangan.acara
-                            : row.Notulen.acara
+                            : row.Notulen !== null ? row.Notulen.acara : null
                           }
                         </TableCell>
                         <TableCell align="center" className='flex items-center justify-center'>
@@ -140,7 +139,7 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                             {row.Undangan === null ? (
                               <div
                                 className='border border-xl-base w-[50%] text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1 px-auto'
-                                onClick={() => handleClickAddForm(row, 'undangan')}
+                                onClick={() => handleClickAddForm(row, '/undangan/tambah')}
                               >Tambah</div>
                             ) : (
                               <div className='flex items-center justify-center text-meta-3'><FaCheck size={18} /></div>
@@ -152,7 +151,7 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                             {row.Notulen === null ? (
                               <div
                                 className='border border-xl-base w-[50%] text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1 px-auto'
-                                onClick={() => handleClickAddForm(row, 'notulen')}
+                                onClick={() => handleClickAddForm(row, '/notulen/form')}
                               >Tambah</div>
                             ) : (
                               <div className='flex items-center justify-center text-meta-3'><FaCheck size={18} /></div>
@@ -163,7 +162,7 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                           <div className='flex items-center justify-center'>
                             <div
                               className='border border-xl-base w-[50%] text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1'
-                              onClick={() => handleClickAddForm(row, 'undangan')}
+                              onClick={() => handleClickAddForm(row, '/peserta')}
                             >Tambah</div>
                           </div>
                         </TableCell>

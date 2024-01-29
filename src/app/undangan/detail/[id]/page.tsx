@@ -65,7 +65,7 @@ const UndanganDetail = ({ params }: { params: { id: number } }) => {
         <Loading loading={loading} setLoading={setLoading} />
       ) : (
         undangan.length == 0 ? (
-          <div>Maaf, Data Notulen Kosong !</div>
+          <div>Maaf, Data Undangan Kosong !</div>
         ) : (
           <UndanganDetailProps data={undangan} profile={profile} />
         )

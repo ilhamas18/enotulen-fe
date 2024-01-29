@@ -14,6 +14,7 @@ import { Button } from "@/components/common/button/button";
 import Blocks from 'editorjs-blocks-react-renderer';
 import Loading from "@/components/global/Loading/loading";
 import { formatMonth } from "@/components/helpers/formatMonth";
+import EditUndanganForm from "./edit";
 
 const editorJsHtml = require("editorjs-html");
 
@@ -26,13 +27,51 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const [isOpenEdit, setIsOpenEdit] = useState<boolean>(false);
-  const [openConfirmSubmit, setOpenConfirmSubmit] = useState<boolean>(false);
-  const [status, setStatus] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
   const handlePrint = () => router.push(`${pathname}/cetak`);
 
-  const handleArchieve = () => { };
+  const handleArchieve = () => {
+    Swal.fire({
+      title: `Permintaan Hapus Undangan "${data.acara}" ?`,
+      showDenyButton: true,
+      confirmButtonText: 'Hapus',
+      denyButtonText: `Batal`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setLoading(true);
+        const response = await fetchApi({
+          url: `/undangan/archieve/${data.id}`,
+          method: 'put',
+          type: 'auth'
+        })
+
+        if (!response.success) {
+          setLoading(false);
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Koneksi bermasalah!",
+          });
+        } else {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: `Sukses hapus undangan`,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          if (data.atasan?.nip !== profile.nip) {
+            router.push('/undangan/laporan')
+          } else {
+            router.push('/undangan/verifikasi')
+          }
+        }
+      } else if (result.isDenied) {
+        Swal.fire('Changes are not saved', '', 'info')
+      }
+    })
+  };
 
   const handleDelete = () => { }
 
@@ -253,7 +292,7 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
                 </div>
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                    {data.tempat}
+                    {data.lokasi}
                   </div>
                 </div>
               </div>
@@ -289,6 +328,7 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
               </div>
             </div>
           </div>
+          {isOpenEdit && <EditUndanganForm profile={profile} undangan={data} />}
         </>
       )}
     </React.Fragment>

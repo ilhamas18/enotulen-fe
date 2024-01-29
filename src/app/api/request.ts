@@ -3,7 +3,7 @@ import { getCookies } from "cookies-next"
 
 interface reqApi {
   type?: string;
-  url: string;
+  url?: string;
   method: string;
   body?: any;
   token?: string;

@@ -10,7 +10,7 @@ import { AiFillPlusCircle } from "react-icons/ai";
 import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
 import DateRangePicker from "../laporan/x-modal/XDateRangePicker";
-import { formatDate, getShortDate, getShortDate2, getTime } from "@/components/hooks/formatDate";
+import { formatDate, getTime } from "@/components/hooks/formatDate";
 import Loading from "@/components/global/Loading/loading";
 import { AiOutlineClose } from "react-icons/ai";
 import { withFormik, FormikProps, FormikBag } from "formik";
@@ -20,7 +20,6 @@ import { State } from "@/store/reducer";
 import axios from "axios";
 import { getCookies } from "cookies-next";
 import { IoMdClose } from "react-icons/io";
-import { formatMonth } from "@/components/helpers/formatMonth";
 
 const EditorBlock = dynamic(() => import("../../hooks/editor"));
 
@@ -1004,7 +1003,7 @@ interface PropTypes {
   dataNotulen: any;
 }
 
-const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
+const EditNotulenForm = ({ dataNotulen }: PropTypes) => {
   const [atasan, setAtasan] = useState<any>(null);
   const [dibuatTanggal, setDibuatTanggal] = useState<any>(null);
 
@@ -1033,7 +1032,6 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
 
     formattedDate();
   }, []);
-  console.log(dataNotulen);
 
   const formattedDate = () => {
     let tempDate: any = dataNotulen.Uuid.hari + '/' + Number(dataNotulen.Uuid.bulan - 1) + '/' + dataNotulen.Uuid.tahun;
@@ -1142,4 +1140,4 @@ const AddNotulenForm = ({ dataNotulen }: PropTypes) => {
   );
 };
 
-export default AddNotulenForm;
+export default EditNotulenForm;
