@@ -127,9 +127,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   const handleClear = (e: any) => {
     e.preventDefault();
     sign.clear()
-    handleChange({
-      target: { name: "signature", value: '' },
-    });
   }
 
   const handleGenerate = (e: any) => {

@@ -16,7 +16,8 @@ import * as Yup from "yup";
 import { v4 as uuidv4 } from 'uuid';
 import { setPayload } from "@/store/payload/action";
 import ModalConfirm from "@/components/global/Modal/confirm";
-import { AiFillPlusCircle, AiOutlineClose } from "react-icons/ai";
+import SignatureCanvas from 'react-signature-canvas';
+import { AiOutlineClose } from "react-icons/ai";
 
 const EditorBlock = dynamic(() => import("../../hooks/editor"));
 
@@ -34,6 +35,7 @@ interface FormValues {
   acara: string;
   penutup: any;
   atasan: any;
+  signature: string;
 }
 
 interface OtherProps {
@@ -76,6 +78,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   const [pesertaRapat, setPesertaRapat] = useState<string>("");
   const [idPesertaRapat, setIdPesertaRapat] = useState<number>(1);
   const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
+  const [sign, setSign] = useState<any>()
 
   const dataSifat = [
     {
@@ -119,6 +122,25 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
       target: { name: "ditujukan", value: newArray },
     });
   };
+
+  const handleClear = (e: any) => {
+    e.preventDefault();
+    sign.clear()
+  }
+
+  const handleGenerate = (e: any) => {
+    e.preventDefault();
+    // setSignUrl(sign.getTrimmedCanvas().toDataURL('image/png'));
+    handleChange({
+      target: { name: "signature", value: sign.getTrimmedCanvas().toDataURL('image/png') },
+    });
+  }
+
+  const handleDeleteSignature = () => {
+    handleChange({
+      target: { name: "signature", value: '' },
+    });
+  }
 
   return (
     <div className="form-container relative bg-white rounded-lg">
@@ -400,6 +422,27 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
             />
           )}
         </div>
+        <div className="signature px-8 mt-6">
+          {values.signature === null ? (
+            <>
+              <div className="text-title-xsm2 mb-2">Bubuhkan Tanda tangan (opsional)</div>
+              <div className="md:w-[500px] w-full md:h-[200px] h-[130px] border-2 border-light-gray rounded rounded-lg">
+                <SignatureCanvas
+                  canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
+                  ref={(data: any) => setSign(data)}
+                />
+              </div>
+              <button style={{ height: "30px", width: "200px" }} className="text-meta-1" onClick={(e: any) => handleClear(e)}>BERSIHKAN</button>
+              <button style={{ height: "30px", width: "200px" }} className="text-xl-base font-bold" onClick={(e: any) => handleGenerate(e)}>SIMPAN</button>
+            </>
+          ) : (
+            <div className="flex md:flex-row md:items-center md:justify-between flex-col mb-2 md:mb-0">
+              <img src={values.signature} />
+              <div className="text-danger text-title-xsm2 hover:cursor-pointer" onClick={handleDeleteSignature}>Hapus</div>
+            </div>
+          )}
+        </div>
+        <div className="text-danger text-title-ss mx-8 mt-3 mb-10">*Pastikan mengisi seluruh data undangan, (kecuali yang opsional)</div>
         <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
           <div className="w-[8em]">
             <Button
@@ -467,6 +510,7 @@ function CreateForm({ handleSubmit, sifat, atasan, dibuatTanggal, payload, ...ot
       acara: payload?.length != 0 ? payload?.acara !== undefined ? payload?.acara : null : null,
       penutup: payload?.length != 0 ? payload?.penutup !== undefined ? JSON.parse(payload?.penutup) : "" : "",
       atasan: payload?.atasan !== undefined ? atasan : null,
+      signature: payload.signature !== undefined ? payload.signature !== '-' ? payload.signature : null : null
     }),
     validationSchema: Yup.object().shape({
       ditujukan: Yup.array()
@@ -607,7 +651,7 @@ const AddUndanganForm = ({
       hari: new Date(values.tanggalSurat).getDate(),
       bulan: new Date(values.tanggalSurat).getMonth() + 1,
       tahun: new Date(values.tanggalSurat).getFullYear(),
-      signature: "-",
+      signature: values.signature !== '' ? values.signature : '-',
       kode_opd: profile.Perangkat_Daerah.kode_opd,
       nip_pegawai: profile.nip,
       nip_atasan: values.atasan.value
@@ -624,7 +668,7 @@ const AddUndanganForm = ({
       step1: dataPayload
     }
     dispatch(setPayload(storedData));
-    router.push('/notulen/form?step=2');
+    router.push('/peserta?step=2');
   }
 
   const handleConfirmSubmit = async (data: any) => {
@@ -692,7 +736,7 @@ const AddUndanganForm = ({
         setOpenModal={setOpenConfirm}
         condition="success"
         title="Berhasil Simpan Undangan"
-        text="Ingin Menambah Notulen ?"
+        text="Ingin Daftar Hadir ?"
         handleCancel={handleConfirmSubmit}
         handleNext={handleNext}
       />

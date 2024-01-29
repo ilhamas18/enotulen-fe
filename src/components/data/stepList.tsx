@@ -1,11 +1,15 @@
 export const dataStepbar = [
     {
         label: "Undangan",
-    },
-    {
-        label: "Notulen",
+        url: "/undangan/tambah?step=1"
+
     },
     {
         label: "Daftar Hadir",
+        url: "/peserta?step=2"
+    },
+    {
+        label: "Notulen",
+        url: "/notulen/form?step=3"
     },
 ]

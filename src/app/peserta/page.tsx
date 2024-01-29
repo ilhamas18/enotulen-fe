@@ -32,13 +32,9 @@ const Peserta = () => {
   }), shallowEqual);
 
   useEffect(() => {
-    // if (step === null) {
-    //   router.push('/unauthorized');
-    // } else {
-    //   if (profile.role != 2 && profile.role != 3 && profile.role != 4) {
-    //     router.push('/unauthorized')
-    //   }
-    // }
+    if (profile.role != 2 && profile.role != 3 && profile.role != 4) {
+      router.push('/unauthorized')
+    }
     if (payload.step2 !== undefined) setData(payload.step2);
     else if (payload.step1 !== undefined) setData(payload.step1);
   }, []);
@@ -57,7 +53,7 @@ const Peserta = () => {
           <div className='text-title-xsm'>Form Tambah Daftar Hadir</div>
         </div>
       </div>
-      {data.length != 0 && <AddPesertaForm payload={data} />}
+      {data.length != 0 && <AddPesertaForm payload={data} profile={profile} />}
     </div>
   )
 }

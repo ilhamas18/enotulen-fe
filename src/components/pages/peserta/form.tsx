@@ -36,10 +36,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 interface PropTypes {
+  profile: any;
   payload: any;
 }
 
-const AddPesertaForm = ({ payload }: PropTypes) => {
+const AddPesertaForm = ({ profile, payload }: PropTypes) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const printRef: any = useRef();
@@ -95,6 +96,9 @@ const AddPesertaForm = ({ payload }: PropTypes) => {
     dispatch(setPayload([]));
     router.push('/laporan');
   }
+  console.log(payload);
+  console.log(profile);
+
 
   return (
     <div className='p-8 bg-white dark:bg-meta-4 w-full'>
@@ -200,6 +204,31 @@ const AddPesertaForm = ({ payload }: PropTypes) => {
             </Table>
           </TableContainer>
         </div>
+        <div className='signature mt-14 flex justify-between'>
+          <div></div>
+          <div className="flex flex-col items-center justify-between text-center w-[45%] h-[12em]">
+            <div>
+              <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                Pembuat
+              </div>
+            </div>
+            {payload.signature !== "-" && (
+              <img src={payload.signature} className="w-[270px]" alt="TTD" />
+            )}
+            <div>
+              <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
+                {profile.nama}
+              </div>
+              <div className="text-black dark:text-white text-title-ss mt-1">
+                {" "}
+                {profile.nama_pangkat}{" "}
+              </div>
+              <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                NIP. {profile?.nip}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-10 space-x-3">
         <div className="w-[8em]">
@@ -210,8 +239,20 @@ const AddPesertaForm = ({ payload }: PropTypes) => {
             onClick={handleExit}
             rounded
           >
-            <div className="flex justify-center items-center text-[#002DBB] font-Nunito">
+            <div className="flex justify-center items-center text-[#002DBB]">
               <span className="button-text">Keluar</span>
+            </div>
+          </Button>
+        </div>
+        <div className="w-[8em]">
+          <Button
+            variant="xl"
+            className="button-container"
+            onClick={handleExit}
+            rounded
+          >
+            <div className="flex justify-center items-center text-white">
+              <span className="button-text">Lanjut</span>
             </div>
           </Button>
         </div>

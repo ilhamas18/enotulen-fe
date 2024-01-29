@@ -19,11 +19,7 @@ export default function StepsWrapper({ step }: PropTypes) {
                 className={`steps__item ${parseInt(step) === i + 1 ? 'active' : ''} ${parseInt(step) > i + 1 ? 'done' : ''}`}
                 onClick={() => {
                   if (i + 1 < parseInt(step)) {
-                    if (i == 0) {
-                      router.push('/')
-                    } else {
-                      router.push('/')
-                    }
+                    router.push(item.url)
                   }
                 }}
               >
