@@ -162,7 +162,11 @@ const AddPesertaForm = ({ profile, payload }: PropTypes) => {
             </div>
             <div className="w-[2%]">:</div>
             <div className="w-[85%]">
-              {payload.lokasi}
+              <div className='flex flex-col'>
+                {payload.lokasi.split(', ').map((el: any, i: number) => (
+                  <div key={i}>{el}</div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -208,9 +212,9 @@ const AddPesertaForm = ({ profile, payload }: PropTypes) => {
                 Pembuat
               </div>
             </div>
-            {payload.signature !== "-" && (
-              <img src={payload.signature} className="w-[270px]" alt="TTD" />
-            )}
+            {payload.signature !== "-" && payload.signature !== null ? (
+              <img src={payload.signature} className="w-[270px] h-[180px]" alt="TTD" />
+            ) : <></>}
             <div>
               <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
                 {profile.nama}

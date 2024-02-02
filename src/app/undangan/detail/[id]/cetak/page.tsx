@@ -265,7 +265,11 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                       </div>
                       <div className="w-[5%]">:</div>
                       <div className="w-[70%]">
-                        {laporan.lokasi}
+                        <div className="flex flex-col">
+                          {laporan.lokasi.split(', ').map((el: any, i: number) => (
+                            <div>{el}</div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                     <div className="flex gap-2 w-full">

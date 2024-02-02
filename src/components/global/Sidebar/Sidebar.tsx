@@ -227,10 +227,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           <li>
                             <Link
                               href="/undangan/laporan"
-                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${pathname === "/undangan/laporan" || pathname.includes('/undangan/detail') && "text-white"
-                                }`}
+                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${pathname === "/undangan/laporan" || pathname.includes('/undangan/detail') ? "text-white" : ''}`}
                             >
                               List Undangan
+                            </Link>
+                          </li>
+                          <li className={`${profile.role == 1 ? 'block' : 'hidden'}`}>
+                            <Link
+                              href="/undangan/arsip"
+                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${pathname === "/undangan/arsip" && "text-white"}`}
+                            >
+                              Permintaan Hapus
                             </Link>
                           </li>
                           <li>

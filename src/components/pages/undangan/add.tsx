@@ -18,6 +18,7 @@ import { setPayload } from "@/store/payload/action";
 import ModalConfirm from "@/components/global/Modal/confirm";
 import SignatureCanvas from 'react-signature-canvas';
 import { AiOutlineClose } from "react-icons/ai";
+import { locationList } from "@/components/data/location";
 
 const EditorBlock = dynamic(() => import("../../hooks/editor"));
 
@@ -32,7 +33,6 @@ interface FormValues {
   rangeTanggal: any;
   jam: any;
   tempat: string;
-  acara: string;
   penutup: any;
   atasan: any;
   signature: string;
@@ -77,7 +77,9 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   const [openDateRange, setOpenDateRange] = useState<boolean>(false);
   const [pesertaRapat, setPesertaRapat] = useState<string>("");
   const [idPesertaRapat, setIdPesertaRapat] = useState<number>(1);
+  const [tempat, setTempat] = useState<string>("");
   const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
+  const [openLocation, setOpenLocation] = useState<boolean>(false);
   const [sign, setSign] = useState<any>()
 
   const dataSifat = [
@@ -122,6 +124,24 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
       target: { name: "ditujukan", value: newArray },
     });
   };
+
+  const handleAddLocation = (e: any) => {
+    e.preventDefault();
+    if (tempat !== "") {
+      handleChange({
+        target: { name: "tempat", value: tempat },
+      });
+    }
+    setTempat("");
+  }
+
+  const handleDeleteLocation = (e: any) => {
+    e.preventDefault();
+    setOpenLocation(false);
+    handleChange({
+      target: { name: "tempat", value: "" },
+    });
+  }
 
   const handleClear = (e: any) => {
     e.preventDefault();
@@ -175,12 +195,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 />
                 <div className="flex justify-center items-center md:gap-8 md:mx-10 mt-3">
                   <button
-                    className="text-xl-pink"
-                    onClick={(e) => handleAddParticipant(e)}
-                  >
-                    Batal
-                  </button>
-                  <button
                     className="text-xl-base"
                     onClick={(e) => handleAddParticipant(e)}
                   >
@@ -216,7 +230,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               ))}
             </ul>
           </div>
-          <div className="data flex flex-row">
+          <div className="data flex flex-row z-50">
             <TextInput
               type="dropdown"
               id="sifat"
@@ -279,8 +293,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
           </div>
           <div className="data flex flex-row mt-4">
             <div
-              className={`flex border-2 ${errors.rangeTanggal ? "border-xl-pink" : "border-light-gray"
-                } rounded-lg w-full py-3 px-4`}
+              className={`flex border-2 ${errors.rangeTanggal ? "border-xl-pink" : "border-light-gray"} rounded-lg w-full py-3 px-4`}
               onClick={() => setOpenDateRange(true)}
             >
               {values?.rangeTanggal[0]?.startDate === null ? (
@@ -324,30 +337,113 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               />
             </div>
           </div>
-          <div className="data flex flex-row w-full">
-            <TextInput
-              type="text"
-              id="tempat"
-              name="tempat"
-              touched={touched.tempat}
-              label="Tempat"
-              change={handleChange}
-              value={values.tempat}
-              handleBlur={handleBlur}
-              errors={errors.tempat}
-            />
+          <div className="data flex flex-row w-full z-50">
+            {!openLocation ? (
+              values.tempat === "" ? (
+                <TextInput
+                  type="dropdown"
+                  id="tempat"
+                  name="tempat"
+                  label="Nama tempat"
+                  touched={touched.tempat}
+                  errors={errors.tempat}
+                  placeholder="Tempat/Lokasi"
+                  value={values.tempat}
+                  options={locationList}
+                  handleBlur={handleBlur}
+                  setValueSelected={handleChange}
+                  change={(selectedOption: any) => {
+                    if (selectedOption.value === 'others') {
+                      setOpenLocation(true);
+                      handleChange({
+                        target: { name: 'tempat', value: '' }
+                      });
+                    } else {
+                      handleChange({
+                        target: { name: 'tempat', value: selectedOption.value }
+                      });
+                    }
+                  }}
+                />
+              ) : (
+                <div className="flex w-full items-center justify-between">
+                  <div className="flex flex-col">
+                    <div className="mb-1">Tempat : </div>
+                    {values.tempat.split(', ').map((el: any, i: number) => (
+                      <div>{el}</div>
+                    ))}
+                  </div>
+                  <div>
+                    <button
+                      onClick={handleDeleteLocation}
+                    >
+                      <AiOutlineClose size={18} />
+                    </button>
+                  </div>
+                </div>
+              )
+            ) : (
+              <div className="data flex flex-col w-full">
+                {values.tempat === "" ? (
+                  <>
+                    <TextInput
+                      type="text"
+                      id="tempat"
+                      name="tempat"
+                      touched={touched.tempat}
+                      label="Tempat"
+                      change={(e: any) => setTempat(e.target.value)}
+                      value={tempat}
+                      handleBlur={handleBlur}
+                      errors={errors.tempat}
+                    />
+                    <div className="mt-1">* Untuk mengisi nama tempat dan alamat, harap dipisahkan dengan koma dan spasi (, )</div>
+                    <div className="flex justify-center items-center md:gap-8 md:mx-10 mt-3">
+                      <button
+                        className="text-xl-pink"
+                        onClick={handleDeleteLocation}
+                      >
+                        Batal
+                      </button>
+                      <button
+                        className="text-xl-base"
+                        onClick={(e) => handleAddLocation(e)}
+                      >
+                        Tambah
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex w-full items-center justify-between">
+                    <div className="flex flex-col">
+                      <div className="mb-1">Tempat : </div>
+                      {values.tempat.split(', ').map((el: any, i: number) => (
+                        <div key={i}>{el}</div>
+                      ))}
+                    </div>
+                    <div>
+                      <button
+                        onClick={handleDeleteLocation}
+                      >
+                        <AiOutlineClose size={18} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
           <div className="data flex flex-row w-full">
             <TextInput
               type="text"
               id="acara"
               name="acara"
-              touched={touched.acara}
+              touched={touched.perihal}
               label="Acara"
-              change={handleChange}
-              value={values.acara}
+              disabled={true}
+              value={values.perihal}
               handleBlur={handleBlur}
-              errors={errors.acara}
+              errors={errors.perihal}
             />
           </div>
           <div>
@@ -408,18 +504,23 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               </div>
             </div>
           ) : (
-            <TextInput
-              type="date-picker"
-              id="tanggalSurat"
-              name="tanggalSurat"
-              touched={touched.tanggalSurat}
-              change={(e: any) => {
-                handleChange({
-                  target: { name: "tanggalSurat", value: e.$d },
-                });
-              }}
-              errors={errors.tanggalSurat}
-            />
+            <div className="flex flex-col gap-2">
+              <div className="text-title-xsm2 mb-2">Tanggal Pelaksanaan Acara</div>
+              <div>
+                <TextInput
+                  type="date-picker"
+                  id="tanggalSurat"
+                  name="tanggalSurat"
+                  touched={touched.tanggalSurat}
+                  change={(e: any) => {
+                    handleChange({
+                      target: { name: "tanggalSurat", value: e.$d },
+                    });
+                  }}
+                  errors={errors.tanggalSurat}
+                />
+              </div>
+            </div>
           )}
         </div>
         <div className="signature px-8 mt-6">
@@ -465,6 +566,21 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               loading={loading}
               rounded
               onClick={handleSubmit}
+              disabled={
+                values.ditujukan.length == 0 ||
+                  values.tanggalSurat === null ||
+                  values.nomorSurat === null ||
+                  values.sifat === null ||
+                  values.perihal === null ||
+                  values.pendahuluan === "" ||
+                  values.isiUndangan === "" ||
+                  values.rangeTanggal.length == 0 ||
+                  values.jam === null ||
+                  values.tempat === "" ||
+                  values.penutup === "" ||
+                  values.atasan === null ?
+                  true : false
+              }
             >
               <div className="flex justify-center items-center text-white font-Nunito">
                 <span className="button-text">Simpan</span>
@@ -495,7 +611,7 @@ function CreateForm({ handleSubmit, sifat, atasan, dibuatTanggal, payload, ...ot
       tanggalSurat: dibuatTanggal !== undefined ? dibuatTanggal : null,
       nomorSurat: payload?.length != 0 ? payload?.nomor_surat !== undefined ? payload?.nomor_surat : null : null,
       sifat: payload?.sifat !== undefined ? sifat : null,
-      perihal: payload?.length != 0 ? payload?.perihal !== undefined ? payload?.perihal : null : null,
+      perihal: payload?.length != 0 ? payload?.acara !== undefined ? payload?.acara : null : null,
       pendahuluan: payload?.length != 0 ? payload?.pendahuluan !== undefined ? JSON.parse(payload?.pendahuluan) : "" : "",
       isiUndangan: payload?.length != 0 ? payload?.isi_undangan !== undefined ? JSON.parse(payload?.isi_undangan) : "" : "",
       rangeTanggal: [
@@ -506,8 +622,7 @@ function CreateForm({ handleSubmit, sifat, atasan, dibuatTanggal, payload, ...ot
         },
       ],
       jam: payload?.length != 0 ? payload?.waktu !== undefined ? payload?.waktu : null : null,
-      tempat: payload?.length != 0 ? payload?.lokasi !== undefined ? payload?.lokasi : null : null,
-      acara: payload?.length != 0 ? payload?.acara !== undefined ? payload?.acara : null : null,
+      tempat: payload.length != 0 ? payload.lokasi !== undefined ? payload.lokasi !== "" ? payload.lokasi : "" : "" : "",
       penutup: payload?.length != 0 ? payload?.penutup !== undefined ? JSON.parse(payload?.penutup) : "" : "",
       atasan: payload?.atasan !== undefined ? atasan : null,
       signature: payload.signature !== undefined ? payload.signature !== '-' ? payload.signature : null : null
@@ -540,9 +655,7 @@ function CreateForm({ handleSubmit, sifat, atasan, dibuatTanggal, payload, ...ot
         .nullable()
         .required("Waktu tidak boleh kosong !"),
       tempat: Yup.string()
-        .required("Harap isi tempat"),
-      acara: Yup.string()
-        .required("Harap isi acara"),
+        .required("Lokasi tidak boleh kosong !"),
       penutup: Yup.mixed()
         .required("Harap isi penutup !"),
       atasan: Yup.object()
@@ -644,7 +757,7 @@ const AddUndanganForm = ({
       tanggal: values.rangeTanggal,
       waktu: values.jam,
       lokasi: values.tempat,
-      acara: values.acara,
+      acara: values.perihal,
       atasan: values.atasan.data,
       penutup: JSON.stringify(values.penutup),
       status: "-",

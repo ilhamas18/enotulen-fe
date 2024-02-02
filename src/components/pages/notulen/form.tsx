@@ -26,6 +26,7 @@ import ModalConfirm from "@/components/global/Modal/confirm";
 import { setPayload } from "@/store/payload/action";
 import CancelBtn from "@/components/hooks/cancelBtn";
 import Blocks from "editorjs-blocks-react-renderer";
+import { locationList } from "@/components/data/location";
 
 const EditorBlock = dynamic(() => import("../../hooks/editor"));
 
@@ -34,7 +35,6 @@ interface FormValues {
   rangeTanggal: any;
   jam: any;
   pendahuluan: any;
-  pimpinanRapat: string;
   pesertaArray: any;
   isiRapat: any;
   tindakLanjut: any;
@@ -91,6 +91,8 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
   const [pesertaRapat, setPesertaRapat] = useState<string>("");
   const [idPesertaRapat, setIdPesertaRapat] = useState<number>(1);
+  const [tempat, setTempat] = useState<string>("");
+  const [openLocation, setOpenLocation] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [sign, setSign] = useState<any>()
 
@@ -177,6 +179,24 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
       target: { name: "pesertaArray", value: newArray },
     });
   };
+
+  const handleAddLocation = (e: any) => {
+    e.preventDefault();
+    if (tempat !== "") {
+      handleChange({
+        target: { name: "lokasi", value: tempat },
+      });
+    }
+    setTempat("");
+  }
+
+  const handleDeleteLocation = (e: any) => {
+    e.preventDefault();
+    setOpenLocation(false);
+    handleChange({
+      target: { name: "lokasi", value: "" },
+    });
+  }
 
   const handleUploadSuratUndangan = async (event: any) => {
     let url = `${process.env.BASE_URL}/upload/undangan`;
@@ -490,19 +510,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   </div>
                 )}
               </div>
-              <div className="data flex flex-row">
-                <TextInput
-                  type="text"
-                  id="pimpinanRapat"
-                  name="pimpinanRapat"
-                  touched={touched.pimpinanRapat}
-                  label="Pimpinan Rapat"
-                  change={handleChange}
-                  value={values?.pimpinanRapat}
-                  handleBlur={handleBlur}
-                  errors={errors.pimpinanRapat}
-                />
-              </div>
               <div className="flex flex-col justify-center mb-2">
                 <div className="flex gap-2">
                   <button onClick={(e) => handleOpenAddPeserta(e)}>
@@ -522,12 +529,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                       handleBlur={handleBlur}
                     />
                     <div className="flex justify-center items-center md:gap-8 md:mx-10 mt-3">
-                      <button
-                        className="text-xl-pink"
-                        onClick={(e) => handleAddParticipant(e)}
-                      >
-                        Batal
-                      </button>
                       <button
                         className="text-xl-base"
                         onClick={(e) => handleAddParticipant(e)}
@@ -592,19 +593,101 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   />
                 </div>
               </div>
-              <div className="data flex flex-row">
-                <TextInput
-                  type="text"
-                  id="lokasi"
-                  name="lokasi"
-                  label="Lokasi / tempat"
-                  touched={touched.lokasi}
-                  change={handleChange}
-                  disabled={step !== null ? true : false}
-                  value={values.lokasi}
-                  errors={errors.lokasi}
-                  handleBlur={handleBlur}
-                />
+              <div className="data flex flex-row w-full z-50">
+                {!openLocation ? (
+                  values.lokasi === "" ? (
+                    <TextInput
+                      type="dropdown"
+                      id="lokasi"
+                      name="lokasi"
+                      label="Nama tempat"
+                      touched={touched.lokasi}
+                      errors={errors.lokasi}
+                      placeholder="Tempat/Lokasi"
+                      value={values.lokasi}
+                      options={locationList}
+                      handleBlur={handleBlur}
+                      setValueSelected={handleChange}
+                      change={(selectedOption: any) => {
+                        if (selectedOption.value === 'others') {
+                          setOpenLocation(true);
+                          handleChange({
+                            target: { name: 'lokasi', value: '' }
+                          });
+                        } else {
+                          handleChange({
+                            target: { name: 'lokasi', value: selectedOption.value }
+                          });
+                        }
+                      }}
+                    />
+                  ) : (
+                    <div className="flex w-full items-center justify-between">
+                      <div className="flex flex-col">
+                        <div className="mb-1">Tempat : </div>
+                        {values.lokasi.split(', ').map((el: any, i: number) => (
+                          <div>{el}</div>
+                        ))}
+                      </div>
+                      {step === null && <div>
+                        <button
+                          onClick={handleDeleteLocation}
+                        >
+                          <AiOutlineClose size={18} />
+                        </button>
+                      </div>}
+                    </div>
+                  )
+                ) : (
+                  <div className="data flex flex-col w-full">
+                    {values.lokasi === "" ? (
+                      <>
+                        <TextInput
+                          type="text"
+                          id="lokasi"
+                          name="lokasi"
+                          touched={touched.lokasi}
+                          label="Tempat"
+                          change={(e: any) => setTempat(e.target.value)}
+                          value={tempat}
+                          handleBlur={handleBlur}
+                          errors={errors.lokasi}
+                        />
+                        <div className="mt-1">* Untuk mengisi nama tempat dan alamat, harap dipisahkan dengan koma dan spasi (, )</div>
+                        <div className="flex justify-center items-center md:gap-8 md:mx-10 mt-3">
+                          <button
+                            className="text-xl-pink"
+                            onClick={handleDeleteLocation}
+                          >
+                            Batal
+                          </button>
+                          <button
+                            className="text-xl-base"
+                            onClick={(e) => handleAddLocation(e)}
+                          >
+                            Tambah
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex w-full items-center justify-between">
+                        <div className="flex flex-col">
+                          <div className="mb-1">Tempat : </div>
+                          {values.lokasi.split(', ').map((el: any, i: number) => (
+                            <div>{el}</div>
+                          ))}
+                        </div>
+                        {step === null && <div>
+                          <button
+                            onClick={handleDeleteLocation}
+                          >
+                            <AiOutlineClose size={18} />
+                          </button>
+                        </div>}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="data flex flex-row">
                 <TextInput
@@ -649,10 +732,30 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 </div>
               ) : (
                 <div className="data flex flex-col w-full mt-2 gap-2 justify-center">
-                  <div>Waktu pembuatan notulen :</div>
-                  <div className="data flex flex-row mt-4 md:mt-0 md:w-[25%] w-full">
-                    <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                      <span>{formatDate(values.dibuatTanggal)}</span>
+                  <div className="flex gap-6 w-full items-center justify-center">
+                    <div className="data flex flex-col gap-2 w-[50%]">
+                      <div>Waktu pembuatan notulen :</div>
+                      <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                        <span>{formatDate(values.dibuatTanggal)}</span>
+                      </div>
+                    </div>
+                    <div className="data flex flex-row w-full">
+                      <div className="flex flex-col gap-2">
+                        <div>Edit tanggal pembuatan notulen :</div>
+                        <TextInput
+                          type="date-picker"
+                          id="dibuatTanggal"
+                          name="dibuatTanggal"
+                          // minDate={}
+                          touched={touched.dibuatTanggal}
+                          change={(e: any) => {
+                            handleChange({
+                              target: { name: "dibuatTanggal", value: e.$d },
+                            });
+                          }}
+                          errors={errors.dibuatTanggal}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -855,7 +958,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                     values.rangeTanggal.length == 0 ||
                       values.jam === null ||
                       values.pendahuluan === "" ||
-                      values.pimpinanRapat === "" ||
                       values.pesertaArray.length == 0 ||
                       values.isiRapat === null ||
                       values.tindakLanjut === null ||
@@ -912,7 +1014,6 @@ function CreateForm({ handleSubmit, atasan, dibuatTanggal, payload, ...otherProp
       ],
       jam: payload.length != 0 ? payload.waktu !== null ? payload.waktu : null : null,
       pendahuluan: payload.length != 0 ? payload.pendahuluan !== null ? JSON.parse(payload.pendahuluan) : null : null,
-      pimpinanRapat: payload.length != 0 ? payload.pimpinan_rapat !== null ? payload.pimpinan_rapat : "" : "",
       pesertaArray: payload.length != 0 ? payload.peserta_rapat !== undefined ? payload.peserta_rapat : [] : [],
       isiRapat: payload.length != 0 ? payload?.isi_rapat !== undefined ? JSON.parse(payload?.isi_rapat) : null : null,
       tindakLanjut: payload.length != 0 ? payload.tindak_lanjut !== undefined ? JSON.parse(payload.tindak_lanjut) : null : null,
@@ -935,8 +1036,6 @@ function CreateForm({ handleSubmit, atasan, dibuatTanggal, payload, ...otherProp
         .required("Waktu tidak boleh kosong !"),
       pendahuluan: Yup.mixed()
         .required("Harap isi pendahuluan !"),
-      pimpinanRapat: Yup.string()
-        .required("Harap isi nama pimpinan rapat !"),
       pesertaArray: Yup.array()
         .required("Harap isi peserta !"),
       isiRapat: Yup.mixed()
@@ -1030,7 +1129,7 @@ const AddNotulenForm = ({ profile, payload, notulen, dataAtasan, step }: PropTyp
       tanggal: values.rangeTanggal,
       waktu: values.jam,
       pendahuluan: JSON.stringify(values.pendahuluan),
-      pimpinan_rapat: values.pimpinanRapat,
+      pimpinan_rapat: values.atasan?.data.nama,
       peserta_rapat: values.pesertaArray,
       isi_rapat: JSON.stringify(values.isiRapat),
       tindak_lanjut: JSON.stringify(values.tindakLanjut),

@@ -1,6 +1,6 @@
 import { TouchEventHandler } from "react";
 import { useState, useEffect } from "react";
-import { RxCross2 } from "react-icons/rx";
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import ReactSelect from "react-select"
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
@@ -21,6 +21,7 @@ interface type {
   max?: number;
   value?: any;
   anim?: boolean;
+  minDate?: any;
   errors?: any;
   change?: any;
   setValueSelected?: any;
@@ -45,6 +46,7 @@ const TextInput = ({
   value,
   errors,
   change,
+  minDate,
   setValueSelected,
   touched,
   handleFocus,
@@ -56,7 +58,7 @@ const TextInput = ({
   onClick,
 }: type) => {
   const [iconAye, setIconAye] = useState(false)
-
+  const today = dayjs();
   return (
     <div className="form">
       {type === "text" || type === "number" || type === "tel" || type === "date" ? (
@@ -253,7 +255,7 @@ const TextInput = ({
             ]}
           >
             <DemoItem label={label}>
-              <DesktopDateTimePicker defaultValue={dayjs('2022-04-17T15:30')} />
+              <DateTimePicker defaultValue={dayjs('2022-04-17T15:30')} minDate={today} disablePast />
             </DemoItem>
           </DemoContainer>
         </LocalizationProvider>

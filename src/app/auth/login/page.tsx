@@ -1,8 +1,7 @@
-'use client'
+"use client";
 import React from "react";
 import LoginForm from "@/components/pages/user/loginForm";
 import withoutAuth from "@/components/hocs/withoutAuth";
-import { getCookie } from "cookies-next";
 
 const Page = () => {
   const gradientStyle = {
@@ -13,7 +12,6 @@ const Page = () => {
   return (
     <div className="login-page-wrapper w-full">
       <div className="bg-white w-full min-h-screen flex">
-        {/* <div className="flex md:flex-row flex-col"> */}
         <div className="w-full bg-[#f5f7f9] flex flex-col h-screen justify-center items-center justify-center">
           <div className="bg-white md:w-[40%] w-full">
             <div className="flex flex-row items-center space-x-4 px-8" style={gradientStyle}>
@@ -26,10 +24,6 @@ const Page = () => {
             </div>
           </div>
         </div>
-        {/* <div className="md:w-1/2 w-full md:block hidden">
-            <img src="/bg-login.jpeg" className="h-screen w-full" alt="Background" />
-          </div> */}
-        {/* </div> */}
       </div>
     </div>
   )

@@ -43,7 +43,6 @@ const CancelBtn = ({ title, data, url, setLoading }: PropTypes) => {
     } else {
       dispatch(setPayload([]));
       router.push("/laporan");
-
     }
   }
 

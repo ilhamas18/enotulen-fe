@@ -73,9 +73,51 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
     })
   };
 
-  const handleDelete = () => { }
+  const handleDelete = async () => {
+    Swal.fire({
+      title: `Yakin Hapus Permanen Undangan "${data.acara}" ?`,
+      showDenyButton: true,
+      confirmButtonText: 'Hapus',
+      denyButtonText: `Batal`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setLoading(true);
+        const response = await fetchApi({
+          url: `/undangan/deleteUndangan/${data.id}`,
+          method: 'delete',
+          type: 'auth'
+        })
 
-  const handleBack = () => { };
+        if (!response.success) {
+          setLoading(false);
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Koneksi bermasalah!",
+          });
+        } else {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: `Sukses hapus undangan`,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          router.push('/undangan/arsip')
+        }
+      } else if (result.isDenied) {
+        Swal.fire('Changes are not saved', '', 'info')
+      }
+    })
+  }
+
+  const handleBack = () => {
+    if (data.atasan?.nip !== profile.nip) {
+      router.push('/undangan/laporan')
+    } else {
+      router.push('/undangan/verifikasi')
+    }
+  };
 
   return (
     <React.Fragment>
@@ -292,7 +334,11 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
                 </div>
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                    {data.lokasi}
+                    <div className="flex flex-col">
+                      {data.lokasi.split(', ').map((el: any, i: number) => (
+                        <div>{el}</div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

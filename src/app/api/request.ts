@@ -15,8 +15,6 @@ export const fetchApi = async ({
   url,
   method,
   body,
-  token,
-  result200 = false,
 }: reqApi) => {
   let baseURL = process.env.BASE_URL;
   let header;
@@ -48,13 +46,8 @@ export const fetchApi = async ({
 
     return data
   } catch (err: any) {
+    const { data }: any = err.response;
 
-    return {
-      success: err?.response?.data?.success ? err.response.data.success : false,
-      code: err?.response?.status ? err.response.status : 500,
-      data: err
-    }
-
-    // return err
+    return data
   }
 }

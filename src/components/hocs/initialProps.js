@@ -2,7 +2,6 @@ import RootLayout from "../../app/layout";
 
 const InitialProps = ({ authenticated }) => {
   // Your page component logic here
-  console.log(authenticated, '<<< 6MEN');
   return (
     <RootLayout authenticated={authenticated}>
     </RootLayout>
@@ -13,7 +12,7 @@ export default InitialProps;
 
 export async function getServerSideProps(context) {
   let authenticated = false;
-console.log('masook');
+  console.log('masook');
 
   const { req, res } = context.ctx;
   const pageProps = context.Component.getInitialProps
