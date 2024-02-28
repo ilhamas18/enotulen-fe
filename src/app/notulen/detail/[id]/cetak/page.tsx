@@ -69,6 +69,7 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
     const options: any = { weekday: "long" };
     return date.toLocaleDateString("id-ID", options);
   }
+  console.log(laporan);
 
   return (
     <React.Fragment>
@@ -301,7 +302,7 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                     Yang Melapor,
                   </div>
                 </div>
-                {laporan.signature !== '-' && (
+                {laporan.signature !== '-' || laporan.signature !== null && (
                   <div>
                     <img src={laporan.signature} className="w-[270px]" alt="TTD" />
                   </div>

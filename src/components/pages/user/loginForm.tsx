@@ -192,7 +192,6 @@ const LoginForm: any = () => {
     })
 
     if (!response.success) {
-
       router.push('/auth/login');
       if (response.code == 404) {
         Swal.fire({
