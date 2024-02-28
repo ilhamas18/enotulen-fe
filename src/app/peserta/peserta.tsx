@@ -8,11 +8,14 @@ import { State } from "@/store/reducer";
 import StepsWrapper from "@/components/global/Steps";
 import { FaWpforms } from "react-icons/fa";
 import AddPesertaForm from "@/components/pages/peserta/form";
+import { fetchApi } from "../api/request";
 
 const PesertaProps = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [data, setData] = useState<any>([]);
+  const [kepalaOPD, setKepalaOPD] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const step: any = searchParams.get('step');
 

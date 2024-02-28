@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 function HomeAuth() {
   return (
-    <div className="list-notulen-container relative flex flex-col relative">
+    <div className="list-notulen-container relative flex flex-col">
       <Home />
     </div>
   )

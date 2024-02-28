@@ -14,12 +14,14 @@ interface FormValues {
   telepon: string,
   faximile: string,
   website: string,
+  kepalaOPD: any
 }
 
 interface OtherProps {
   title?: string;
   ref?: any;
   dataOPD?: any;
+  dataPegawai?: any;
 }
 
 interface MyFormProps extends OtherProps {
@@ -38,6 +40,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     handleChange,
     handleBlur,
     handleSubmit,
+    dataPegawai,
     isSubmitting,
     dataOPD,
     ref,
@@ -116,6 +119,26 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               handleBlur={handleBlur}
             />
           </div>
+          <div className="data flex flex-row">
+            <TextInput
+              type="dropdown"
+              id="kepalaOPD"
+              name="kepalaOPD"
+              label="Nama Kepala"
+              touched={touched.kepalaOPD}
+              errors={errors.kepalaOPD}
+              value={values.kepalaOPD}
+              placeholder="Ketik dan pilih Kepala OPD"
+              options={dataPegawai}
+              handleBlur={handleBlur}
+              setValueSelected={handleChange}
+              change={(selectedOption: any) => {
+                handleChange({
+                  target: { name: "kepalaOPD", value: selectedOption },
+                });
+              }}
+            />
+          </div>
         </div>
         <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
           <div className="w-[8em] absolute bottom-0 right-8">
@@ -149,7 +172,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   )
 }
 
-function CreateForm({ handleSubmit, dataOPD }: MyFormProps) {
+function CreateForm({ handleSubmit, dataOPD, ...otherProps }: MyFormProps) {
   const FormWithFormik = withFormik({
     mapPropsToValues: () => ({
       singkatan: dataOPD.opd.singkatan !== null ? dataOPD.opd.singkatan : "",
@@ -157,6 +180,7 @@ function CreateForm({ handleSubmit, dataOPD }: MyFormProps) {
       telepon: dataOPD.opd.telepon !== null ? dataOPD.opd.telepon : "",
       faximile: dataOPD.opd.faximile !== null ? dataOPD.opd.faximile : "",
       website: dataOPD.opd.website !== null ? dataOPD.opd.website : "",
+      kepalaOPD: null
     }),
     validationSchema: Yup.object().shape({
       alamat: Yup.string()
@@ -167,18 +191,26 @@ function CreateForm({ handleSubmit, dataOPD }: MyFormProps) {
         .required('Harap isi faximile !'),
       website: Yup.string()
         .required('Harap isi website !'),
+      kepalaOPD: Yup.object()
+        .shape({
+          label: Yup.string(),
+          value: Yup.number(),
+        })
+        .required("Bagian dibutuhkan")
+        .nullable(),
     }),
     handleSubmit
   })(FormField)
 
-  return <FormWithFormik />
+  return <FormWithFormik {...otherProps} />
 }
 
 interface PropTypes {
-  dataOPD: any
+  dataOPD: any;
+  dataPegawai: any;
 }
 
-const TambahOPDForm = ({ dataOPD }: PropTypes) => {
+const TambahOPDForm = ({ dataOPD, dataPegawai }: PropTypes) => {
   const router = useRouter();
 
   const handleSubmit = async (values: FormValues) => {
@@ -187,7 +219,8 @@ const TambahOPDForm = ({ dataOPD }: PropTypes) => {
       alamat: values.alamat,
       telepon: values.telepon,
       faximile: values.faximile,
-      website: values.website
+      website: values.website,
+      kepala_opd: values.kepalaOPD.data
     }
 
     const response = await fetchApi({
@@ -218,7 +251,7 @@ const TambahOPDForm = ({ dataOPD }: PropTypes) => {
   }
 
   return (
-    <CreateForm handleSubmit={handleSubmit} dataOPD={dataOPD} />
+    <CreateForm handleSubmit={handleSubmit} dataOPD={dataOPD} dataPegawai={dataPegawai} />
   )
 }
 

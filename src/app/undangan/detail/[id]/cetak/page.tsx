@@ -10,6 +10,8 @@ import withAuth from "@/components/hocs/withAuth";
 import Blocks from 'editorjs-blocks-react-renderer';
 import { formatMonth } from "@/components/helpers/formatMonth";
 import Loading from "@/components/global/Loading/loading";
+import { shallowEqual, useSelector } from "react-redux";
+import { State } from "@/store/reducer";
 
 const CetakUndangan = ({ params }: { params: { id: number } }) => {
   const { id } = params;
@@ -17,6 +19,10 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const printRef: any = useRef();
+
+  const { profile } = useSelector((state: State) => ({
+    profile: state.profile.profile,
+  }), shallowEqual);
 
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
@@ -71,6 +77,7 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
     const options: any = { weekday: "long" };
     return date.toLocaleDateString("id-ID", options);
   }
+  console.log(profile);
 
   return (
     <React.Fragment>
@@ -301,7 +308,7 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                   <div className="flex flex-col items-center justify-between text-center w-[45%] h-[15em]">
                     <div>
                       <div className="font-bold text-black dark:text-white text-title-ss mt-1">
-                        {laporan.atasan?.jabatan}
+                        {profile.Perangkat_Daerah.kepala_opd.jabatan}
                       </div>
                     </div>
                     {laporan.signature_atasan !== "-" || laporan.signature_atasan !== null && (
@@ -309,14 +316,14 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                     )}
                     <div>
                       <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
-                        {laporan.atasan.nama}
+                        {profile.Perangkat_Daerah.kepala_opd.nama}
                       </div>
                       <div className="text-black dark:text-white text-title-ss mt-1">
                         {" "}
-                        {laporan.atasan?.namaPangkat}{" "}
+                        {profile.Perangkat_Daerah.kepala_opd.namaPangkat}{" "}
                       </div>
                       <div className="font-bold text-black dark:text-white text-title-ss mt-1">
-                        NIP. {laporan.atasan?.nip}
+                        NIP. {profile.Perangkat_Daerah.kepala_opd.nip}
                       </div>
                     </div>
                   </div>

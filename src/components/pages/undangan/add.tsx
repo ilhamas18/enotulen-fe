@@ -523,7 +523,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
             </div>
           )}
         </div>
-        <div className="signature px-8 mt-6">
+        {/* <div className="signature px-8 mt-6">
           {values.signature === null ? (
             <>
               <div className="text-title-xsm2 mb-2">Bubuhkan Tanda tangan (opsional)</div>
@@ -542,7 +542,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               <div className="text-danger text-title-xsm2 hover:cursor-pointer" onClick={handleDeleteSignature}>Hapus</div>
             </div>
           )}
-        </div>
+        </div> */}
         <div className="text-danger text-title-ss mx-8 mt-3 mb-10">*Pastikan mengisi seluruh data undangan, (kecuali yang opsional)</div>
         <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
           <div className="w-[8em]">
