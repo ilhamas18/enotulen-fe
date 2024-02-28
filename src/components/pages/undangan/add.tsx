@@ -33,6 +33,7 @@ interface FormValues {
   rangeTanggal: any;
   jam: any;
   tempat: string;
+  catatan: any;
   penutup: any;
   atasan: any;
   signature: string;
@@ -166,6 +167,48 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     <div className="form-container relative bg-white rounded-lg">
       <div className="form-wrapper-general">
         <div className="px-8 flex flex-col space-y-7 mt-4 py-8">
+          {values.tanggalSurat !== null ? (
+            <div className="data items-center flex md:flex-row flex-col md:gap-4 w-full">
+              <div className="data flex flex-row mt-4 md:mt-0 md:w-[25%] w-full">
+                <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                  <span>{formatDate(values.tanggalSurat)}</span>
+                </div>
+              </div>
+              <div className="w-[15%] text-right">Edit Waktu Pembuatan: </div>
+              <div className="w-[60%] mb-2">
+                <TextInput
+                  type="date-picker"
+                  id="tanggalSurat"
+                  name="tanggalSurat"
+                  touched={touched.tanggalSurat}
+                  change={(e: any) => {
+                    handleChange({
+                      target: { name: "tanggalSurat", value: e.$d },
+                    });
+                  }}
+                  errors={errors.tanggalSurat}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <div className="text-title-xsm2 mb-2">Tanggal Pembuatan Undangan :</div>
+              <div>
+                <TextInput
+                  type="date-picker"
+                  id="tanggalSurat"
+                  name="tanggalSurat"
+                  touched={touched.tanggalSurat}
+                  change={(e: any) => {
+                    handleChange({
+                      target: { name: "tanggalSurat", value: e.$d },
+                    });
+                  }}
+                  errors={errors.tanggalSurat}
+                />
+              </div>
+            </div>
+          )}
           <div className="data flex flex-row w-full">
             <TextInput
               type="text"
@@ -447,6 +490,20 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
             />
           </div>
           <div>
+            <div className="text-deep-gray">Catatan (Opsional)</div>
+            <div className="container border-2 border-light-gray rounded-lg">
+              <EditorBlock
+                data={values.catatan}
+                onChange={(e) => {
+                  handleChange({
+                    target: { name: "catatan", value: e },
+                  });
+                }}
+                holder="editorjs-container3"
+              />
+            </div>
+          </div>
+          <div>
             <div className="text-deep-gray">Penutup</div>
             <div className="container border-2 border-light-gray rounded-lg">
               <EditorBlock
@@ -456,7 +513,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                     target: { name: "penutup", value: e },
                   });
                 }}
-                holder="editorjs-container3"
+                holder="editorjs-container4"
               />
             </div>
           </div>
@@ -480,48 +537,6 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               }}
             />
           </div>
-          {values.tanggalSurat !== null ? (
-            <div className="data items-center flex md:flex-row flex-col md:gap-4 w-full">
-              <div className="data flex flex-row mt-4 md:mt-0 md:w-[25%] w-full">
-                <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                  <span>{formatDate(values.tanggalSurat)}</span>
-                </div>
-              </div>
-              <div className="w-[15%] text-right">Edit Waktu Pembuatan: </div>
-              <div className="w-[60%] mb-2">
-                <TextInput
-                  type="date-picker"
-                  id="tanggalSurat"
-                  name="tanggalSurat"
-                  touched={touched.tanggalSurat}
-                  change={(e: any) => {
-                    handleChange({
-                      target: { name: "tanggalSurat", value: e.$d },
-                    });
-                  }}
-                  errors={errors.tanggalSurat}
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-2">
-              <div className="text-title-xsm2 mb-2">Tanggal Pelaksanaan Acara</div>
-              <div>
-                <TextInput
-                  type="date-picker"
-                  id="tanggalSurat"
-                  name="tanggalSurat"
-                  touched={touched.tanggalSurat}
-                  change={(e: any) => {
-                    handleChange({
-                      target: { name: "tanggalSurat", value: e.$d },
-                    });
-                  }}
-                  errors={errors.tanggalSurat}
-                />
-              </div>
-            </div>
-          )}
         </div>
         {/* <div className="signature px-8 mt-6">
           {values.signature === null ? (
@@ -623,6 +638,7 @@ function CreateForm({ handleSubmit, sifat, atasan, dibuatTanggal, payload, ...ot
       ],
       jam: payload?.length != 0 ? payload?.waktu !== undefined ? payload?.waktu : null : null,
       tempat: payload.length != 0 ? payload.lokasi !== undefined ? payload.lokasi !== "" ? payload.lokasi : "" : "" : "",
+      catatan: payload?.length != 0 ? payload?.catatan !== undefined ? JSON.parse(payload?.catatan) : "" : "",
       penutup: payload?.length != 0 ? payload?.penutup !== undefined ? JSON.parse(payload?.penutup) : "" : "",
       atasan: payload?.atasan !== undefined ? atasan : null,
       signature: payload.signature !== undefined ? payload.signature !== '-' ? payload.signature : null : null
@@ -759,6 +775,7 @@ const AddUndanganForm = ({
       lokasi: values.tempat,
       acara: values.perihal,
       atasan: values.atasan.data,
+      catatan: JSON.stringify(values.catatan),
       penutup: JSON.stringify(values.penutup),
       status: "-",
       hari: new Date(values.tanggalSurat).getDate(),
@@ -769,6 +786,7 @@ const AddUndanganForm = ({
       nip_pegawai: profile.nip,
       nip_atasan: values.atasan.value
     }
+
     setDataPayload(dataUndangan);
     if (step !== null) setOpenConfirm(true);
     else handleConfirmSubmit(dataUndangan);

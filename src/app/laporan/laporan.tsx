@@ -77,7 +77,7 @@ const LaporanPage = () => {
   return (
     <div className='list-laporan-container relative'>
       <div className="bg-white dark:bg-meta-4 shadow-card flex flex-col gap-2 py-4 text-center font-bold text-title-sm rounded rounded-lg border-none">
-        <div>REKAP LAPORAN UNDANGAN DAN NOTULEN</div>
+        <div>REKAP LAPORAN UNDANGAN, DAFTAR HADIR, DAN NOTULEN</div>
         {profile.role == 1 && <div>PEMERINTAH KOTA MADIUN</div>}
         {profile.role == 2 || profile.role == 3 ? <div>{profile.Perangkat_Daerah?.nama_opd}</div> : null}
       </div>

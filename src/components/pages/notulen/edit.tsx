@@ -905,7 +905,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   onClick={handleSubmit}
                 >
                   <div className="flex justify-center items-center text-white font-Nunito">
-                    <span className="button-text">Edit</span>
+                    <span className="button-text">Simpan</span>
                   </div>
                 </Button>
               </div>

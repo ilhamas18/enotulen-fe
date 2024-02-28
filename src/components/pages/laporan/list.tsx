@@ -80,6 +80,19 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
     }
   }
 
+  const handleDetail = (id: number, type: string) => {
+    switch (type) {
+      case 'undangan':
+        router.push(`/undangan/detail/${id}`);
+        break;
+      case 'notulen':
+        router.push(`/notulen/detail/${id}`);
+        break;
+      default:
+        null;
+    }
+  }
+
   return (
     <React.Fragment>
       <Paper>
@@ -94,8 +107,8 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                 {profile.role == 1 || profile.role == 2 && <TableCell align="center" style={{ maxWidth: 220 }}>PEMBUAT</TableCell>}
                 <TableCell align="center" style={{ maxWidth: 220 }}>ACARA</TableCell>
                 <TableCell align="center" style={{ maxWidth: 180 }}>UNDANGAN</TableCell>
-                <TableCell align="center" style={{ maxWidth: 180 }}>NOTULEN</TableCell>
                 <TableCell align="center" style={{ maxWidth: 180 }}>DAFTAR HADIR</TableCell>
+                <TableCell align="center" style={{ maxWidth: 180 }}>NOTULEN</TableCell>
                 <TableCell align="center" style={{ maxWidth: 180 }}>PILIH REKIN</TableCell>
               </TableRow>
             </TableHead>
@@ -138,32 +151,38 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                           <div className='flex items-center justify-center'>
                             {row.Undangan === null ? (
                               <div
-                                className='border border-xl-base w-[50%] text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1 px-auto'
+                                className='border border-xl-base p-2 text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1'
                                 onClick={() => handleClickAddForm(row, '/undangan/tambah')}
-                              >Tambah</div>
+                              >+</div>
                             ) : (
-                              <div className='flex items-center justify-center text-meta-3'><FaCheck size={18} /></div>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell align="center">
-                          <div className='flex items-center justify-center'>
-                            {row.Notulen === null ? (
                               <div
-                                className='border border-xl-base w-[50%] text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1 px-auto'
-                                onClick={() => handleClickAddForm(row, '/notulen/form')}
-                              >Tambah</div>
-                            ) : (
-                              <div className='flex items-center justify-center text-meta-3'><FaCheck size={18} /></div>
+                                className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
+                                onClick={() => handleDetail(row.Undangan?.id, 'undangan')}><FaCheck size={14}
+                                /></div>
                             )}
                           </div>
                         </TableCell>
                         <TableCell align="center">
                           <div className='flex items-center justify-center'>
                             <div
-                              className='border border-xl-base w-[50%] text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1'
+                              className='border border-xl-base p-2 text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1'
                               onClick={() => handleClickAddForm(row, '/peserta')}
-                            >Tambah</div>
+                            >+</div>
+                          </div>
+                        </TableCell>
+                        <TableCell align="center">
+                          <div className='flex items-center justify-center'>
+                            {row.Notulen === null ? (
+                              <div
+                                className='border border-xl-base p-2 text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1'
+                                onClick={() => handleClickAddForm(row, '/notulen/form')}
+                              >+</div>
+                            ) : (
+                              <div
+                                className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
+                                onClick={() => handleDetail(row.Notulen?.id, 'notulen')}><FaCheck size={14}
+                                /></div>
+                            )}
                           </div>
                         </TableCell>
                         <TableCell align="center">

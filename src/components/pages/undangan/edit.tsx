@@ -35,6 +35,7 @@ interface FormValues {
   jam: any;
   tempat: string;
   acara: string;
+  catatan: any;
   penutup: any;
   atasan: any;
   signature: string;
@@ -357,6 +358,20 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
             />
           </div>
           <div>
+            <div className="text-deep-gray">Catatan (Opsional)</div>
+            <div className="container border-2 border-light-gray rounded-lg">
+              <EditorBlock
+                data={values.catatan}
+                onChange={(e) => {
+                  handleChange({
+                    target: { name: "catatan", value: e },
+                  });
+                }}
+                holder="editorjs-container3"
+              />
+            </div>
+          </div>
+          <div>
             <div className="text-deep-gray">Penutup</div>
             <div className="container border-2 border-light-gray rounded-lg">
               <EditorBlock
@@ -366,7 +381,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                     target: { name: "penutup", value: e },
                   });
                 }}
-                holder="editorjs-container3"
+                holder="editorjs-container4"
               />
             </div>
           </div>
@@ -473,7 +488,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               onClick={handleSubmit}
             >
               <div className="flex justify-center items-center text-white font-Nunito">
-                <span className="button-text">Edit</span>
+                <span className="button-text">Simpan</span>
               </div>
             </Button>
           </div>
@@ -514,6 +529,7 @@ function CreateForm({ handleSubmit, sifat, atasan, dibuatTanggal, payload, ...ot
       jam: payload?.length != 0 ? payload?.waktu !== undefined ? payload?.waktu : null : null,
       tempat: payload?.length != 0 ? payload?.lokasi !== undefined ? payload?.lokasi : null : null,
       acara: payload?.length != 0 ? payload?.acara !== undefined ? payload?.acara : null : null,
+      catatan: payload?.length != 0 ? payload?.catatan !== undefined ? JSON.parse(payload?.catatan) : "" : "",
       penutup: payload?.length != 0 ? payload?.penutup !== undefined ? JSON.parse(payload?.penutup) : "" : "",
       atasan: payload?.atasan !== undefined ? atasan : null,
       signature: payload.signature !== undefined ? payload.signature !== '-' ? payload.signature : null : null
@@ -690,6 +706,7 @@ const EditUndanganForm = ({
       lokasi: values.tempat,
       acara: values.acara,
       atasan: values.atasan.data,
+      catatan: JSON.stringify(values.catatan),
       penutup: JSON.stringify(values.penutup),
       status: "-",
       hari: new Date(values.tanggalSurat).getDate(),

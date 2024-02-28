@@ -344,6 +344,26 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
               </div>
               <div className="body flex flex-row md:flex-row flex-col items-center justify-between">
                 <div className="text-label md:w-[20%] w-full md:text-left text-center">
+                  Catatan
+                </div>
+                <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+                  <div className="border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                    {data?.catatan !== null && <Blocks data={JSON.parse(data?.catatan)} config={{
+                      list: {
+                        className: "list-decimal ml-10"
+                      },
+                      paragraph: {
+                        className: "text-base text-opacity-75",
+                        actionsClassNames: {
+                          alignment: "text-justify",
+                        }
+                      }
+                    }} />}
+                  </div>
+                </div>
+              </div>
+              <div className="body flex flex-row md:flex-row flex-col items-center justify-between">
+                <div className="text-label md:w-[20%] w-full md:text-left text-center">
                   Penutup
                 </div>
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">

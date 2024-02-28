@@ -288,6 +288,29 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                         {laporan.acara}
                       </div>
                     </div>
+                    {laporan?.catatan !== null && (
+                      <div className="flex gap-2 w-full">
+                        <div className="w-[25%]">
+                          Catatan
+                        </div>
+                        <div className="w-[5%]">:</div>
+                        <div className="w-[70%]">
+                          <div className="text-black dark:text-white text-title-xsm text-justify indent-10">
+                            {laporan?.catatan !== null && <Blocks data={JSON.parse(laporan?.catatan)} config={{
+                              list: {
+                                className: "list-decimal text-title-ss"
+                              },
+                              paragraph: {
+                                className: "text-base text-opacity-75",
+                                actionsClassNames: {
+                                  alignment: "text-justify",
+                                }
+                              }
+                            }} />}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="text-black dark:text-white text-title-xsm mt-3 ml-4 text-justify indent-10 ml-[12%] mt-4">
                     {laporan?.penutup !== undefined && <Blocks data={JSON.parse(laporan?.penutup)} config={{

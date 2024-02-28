@@ -34,6 +34,7 @@ const DetailProps = ({ id }: PropTypes) => {
       method: 'get',
       type: 'auth'
     });
+    console.log(response, 'RESPONSE');
 
     if (!response.success) {
       setLoading(false);

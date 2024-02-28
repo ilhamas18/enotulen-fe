@@ -209,7 +209,6 @@ const XAddSasaran = ({
     temp.push(id);
     setIdSasaran(temp);
   }
-  console.log(data, '>>> data');
 
   return (
     <CommonModal isOpen={openAddSasaran} onClose={setOpenAddSasaran} animate={true}>
@@ -224,7 +223,7 @@ const XAddSasaran = ({
                   id="sasaran"
                   name="sasaran"
                   label="Sasaran"
-                  placeholder="Ketik dan pilih atasan"
+                  placeholder="Ketik dan pilih sasaran"
                   options={listSasaran}
                   handleFocus={() => setIsOnFocus(true)}
                   handleBlur={() => setIsOnFocus(false)}
