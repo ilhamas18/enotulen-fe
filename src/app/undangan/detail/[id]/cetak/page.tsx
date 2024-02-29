@@ -77,7 +77,6 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
     const options: any = { weekday: "long" };
     return date.toLocaleDateString("id-ID", options);
   }
-  console.log(profile);
 
   return (
     <React.Fragment>
@@ -147,64 +146,70 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                 <div className="flex justify-between mt-6 text-title-xsm2 text-black font-medium">
                   <div className="flex flex-col w-[50%]">
                     <div className="flex gap-2 w-full">
-                      <div className="w-[25%]">
-                        Nomor :
+                      <div className="w-[20%]">
+                        Nomor
                       </div>
+                      <div className="w-[5%]">:</div>
                       <div className="w-[70%]">
-                        {laporan.nomor_surat}
+                        {laporan.nomor_surat !== null ? laporan.nomor_surat : '-'}
                       </div>
                     </div>
                     <div className="flex gap-2 w-full">
-                      <div className="w-[25%]">
-                        Sifat :
+                      <div className="w-[20%]">
+                        Sifat
                       </div>
+                      <div className="w-[5%]">:</div>
                       <div className="w-[70%]">
-                        {laporan.sifat}
+                        {laporan.sifat !== null ? laporan.sifat : '-'}
                       </div>
                     </div>
                     <div className="flex gap-2 w-full">
-                      <div className="w-[25%]">
-                        Lampiran :
+                      <div className="w-[20%]">
+                        Lampiran
                       </div>
+                      <div className="w-[5%]">:</div>
                       <div className="w-[70%]">
                         -
                       </div>
                     </div>
                     <div className="flex gap-2 w-full">
-                      <div className="w-[25%]">
-                        Nomor :
+                      <div className="w-[20%]">
+                        Perihal
                       </div>
+                      <div className="w-[5%]">:</div>
                       <div className="w-[70%]">
-                        {laporan.perihal}
+                        {laporan.perihal !== null ? laporan.perihal : '-'}
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col w-[50%] pl-[10%] text-left">
-                    <div className="pl-[36px]">Kepada</div>
-                    <div className="flex gap-2">
-                      <div>Yth.</div>
-                      <div>
-                        {laporan.ditujukan.map((el: any, i: number) => (
-                          <>
-                            {laporan.ditujukan.length > 1 ? (
-                              <div className="flex space-x-2">
-                                <div className="mr-1">{i + 1}</div>
+                  {laporan.ditujukan !== null ? (
+                    <div className="flex flex-col w-[50%] pl-[10%] text-left">
+                      <div className="pl-[36px]">Kepada</div>
+                      <div className="flex gap-2">
+                        <div>Yth.</div>
+                        <div>
+                          {laporan.ditujukan.map((el: any, i: number) => (
+                            <>
+                              {laporan.ditujukan.length > 1 ? (
+                                <div className="flex space-x-2">
+                                  <div className="mr-1">{i + 1}</div>
+                                  <div>{el.nama}</div>
+                                </div>
+                              ) : (
                                 <div>{el.nama}</div>
-                              </div>
-                            ) : (
-                              <div>{el.nama}</div>
-                            )}
-                          </>
-                        ))}
+                              )}
+                            </>
+                          ))}
+                        </div>
                       </div>
+                      <div className="pl-[36px]">di -</div>
+                      <div className="pl-[60px]">MADIUN</div>
                     </div>
-                    <div className="pl-[36px]">di -</div>
-                    <div className="pl-[60px]">MADIUN</div>
-                  </div>
+                  ) : '-'}
                 </div>
                 <div className="body mt-8">
                   <div className="text-black dark:text-white text-title-xsm mt-3 ml-4 text-justify indent-10 ml-[12%]">
-                    {laporan?.pendahuluan !== undefined && <Blocks data={JSON.parse(laporan?.pendahuluan)} config={{
+                    {laporan?.pendahuluan !== null && <Blocks data={JSON.parse(laporan?.pendahuluan)} config={{
                       list: {
                         className: "list-decimal ml-10"
                       },
@@ -217,7 +222,7 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                     }} />}
                   </div>
                   <div className="text-black dark:text-white text-title-xsm mt-3 ml-4 text-justify indent-10 ml-[12%]">
-                    {laporan?.isi_undangan !== undefined && <Blocks data={JSON.parse(laporan?.isi_undangan)} config={{
+                    {laporan?.isi_undangan !== null && <Blocks data={JSON.parse(laporan?.isi_undangan)} config={{
                       list: {
                         className: "list-decimal ml-10"
                       },
@@ -313,7 +318,7 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                     )}
                   </div>
                   <div className="text-black dark:text-white text-title-xsm mt-3 ml-4 text-justify indent-10 ml-[12%] mt-4">
-                    {laporan?.penutup !== undefined && <Blocks data={JSON.parse(laporan?.penutup)} config={{
+                    {laporan?.penutup !== null && <Blocks data={JSON.parse(laporan?.penutup)} config={{
                       list: {
                         className: "list-decimal ml-10"
                       },

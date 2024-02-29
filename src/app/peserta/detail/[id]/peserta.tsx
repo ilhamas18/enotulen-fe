@@ -8,9 +8,13 @@ import { State } from "@/store/reducer";
 import StepsWrapper from "@/components/global/Steps";
 import { FaWpforms } from "react-icons/fa";
 import AddPesertaForm from "@/components/pages/peserta/form";
-import { fetchApi } from "../api/request";
+import { fetchApi } from "../../../api/request";
 
-const PesertaProps = () => {
+interface PropTypes {
+  id: number
+}
+
+const PesertaProps = ({ id }: PropTypes) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [data, setData] = useState<any>([]);
@@ -46,7 +50,7 @@ const PesertaProps = () => {
           <div className='text-title-xsm'>Form Tambah Daftar Hadir</div>
         </div>
       </div>
-      {data.length != 0 && <AddPesertaForm payload={data} profile={profile} />}
+      {data.length != 0 && <AddPesertaForm payload={data} profile={profile} id={id} />}
     </div>
   )
 }

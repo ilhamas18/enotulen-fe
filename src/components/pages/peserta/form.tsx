@@ -18,6 +18,8 @@ import { formatDate, getTime } from '@/components/hooks/formatDate';
 import { BsPrinter } from "react-icons/bs";
 import { setPayload } from '@/store/payload/action';
 import CancelBtn from '@/components/hooks/cancelBtn';
+import XAddPeserta from './x-modal/addPeserta';
+import { fetchApi } from '@/app/api/request';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -39,18 +41,51 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 interface PropTypes {
   profile: any;
   payload: any;
+  id: number;
 }
 
-const AddPesertaForm = ({ profile, payload }: PropTypes) => {
+const AddPesertaForm = ({ profile, payload, id }: PropTypes) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const printRef: any = useRef();
   const [peserta, setPeserta] = useState<any>([]);
+  const [jenisPeserta, setJenisPeserta] = useState<string>('');
+  const [openAddPeserta, setOpenAddPeserta] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
   });
+
+  React.useEffect(() => {
+    fetchJumlahPeserta();
+  }, [openAddPeserta]);
+
+  const fetchJumlahPeserta = async () => {
+    setLoading(true);
+    const response = await fetchApi({
+      url: `/undangan/getUndanganDetail/${id}`,
+      method: 'get',
+      type: 'auth'
+    })
+
+    if (!response.success) {
+      setLoading(false);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Koneksi bermasalah!",
+      });
+    } else {
+      const { data } = response.data;
+      const maxNumber = parseInt(data.jumlah_peserta);
+      if (!isNaN(maxNumber) && maxNumber > 0) {
+        const newArray = Array.from({ length: maxNumber }, (_, index) => index + 1);
+        setPeserta(newArray);
+        setJenisPeserta(data.jenis_peserta)
+      }
+    }
+  }
 
   function formatDateRange(startDate: any, endDate: any) {
     const start = new Date(startDate);
@@ -68,31 +103,7 @@ const AddPesertaForm = ({ profile, payload }: PropTypes) => {
     }
   }
 
-  const hanleAddParticipant = () => {
-    Swal.fire({
-      title: "Masukkan jumlah peserta",
-      input: "number",
-      inputAttributes: {
-        autocapitalize: "off"
-      },
-      showCancelButton: true,
-      confirmButtonText: "OK",
-      showLoaderOnConfirm: true,
-      preConfirm: async (number) => {
-        const maxNumber = parseInt(number, 10);
-
-        if (!isNaN(maxNumber) && maxNumber > 0) {
-          const newArray = Array.from({ length: maxNumber }, (_, index) => index + 1);
-          setPeserta(newArray);
-        } else {
-          alert('Please enter a valid positive number.');
-        }
-      },
-      allowOutsideClick: () => !Swal.isLoading()
-    }).then((result) => {
-
-    });
-  }
+  const hanleAddParticipant = () => setOpenAddPeserta(true);
 
   const handleNext = () => router.push('/notulen/form?step=3');
 
@@ -179,7 +190,7 @@ const AddPesertaForm = ({ profile, payload }: PropTypes) => {
                   <StyledTableCell align="center" width={250} className='border border-black'>NAMA</StyledTableCell>
                   <StyledTableCell align="center" width={10} className='border border-black'>LAKI-LAKI</StyledTableCell>
                   <StyledTableCell align="center" width={10} className='border border-black'>PEREM PUAN</StyledTableCell>
-                  <StyledTableCell align="center" width={250} className='border border-black'>INSTANSI</StyledTableCell>
+                  <StyledTableCell align="center" width={250} className='border border-black'>{jenisPeserta === 'internal' ? 'JABATAN' : 'INSTANSI'}</StyledTableCell>
                   <StyledTableCell align="center" width={300} className='border border-black'>TANDA TANGAN</StyledTableCell>
                 </TableRow>
               </TableHead>
@@ -252,6 +263,14 @@ const AddPesertaForm = ({ profile, payload }: PropTypes) => {
           </Button>
         </div>
       </div>
+
+      <XAddPeserta
+        openAddPeserta={openAddPeserta}
+        setOpenAddPeserta={setOpenAddPeserta}
+        id={id}
+        peserta={peserta}
+        jenis={jenisPeserta}
+      />
     </div>
   )
 }

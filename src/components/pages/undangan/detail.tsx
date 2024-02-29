@@ -227,7 +227,7 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
                 </div>
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                    {data.nomor_surat}
+                    {data.nomor_surat !== null ? data.nomor_surat : '-'}
                   </div>
                 </div>
               </div>
@@ -237,7 +237,7 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
                 </div>
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                    {data.sifat}
+                    {data.sifat !== null ? data.sifat : '-'}
                   </div>
                 </div>
               </div>
@@ -247,7 +247,7 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
                 </div>
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                    {data.perihal}
+                    {data.perihal !== null ? data.perihal : '-'}
                   </div>
                 </div>
               </div>
@@ -258,12 +258,12 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
                     <ul className="flex flex-col gap-2">
-                      {data.ditujukan.map((el: any, i: number) => (
+                      {data.ditujukan !== null ? data.ditujukan.map((el: any, i: number) => (
                         <li className="flex gap-3">
                           <div>{i + 1}.</div>
                           <div>{el.nama}</div>
                         </li>
-                      ))}
+                      )) : '-'}
                     </ul>
                   </div>
                 </div>
@@ -294,7 +294,7 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
                 </div>
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                    {data?.isi_undangan !== undefined && <Blocks data={JSON.parse(data?.isi_undangan)} config={{
+                    {data?.isi_undangan !== null ? <Blocks data={JSON.parse(data?.isi_undangan)} config={{
                       list: {
                         className: "list-decimal ml-10"
                       },
@@ -304,7 +304,7 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
                           alignment: "text-justify",
                         }
                       }
-                    }} />}
+                    }} /> : '-'}
                   </div>
                 </div>
               </div>
@@ -348,7 +348,7 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
                 </div>
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                    {data?.catatan !== null && <Blocks data={JSON.parse(data?.catatan)} config={{
+                    {data?.catatan !== null ? <Blocks data={JSON.parse(data?.catatan)} config={{
                       list: {
                         className: "list-decimal ml-10"
                       },
@@ -358,7 +358,7 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
                           alignment: "text-justify",
                         }
                       }
-                    }} />}
+                    }} /> : '-'}
                   </div>
                 </div>
               </div>
@@ -368,7 +368,7 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
                 </div>
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                    {data?.penutup !== undefined && <Blocks data={JSON.parse(data?.penutup)} config={{
+                    {data?.penutup !== null ? <Blocks data={JSON.parse(data?.penutup)} config={{
                       list: {
                         className: "list-decimal ml-10"
                       },
@@ -378,7 +378,7 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
                           alignment: "text-justify",
                         }
                       }
-                    }} />}
+                    }} /> : '-'}
                   </div>
                 </div>
               </div>

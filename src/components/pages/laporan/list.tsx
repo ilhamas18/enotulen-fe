@@ -85,6 +85,9 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
       case 'undangan':
         router.push(`/undangan/detail/${id}`);
         break;
+      case 'peserta':
+        router.push(`/peserta/detail/${id}`);
+        break;
       case 'notulen':
         router.push(`/notulen/detail/${id}`);
         break;
@@ -164,10 +167,21 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                         </TableCell>
                         <TableCell align="center">
                           <div className='flex items-center justify-center'>
-                            <div
-                              className='border border-xl-base p-2 text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1'
-                              onClick={() => handleClickAddForm(row, '/peserta')}
-                            >+</div>
+                            {row.Undangan === null ? (
+                              <div>Undangan belum dibuat</div>
+                            ) : (
+                              row.Undangan.jumlah_peserta !== null ? (
+                                <div
+                                  className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
+                                  onClick={() => handleDetail(row.Undangan?.id, 'peserta')}><FaCheck size={14}
+                                  /></div>
+                              ) : (
+                                <div
+                                  className='border border-xl-base p-2 text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1'
+                                  onClick={() => handleClickAddForm(row, `/peserta/detail/${row.Undangan?.id}`)}
+                                >+</div>
+                              )
+                            )}
                           </div>
                         </TableCell>
                         <TableCell align="center">

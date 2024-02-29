@@ -9,11 +9,13 @@ export const metadata: Metadata = {
   icons: [{ rel: 'icon', url: '/logo/Lambang_Kota_Madiun.png' }]
 }
 
-const Peserta = () => {
+const Peserta = ({ params }: { params: { id: number } }) => {
+  const { id } = params;
+
   return (
     <div className="form-peserta-container">
       <Breadcrumb pageName="Daftar Hadir" />
-      <PesertaProps />
+      <PesertaProps id={id} />
     </div>
   )
 }
