@@ -1200,15 +1200,34 @@ const AddNotulenForm = ({ profile, payload, notulen, dataAtasan, step }: PropTyp
             });
           }
         } else {
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "Berhasil menambahkan notulen",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          dispatch(setPayload([]));
-          router.push("/notulen/laporan");
+          const { data } = response2.data;
+
+          const response3 = await fetchApi({
+            url: `/undangan/addJumlahPeserta/${data.id}`,
+            method: 'post',
+            type: 'auth',
+            body: payload.step2
+          })
+          console.log(response3, 'response');
+
+          if (!response3.success) {
+            setLoading(false);
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Periksa kembali data peserta!",
+            });
+          } else {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "Berhasil menambahkan notulen",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+            dispatch(setPayload([]));
+            router.push("/notulen/laporan");
+          }
         }
       } else {
         Swal.fire({

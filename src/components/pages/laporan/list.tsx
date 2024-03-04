@@ -42,23 +42,32 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
   };
 
   const handleClickAddForm = (data: any, url: string) => {
-    if (data.Notulen !== null) {
-      let temp: any = data.Notulen;
+    if (data.Undangan !== null) {
+      let temp: any = data.Undangan;
       temp.hari = data.hari;
       temp.bulan = data.bulan;
       temp.tahun = data.tahun;
       const stored = { step1: temp };
       dispatch(setPayload(stored));
-      router.push(url)
-    } else if (data.Undangan !== null) {
-      let temp: any = data.Undangan;
-      temp.hari = data.hari;
-      temp.bulan = data.bulan;
-      temp.tahun = data.tahun;
-      const stored = { step2: temp };
-      dispatch(setPayload(stored));
       router.push(url);
     }
+    // if (data.Notulen !== null) {
+    //   let temp: any = data.Notulen;
+    //   temp.hari = data.hari;
+    //   temp.bulan = data.bulan;
+    //   temp.tahun = data.tahun;
+    //   const stored = { step1: temp };
+    //   dispatch(setPayload(stored));
+    //   router.push(url)
+    // } else if (data.Undangan !== null) {
+    //   let temp: any = data.Undangan;
+    //   temp.hari = data.hari;
+    //   temp.bulan = data.bulan;
+    //   temp.tahun = data.tahun;
+    //   const stored = { step2: temp };
+    //   dispatch(setPayload(stored));
+    //   router.push(url);
+    // }
   }
 
   const handleAddTags = (data: any) => {
@@ -80,13 +89,17 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
     }
   }
 
-  const handleDetail = (id: number, type: string) => {
+  const handleDetail = (id: number, type: string, data?: any) => {
     switch (type) {
       case 'undangan':
         router.push(`/undangan/detail/${id}`);
         break;
       case 'peserta':
-        router.push(`/peserta/detail/${id}`);
+        const temp = {
+          step1: data.Undangan
+        }
+        dispatch(setPayload(temp));
+        router.push(`/peserta/${id}?type=detail`);
         break;
       case 'notulen':
         router.push(`/notulen/detail/${id}`);
@@ -153,10 +166,7 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                         <TableCell align="center" className='flex items-center justify-center'>
                           <div className='flex items-center justify-center'>
                             {row.Undangan === null ? (
-                              <div
-                                className='border border-xl-base p-2 text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1'
-                                onClick={() => handleClickAddForm(row, '/undangan/tambah')}
-                              >+</div>
+                              <div className='text-danger w-[28px] h-[28px] flex items-center justify-center'><FaCheck size={14} /></div>
                             ) : (
                               <div
                                 className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
@@ -168,17 +178,17 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                         <TableCell align="center">
                           <div className='flex items-center justify-center'>
                             {row.Undangan === null ? (
-                              <div>Undangan belum dibuat</div>
+                              <div className='text-danger w-[28px] h-[28px] flex items-center justify-center'><FaCheck size={14} /></div>
                             ) : (
                               row.Undangan.jumlah_peserta !== null ? (
                                 <div
                                   className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
-                                  onClick={() => handleDetail(row.Undangan?.id, 'peserta')}><FaCheck size={14}
-                                  /></div>
+                                  onClick={() => handleDetail(row.Undangan?.id, 'peserta', row)}><FaCheck size={14} />
+                                </div>
                               ) : (
                                 <div
                                   className='border border-xl-base p-2 text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1'
-                                  onClick={() => handleClickAddForm(row, `/peserta/detail/${row.Undangan?.id}`)}
+                                  onClick={() => handleClickAddForm(row, `/peserta/${row.Undangan?.id}?type=detail`)}
                                 >+</div>
                               )
                             )}

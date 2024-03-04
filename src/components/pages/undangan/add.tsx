@@ -799,7 +799,7 @@ const AddUndanganForm = ({
       step1: dataPayload
     }
     dispatch(setPayload(storedData));
-    router.push('/peserta?step=2');
+    router.push(`/peserta/2?step=2`);
   }
 
   const handleConfirmSubmit = async (data: any) => {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/common/button/button';
 import { CommonModal } from '@/components/common/common-modal/modal';
 import TextInput from '@/components/common/text-input/input';
@@ -8,59 +8,39 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { fetchApi } from '@/app/api/request';
-import Swal from 'sweetalert2';
-
 
 interface PropTypes {
+  index: number;
   openAddPeserta: boolean;
   setOpenAddPeserta: any;
-  id: number;
   peserta: any;
-  jenis: string;
+  setPeserta: any
 }
 
-const XAddPeserta = ({ openAddPeserta, setOpenAddPeserta, id, peserta, jenis }: PropTypes) => {
-  const [jumlahPeserta, setJumlahPeserta] = useState<number>(peserta.length != 0 ? peserta.length : 0);
-  const [jenisPeserta, setJenisPeserta] = useState<string>(jenis !== '' ? jenis : '');
-  const [loading, setLoading] = useState<boolean>(false);
+const XAddPeserta = ({
+  index,
+  openAddPeserta,
+  setOpenAddPeserta,
+  peserta,
+  setPeserta
+}: PropTypes) => {
+  const [storedNumber, setStoredNumber] = useState<number>(0);
+  const [storedParticipant, setStoredParticipant] = useState<string>('');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setJenisPeserta((event.target as HTMLInputElement).value);
+    setStoredParticipant((event.target as HTMLInputElement).value);
   };
 
-  const handleAddPeserta = async () => {
-    setLoading(true);
-    const payload = {
-      jumlah_peserta: jumlahPeserta,
-      jenis_peserta: jenisPeserta
+  const handleSave = () => {
+    if (!isNaN(storedNumber)) {
+      const newArr1 = [...peserta];
+      newArr1[index].jumlah_peserta = +storedNumber
+      setPeserta(newArr1)
     }
-    const response = await fetchApi({
-      url: `/undangan/addJumlahPeserta/${id}`,
-      method: 'post',
-      type: 'auth',
-      body: payload
-    })
-
-    if (!response.success) {
-      setLoading(false);
-      setOpenAddPeserta(false);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Koneksi bermasalah!",
-      });
-    } else {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: `${jumlahPeserta} Peserta ditambahkan`,
-        showConfirmButton: false,
-        timer: 1500,
-      });
-      setLoading(false);
-      setOpenAddPeserta(false);
-    }
+    const newArr2 = [...peserta];
+    newArr2[index].jenis_peserta = storedParticipant;
+    setPeserta(newArr2)
+    setOpenAddPeserta(false);
   }
 
   const handleCancel = () => setOpenAddPeserta(false);
@@ -77,8 +57,8 @@ const XAddPeserta = ({ openAddPeserta, setOpenAddPeserta, id, peserta, jenis }: 
               name="jumlahPeserta"
               label="Jumlah Peserta"
               placeholder="Jumlah Peserta"
-              value={jumlahPeserta}
-              change={(e: any) => setJumlahPeserta(e.target.value)}
+              value={storedNumber}
+              change={(e: any) => setStoredNumber(e.target.value)}
             />
           </div>
           <div className='mt-10'>
@@ -87,7 +67,7 @@ const XAddPeserta = ({ openAddPeserta, setOpenAddPeserta, id, peserta, jenis }: 
               <RadioGroup
                 aria-labelledby="demo-controlled-radio-buttons-group"
                 name="controlled-radio-buttons-group"
-                value={jenisPeserta}
+                value={storedParticipant}
                 onChange={handleChange}
               >
                 <div className='flex gap-4'>
@@ -111,7 +91,8 @@ const XAddPeserta = ({ openAddPeserta, setOpenAddPeserta, id, peserta, jenis }: 
             <Button
               variant="xl"
               className="button-container"
-              onClick={handleAddPeserta}
+              onClick={handleSave}
+              disabled={storedNumber == 0 || storedParticipant == '' ? true : false}
               rounded
             >
               <div className="flex justify-center items-center text-white">
@@ -126,3 +107,7 @@ const XAddPeserta = ({ openAddPeserta, setOpenAddPeserta, id, peserta, jenis }: 
 }
 
 export default XAddPeserta;
+
+function dispatch(arg0: { payload: any; type: "payload/setPayload"; }) {
+  throw new Error('Function not implemented.');
+}

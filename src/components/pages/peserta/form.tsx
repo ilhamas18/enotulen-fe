@@ -1,11 +1,9 @@
 "use client";
 import * as React from 'react';
 import { useState, useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import { useRouter } from 'next/navigation';
 import { useReactToPrint } from "react-to-print";
 import { styled } from '@mui/material/styles';
-import { Button } from '@/components/common/button/button';
+import { IoPersonAdd } from "react-icons/io5";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -13,13 +11,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Swal from 'sweetalert2';
-import { formatDate, getTime } from '@/components/hooks/formatDate';
+import { getTime } from '@/components/hooks/formatDate';
 import { BsPrinter } from "react-icons/bs";
-import { setPayload } from '@/store/payload/action';
-import CancelBtn from '@/components/hooks/cancelBtn';
 import XAddPeserta from './x-modal/addPeserta';
-import { fetchApi } from '@/app/api/request';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -40,75 +34,42 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 interface PropTypes {
   profile: any;
-  payload: any;
+  undangan: any;
   id: number;
+  rangeDate: any;
+  index: number;
+  type: string;
+  peserta: any;
+  setPeserta: any;
 }
 
-const AddPesertaForm = ({ profile, payload, id }: PropTypes) => {
-  const router = useRouter();
-  const dispatch = useDispatch();
+const AddPesertaForm = ({
+  profile,
+  undangan,
+  id,
+  rangeDate,
+  index,
+  type,
+  peserta,
+  setPeserta
+}: PropTypes) => {
   const printRef: any = useRef();
-  const [peserta, setPeserta] = useState<any>([]);
-  const [jenisPeserta, setJenisPeserta] = useState<string>('');
   const [openAddPeserta, setOpenAddPeserta] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
 
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
   });
 
-  React.useEffect(() => {
-    fetchJumlahPeserta();
-  }, [openAddPeserta]);
-
-  const fetchJumlahPeserta = async () => {
-    setLoading(true);
-    const response = await fetchApi({
-      url: `/undangan/getUndanganDetail/${id}`,
-      method: 'get',
-      type: 'auth'
-    })
-
-    if (!response.success) {
-      setLoading(false);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Koneksi bermasalah!",
-      });
-    } else {
-      const { data } = response.data;
-      const maxNumber = parseInt(data.jumlah_peserta);
-      if (!isNaN(maxNumber) && maxNumber > 0) {
-        const newArray = Array.from({ length: maxNumber }, (_, index) => index + 1);
-        setPeserta(newArray);
-        setJenisPeserta(data.jenis_peserta)
-      }
-    }
-  }
-
-  function formatDateRange(startDate: any, endDate: any) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    const startDay = start.getDate();
-    const endDay = end.getDate();
-    const month = start.toLocaleString("default", { month: "long" });
-    const year = start.getFullYear();
-
-    if (startDay === endDay) {
-      return `${startDay} ${month} ${year}`;
-    } else {
-      return `${startDay} - ${endDay} ${month} ${year}`;
-    }
-  }
-
   const hanleAddParticipant = () => setOpenAddPeserta(true);
 
-  const handleNext = () => router.push('/notulen/form?step=3');
+  const mappedPeserta = peserta.map((item: any) => ({
+    ...item,
+    jumlah_peserta: Array.from({ length: item.jumlah_peserta }, (_, index) => index + 1)
+  }));
+
 
   return (
-    <div className='p-8 bg-white dark:bg-meta-4 w-full'>
+    <div className='p-8 dark:bg-meta-4 w-full'>
       <div className='flex justify-between mt-6'>
         <button
           className="border border-xl-base rounded-md w-[10%] px-4 py-1 flex items-center gap-2 bg-white dark:bg-meta-4 dark:text-white mb-2 hover:shadow-md hover:cursor-pointer"
@@ -118,7 +79,7 @@ const AddPesertaForm = ({ profile, payload, id }: PropTypes) => {
           <div>Cetak</div>
         </button>
         <div>
-          <button className='bg-xl-base rounded-lg px-4 py-2 text-white hover:shadow-lg' onClick={hanleAddParticipant}>+ Jumlah Peserta</button>
+          <button className='bg-xl-base rounded-lg px-4 py-2 text-white hover:shadow-lg' onClick={hanleAddParticipant}><IoPersonAdd size={18} /></button>
         </div>
       </div>
       <div
@@ -128,7 +89,7 @@ const AddPesertaForm = ({ profile, payload, id }: PropTypes) => {
       >
         <div className='title flex flex-col text-center font-bold gap-2 text-title-xsm'>
           <div className='uppercase'>Daftar Hadir</div>
-          <div className='uppercase'>{payload.perihal}</div>
+          <div className='uppercase'>{undangan.perihal}</div>
         </div>
         <div className='text-black mt-[4em] text-ss font-medium'>
           <div className="flex gap-2 w-full">
@@ -136,27 +97,7 @@ const AddPesertaForm = ({ profile, payload, id }: PropTypes) => {
               Hari
             </div>
             <div className="w-[2%]">:</div>
-            <div className="w-[85%]">
-              {payload.tanggal[0]?.startDate !== null &&
-                payload.tanggal[0]?.endDate !== null &&
-                payload.tanggal[0]?.startDate ===
-                payload.tanggal[0]?.endDate && (
-                  <span>
-                    {formatDate(payload.tanggal[0]?.startDate)}
-                  </span>
-                )}
-              {payload.tanggal[0]?.startDate !== null &&
-                payload.tanggal[0]?.endDate !== null &&
-                payload.tanggal[0]?.startDate !==
-                payload.tanggal[0]?.endDate && (
-                  <span>
-                    {formatDateRange(
-                      payload.tanggal[0]?.startDate,
-                      payload.tanggal[0]?.endDate
-                    )}
-                  </span>
-                )}
-            </div>
+            <div className="w-[85%]">{rangeDate}</div>
           </div>
           <div className="flex gap-2 w-full">
             <div className="w-[10%]">
@@ -164,7 +105,7 @@ const AddPesertaForm = ({ profile, payload, id }: PropTypes) => {
             </div>
             <div className="w-[2%]">:</div>
             <div className="w-[85%]">
-              {getTime(payload.waktu)} WIB
+              {getTime(undangan.waktu)} WIB
             </div>
           </div>
           <div className="flex gap-2 w-full">
@@ -174,7 +115,7 @@ const AddPesertaForm = ({ profile, payload, id }: PropTypes) => {
             <div className="w-[2%]">:</div>
             <div className="w-[85%]">
               <div className='flex flex-col'>
-                {payload.lokasi.split(', ').map((el: any, i: number) => (
+                {undangan.lokasi.split(', ').map((el: any, i: number) => (
                   <div key={i}>{el}</div>
                 ))}
               </div>
@@ -184,18 +125,26 @@ const AddPesertaForm = ({ profile, payload, id }: PropTypes) => {
         <div className='mt-4 body'>
           <TableContainer component={Paper} className='dark:bg-meta-4'>
             <Table sx={{ minWidth: '100%' }} aria-label="customized table">
-              <TableHead>
+              <TableHead className='border-b-2 border-black'>
                 <TableRow>
                   <StyledTableCell align="center" width={2} className='border border-black'>No</StyledTableCell>
                   <StyledTableCell align="center" width={250} className='border border-black'>NAMA</StyledTableCell>
                   <StyledTableCell align="center" width={10} className='border border-black'>LAKI-LAKI</StyledTableCell>
                   <StyledTableCell align="center" width={10} className='border border-black'>PEREM PUAN</StyledTableCell>
-                  <StyledTableCell align="center" width={250} className='border border-black'>{jenisPeserta === 'internal' ? 'JABATAN' : 'INSTANSI'}</StyledTableCell>
+                  <StyledTableCell align="center" width={250} className='border border-black'>{peserta[index].jenis_peserta === 'internal' ? 'JABATAN' : 'INSTANSI'}</StyledTableCell>
                   <StyledTableCell align="center" width={300} className='border border-black'>TANDA TANGAN</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {peserta.map((number: number, i: number) => (
+                <TableRow className='border-b-2 border-light-gray max-h-1'>
+                  <StyledTableCell align="center" width={2} className='border border-black italic'>1</StyledTableCell>
+                  <StyledTableCell align="center" width={250} className='border border-black italic'>2</StyledTableCell>
+                  <StyledTableCell align="center" width={10} className='border border-black italic'>3</StyledTableCell>
+                  <StyledTableCell align="center" width={10} className='border border-black italic'>4</StyledTableCell>
+                  <StyledTableCell align="center" width={250} className='border border-black italic'>5</StyledTableCell>
+                  <StyledTableCell align="center" width={300} className='border border-black italic'>6</StyledTableCell>
+                </TableRow>
+                {mappedPeserta.length != 0 && mappedPeserta[index].jumlah_peserta.map((number: number, i: number) => (
                   <StyledTableRow key={i} className='border border-black'>
                     <StyledTableCell className='border border-black'>{number}</StyledTableCell>
                     <StyledTableCell className='border border-black'></StyledTableCell>
@@ -223,8 +172,8 @@ const AddPesertaForm = ({ profile, payload, id }: PropTypes) => {
                 Pembuat
               </div>
             </div>
-            {payload.signature !== "-" && payload.signature !== null ? (
-              <img src={payload.signature} className="w-[270px] h-[180px]" alt="TTD" />
+            {undangan.signature !== "-" && undangan.signature !== null ? (
+              <img src={undangan.signature} className="w-[270px] h-[180px]" alt="TTD" />
             ) : <></>}
             <div>
               <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
@@ -241,11 +190,11 @@ const AddPesertaForm = ({ profile, payload, id }: PropTypes) => {
           </div>
         </div>
       </div>
-      <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-10 space-x-3">
+      {/* <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-10 space-x-3">
         <div className="w-[8em]">
           <CancelBtn
             title="Keluar"
-            data={payload}
+            data={undangan}
             url="/undangan/addUndangan"
             setLoading={setLoading}
           />
@@ -255,21 +204,22 @@ const AddPesertaForm = ({ profile, payload, id }: PropTypes) => {
             variant="xl"
             className="button-container"
             onClick={handleNext}
+            loading={loading}
             rounded
           >
             <div className="flex justify-center items-center text-white">
-              <span className="button-text">Lanjut</span>
+              <span className="button-text">{step !== null ? 'Lanjut' : 'Simpan'}</span>
             </div>
           </Button>
         </div>
-      </div>
+      </div> */}
 
       <XAddPeserta
+        index={index}
         openAddPeserta={openAddPeserta}
         setOpenAddPeserta={setOpenAddPeserta}
-        id={id}
         peserta={peserta}
-        jenis={jenisPeserta}
+        setPeserta={setPeserta}
       />
     </div>
   )
