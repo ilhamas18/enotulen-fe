@@ -28,6 +28,7 @@ const PesertaProps = ({ id }: PropTypes) => {
   const [data, setData] = useState<any>([]);
   const [peserta, setPeserta] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [trigger, setTrigger] = useState<boolean>(false);
 
   const step: any = searchParams.get('step');
   const type: any = searchParams.get('type');
@@ -38,7 +39,6 @@ const PesertaProps = ({ id }: PropTypes) => {
   }), shallowEqual);
 
   useEffect(() => {
-    setLoading(true);
     if (profile.role != 2 && profile.role != 3 && profile.role != 4) {
       router.push('/unauthorized')
     }
@@ -49,23 +49,55 @@ const PesertaProps = ({ id }: PropTypes) => {
       "jenis_peserta": ""
     }));
     setPeserta(tempArr);
-    setLoading(false);
-  }, []);
+    fetchPeserta(tempArr)
+  }, [trigger]);
+
+  const fetchPeserta = async (arr: any) => {
+    setLoading(true);
+    const response = await fetchApi({
+      url: `/laporan/getLaporanDetail/${payload.step1.uuid}`,
+      method: 'get',
+      type: 'auth'
+    })
+
+    if (!response.success) {
+      setLoading(false);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Koneksi bermasalah!",
+      });
+    } else {
+      const { data } = response.data;
+      const temp = [...arr];
+      data[0].Peserta.forEach((el: any, i: number) => {
+        temp[i] = {
+          uuid: el.uuid,
+          jumlah_peserta: el.jumlah_peserta,
+          jenis_peserta: el.jenis_peserta
+        }
+      })
+      if (data[0].Peserta.length != 0) setPeserta(temp);
+      setLoading(false);
+      setTrigger(false);
+    }
+  }
 
   const rangeDate = dateRangeFormat(data?.tanggal !== undefined && data?.tanggal[0]);
 
   const handleNext = () => {
     if (step !== null) {
-      const storedData = {
-        ...payload,
-        step2: peserta
-      }
-      dispatch(setPayload(storedData));
+      // const storedData = {
+      //   ...payload,
+      //   step2: peserta
+      // }
+      // dispatch(setPayload(storedData));
       router.push('/notulen/form?step=3');
     } else {
       handleSubmit(peserta)
     }
   }
+  console.log(peserta);
 
   const handleSubmit = async (data: any) => {
     setLoading(true);
@@ -84,13 +116,13 @@ const PesertaProps = ({ id }: PropTypes) => {
         text: "Koneksi bermasalah!",
       });
     } else {
-      // Swal.fire({
-      //   position: "center",
-      //   icon: "success",
-      //   title: `${jumlahPeserta} Peserta ditambahkan`,
-      //   showConfirmButton: false,
-      //   timer: 1500,
-      // });
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: `Peserta ditambahkan`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
       setLoading(false);
       router.push('/laporan');
     }
@@ -118,14 +150,15 @@ const PesertaProps = ({ id }: PropTypes) => {
             rangeDate.length == peserta.length && rangeDate.map((el: any, i: number) => (
               <div className="flex flex-col gap-6" key={i}>
                 <AddPesertaForm
+                  step={step}
                   undangan={data}
                   profile={profile}
-                  id={id}
                   rangeDate={el}
                   index={i}
                   type={type}
                   peserta={peserta}
                   setPeserta={setPeserta}
+                  setTrigger={setTrigger}
                 />
               </div>
             ))

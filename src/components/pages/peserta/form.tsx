@@ -1,6 +1,7 @@
 "use client";
 import * as React from 'react';
 import { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { useReactToPrint } from "react-to-print";
 import { styled } from '@mui/material/styles';
 import { IoPersonAdd } from "react-icons/io5";
@@ -14,6 +15,9 @@ import Paper from '@mui/material/Paper';
 import { getTime } from '@/components/hooks/formatDate';
 import { BsPrinter } from "react-icons/bs";
 import XAddPeserta from './x-modal/addPeserta';
+import { IoIosSave } from "react-icons/io";
+import { fetchApi } from '@/app/api/request';
+import Swal from 'sweetalert2';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -35,26 +39,29 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 interface PropTypes {
   profile: any;
   undangan: any;
-  id: number;
+  step: string;
   rangeDate: any;
   index: number;
   type: string;
   peserta: any;
   setPeserta: any;
+  setTrigger: any;
 }
 
 const AddPesertaForm = ({
   profile,
   undangan,
-  id,
+  step,
   rangeDate,
   index,
-  type,
   peserta,
-  setPeserta
+  setPeserta,
+  setTrigger
 }: PropTypes) => {
   const printRef: any = useRef();
+  const router = useRouter();
   const [openAddPeserta, setOpenAddPeserta] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
@@ -67,21 +74,61 @@ const AddPesertaForm = ({
     jumlah_peserta: Array.from({ length: item.jumlah_peserta }, (_, index) => index + 1)
   }));
 
+  const handleSave = async () => {
+    setLoading(true);
+    const payload = {
+      uuid: undangan.uuid,
+      jumlah_peserta: peserta[index].jumlah_peserta,
+      jenis_peserta: peserta[index].jenis_peserta
+    }
+    const response = await fetchApi({
+      url: '/peserta/addPeserta',
+      method: 'post',
+      type: 'auth',
+      body: payload
+    })
+
+    if (!response.success) {
+      setLoading(false);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Koneksi bermasalah!",
+      });
+    } else {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: `${peserta[index].jumlah_peserta} Peserta ditambahkan`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      setLoading(false);
+      setTrigger(true);
+    }
+  }
 
   return (
-    <div className='p-8 dark:bg-meta-4 w-full'>
-      <div className='flex justify-between mt-6'>
-        <button
-          className="border border-xl-base rounded-md w-[10%] px-4 py-1 flex items-center gap-2 bg-white dark:bg-meta-4 dark:text-white mb-2 hover:shadow-md hover:cursor-pointer"
-          onClick={handlePrint}
-        >
-          <BsPrinter size={20} />
-          <div>Cetak</div>
-        </button>
-        <div>
-          <button className='bg-xl-base rounded-lg px-4 py-2 text-white hover:shadow-lg' onClick={hanleAddParticipant}><IoPersonAdd size={18} /></button>
+    <div className='py-8 dark:bg-meta-4 w-full'>
+      {peserta[index].uuid !== undefined ? (
+        <div className='flex justify-between'>
+          <button
+            className="border border-xl-base rounded-md px-4 py-1 flex items-center gap-2 bg-white dark:bg-meta-4 dark:text-white mb-2 hover:shadow-md hover:cursor-pointer"
+            onClick={handlePrint}
+          >
+            <BsPrinter size={20} />
+            <div>Cetak</div>
+          </button>
+          <div></div>
         </div>
-      </div>
+      ) : (
+        <div className='flex justify-between'>
+          <div></div>
+          <div>
+            <button className='bg-xl-base rounded-lg px-4 py-2 text-white hover:shadow-lg' onClick={hanleAddParticipant}><IoPersonAdd size={18} /></button>
+          </div>
+        </div>
+      )}
       <div
         className="cetak-wrapper bg-white dark:bg-meta-4 px-8"
         id="container"
@@ -125,7 +172,7 @@ const AddPesertaForm = ({
         <div className='mt-4 body'>
           <TableContainer component={Paper} className='dark:bg-meta-4'>
             <Table sx={{ minWidth: '100%' }} aria-label="customized table">
-              <TableHead className='border-b-2 border-black'>
+              <TableHead className='border-b-2 border-black '>
                 <TableRow>
                   <StyledTableCell align="center" width={2} className='border border-black'>No</StyledTableCell>
                   <StyledTableCell align="center" width={250} className='border border-black'>NAMA</StyledTableCell>
@@ -189,6 +236,17 @@ const AddPesertaForm = ({
             </div>
           </div>
         </div>
+        {step !== null && (
+          peserta[index].jumlah_peserta != 0 && peserta[index].uuid === undefined ? (
+            <div className='flex justify-between mt-8'>
+              <div></div>
+              <div
+                className='rounded-md px-4 py-1 bg-xl-base text-white flex gap-2 items-center justify-center hover:cursor-pointer'
+                onClick={handleSave}
+              ><IoIosSave size={20} /> Simpan</div>
+            </div>
+          ) : null
+        )}
       </div>
       {/* <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-10 space-x-3">
         <div className="w-[8em]">

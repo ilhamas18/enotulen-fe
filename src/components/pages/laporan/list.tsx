@@ -158,14 +158,14 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                         {profile.role == 1 && <TableCell align="center">{trimText(row.Perangkat_Daerah.nama_opd)}</TableCell>}
                         {profile.role == 1 || profile.role == 2 && <TableCell align="center">{row.Pegawai.nama}</TableCell>}
                         <TableCell align="center">
-                          {row.Undangan !== null
+                          {row.Undangan.length != 0
                             ? row.Undangan.acara
-                            : row.Notulen !== null ? row.Notulen.acara : null
+                            : row.Notulen.length != 0 ? row.Notulen.acara : null
                           }
                         </TableCell>
                         <TableCell align="center" className='flex items-center justify-center'>
                           <div className='flex items-center justify-center'>
-                            {row.Undangan === null ? (
+                            {row.Undangan.length != 0 ? (
                               <div className='text-danger w-[28px] h-[28px] flex items-center justify-center'><FaCheck size={14} /></div>
                             ) : (
                               <div
@@ -177,7 +177,7 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                         </TableCell>
                         <TableCell align="center">
                           <div className='flex items-center justify-center'>
-                            {row.Undangan === null ? (
+                            {row.Undangan.length != 0 ? (
                               <div className='text-danger w-[28px] h-[28px] flex items-center justify-center'><FaCheck size={14} /></div>
                             ) : (
                               row.Undangan.jumlah_peserta !== null ? (

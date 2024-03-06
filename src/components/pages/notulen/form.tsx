@@ -25,8 +25,10 @@ import { v4 as uuidv4 } from 'uuid';
 import ModalConfirm from "@/components/global/Modal/confirm";
 import { setPayload } from "@/store/payload/action";
 import CancelBtn from "@/components/hooks/cancelBtn";
+import { IoIosSave } from "react-icons/io";
 import Blocks from "editorjs-blocks-react-renderer";
 import { locationList } from "@/components/data/location";
+import { formattedDate } from "@/components/helpers/formatMonth";
 
 const EditorBlock = dynamic(() => import("../../hooks/editor"));
 
@@ -56,11 +58,16 @@ interface OtherProps {
   ref?: any;
   handleSave?: any;
   dataAtasan?: any;
-  data?: any;
   atasan?: any;
   payload?: any;
   dibuatTanggal?: any;
   step?: string;
+  index?: number;
+  rangeDate?: any;
+  tanggal?: any;
+  key?: number;
+  order?: number;
+  notulens?: any;
 }
 
 interface MyFormProps extends OtherProps {
@@ -80,9 +87,10 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     handleSubmit,
     isSubmitting,
     dataAtasan,
-    data,
     step,
-    payload,
+    index,
+    rangeDate,
+    notulens,
     ref,
   } = props;
   const router = useRouter();
@@ -94,7 +102,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   const [tempat, setTempat] = useState<string>("");
   const [openLocation, setOpenLocation] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [sign, setSign] = useState<any>()
+  const [sign, setSign] = useState<any>();
 
   const [uploadMsgUndangan, setUploadMsgUndangan] = useState<string>("");
   const [progressUndangan, setProgressUndangan] = useState<any>({
@@ -414,8 +422,9 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
       {loading ? (
         <Loading loading={loading} setLoading={setLoading} />
       ) : (
-        <div className="form-container relative bg-white rounded-lg">
+        <div className="form-container relative bg-white shadow-card">
           <div className="form-wrapper-general">
+            {step !== null && <div className="flex items-center justify-center text-center bg-meta-6 font-bold py-2 w-full text-white mt-6">{index !== undefined && rangeDate[index]}</div>}
             <div className="px-8 flex flex-col space-y-7 mt-4">
               <div className="data flex flex-row mt-4">
                 <div
@@ -488,14 +497,14 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                             target: { name: "pendahuluan", value: e },
                           });
                         }}
-                        holder="editorjs-containe"
+                        holder={`editorjs-container${index}`}
                       />
                     </div>
                   </>
                 ) : (
                   <div className="md:mt-0 mt-2 w-full">
                     <div className="border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                      {values.pendahuluan !== null && <Blocks data={JSON.parse(data.pendahuluan)} config={{
+                      {values.pendahuluan !== null && <Blocks data={values.pendahuluan} config={{
                         list: {
                           className: "list-decimal ml-10"
                         },
@@ -511,34 +520,41 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 )}
               </div>
               <div className="flex flex-col justify-center mb-2">
-                <div className="flex gap-2">
-                  <button onClick={(e) => handleOpenAddPeserta(e)}>
-                    <AiFillPlusCircle size={26} />
-                  </button>
-                  <div>Tambah Peserta</div>
-                </div>
-                <div>
-                  <div className="flex flex-col w-full mt-8">
-                    <TextInput
-                      type="text"
-                      id="pesertaRapat"
-                      name="pesertaRapat"
-                      label="Peserta Rapat"
-                      change={(e: any) => setPesertaRapat(e.target.value)}
-                      value={pesertaRapat}
-                      handleBlur={handleBlur}
-                    />
-                    <div className="flex justify-center items-center md:gap-8 md:mx-10 mt-3">
-                      <button
-                        className="text-xl-base"
-                        onClick={(e) => handleAddParticipant(e)}
-                      >
-                        Tambah
+                {index !== undefined && notulens[index].uuid === undefined && (
+                  <div>
+                    <div className="flex gap-2">
+                      <button onClick={(e) => handleOpenAddPeserta(e)}>
+                        <AiFillPlusCircle size={26} />
                       </button>
+                      <div>Tambah Peserta</div>
+                    </div>
+                    <div>
+                      <div className="flex flex-col w-full mt-8">
+                        <TextInput
+                          type="text"
+                          id="pesertaRapat"
+                          name="pesertaRapat"
+                          label="Peserta Rapat"
+                          change={(e: any) => setPesertaRapat(e.target.value)}
+                          value={pesertaRapat}
+                          handleBlur={handleBlur}
+                        />
+                        <div className="flex justify-center items-center md:gap-8 md:mx-10 mt-3">
+                          <button
+                            className="text-xl-base"
+                            onClick={(e) => handleAddParticipant(e)}
+                          >
+                            Tambah
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
                 <ul className="mt-4 ml-4">
+                  {index !== undefined && notulens[index].uuid !== undefined && (
+                    <div className="mb-6">Peserta :</div>
+                  )}
                   {values.pesertaArray.map((el: any, i: number) => (
                     <li className="font flex flex-col gap-2" key={i}>
                       <div className="flex justify-between">
@@ -551,47 +567,90 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                           </div>
                           <div>{el.nama}</div>
                         </div>
-                        <div>
-                          <button
-                            onClick={(e: any) =>
-                              handleDeletePesertaArray(e, el.nama)
-                            }
-                          >
-                            <AiOutlineClose size={18} />
-                          </button>
-                        </div>
+                        {index !== undefined && notulens[index].uuid === undefined && (
+                          <div>
+                            <button
+                              onClick={(e: any) =>
+                                handleDeletePesertaArray(e, el.nama)
+                              }
+                            >
+                              <AiOutlineClose size={18} />
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </li>
                   ))}
                 </ul>
               </div>
               <div>
-                <div className="text-deep-gray">Tambahkan Isi Rapat</div>
-                <div className="container border-2 border-light-gray rounded-lg">
-                  <EditorBlock
-                    data={values.isiRapat}
-                    onChange={(e) => {
-                      handleChange({
-                        target: { name: "isiRapat", value: e },
-                      });
-                    }}
-                    holder="editorjs-container2"
-                  />
-                </div>
+                {index !== undefined && notulens[index].uuid !== undefined ? (
+                  <div>
+                    <div className="mb-4">Isi Rapat :</div>
+                    <div className="md:mt-0 mt-2 w-full">
+                      <div className="border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                        {values.isiRapat !== null && <Blocks data={values.isiRapat} config={{
+                          list: {
+                            className: "list-decimal ml-10"
+                          },
+                          paragraph: {
+                            className: "text-base text-opacity-75",
+                            actionsClassNames: {
+                              alignment: "text-justify",
+                            }
+                          }
+                        }} />}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="text-deep-gray">Tambahkan Isi Rapat</div>
+                    <div className="container border-2 border-light-gray rounded-lg">
+                      <EditorBlock
+                        data={values.isiRapat}
+                        onChange={(e) => {
+                          handleChange({
+                            target: { name: "isiRapat", value: e },
+                          });
+                        }}
+                        holder={`${index !== undefined && `editorjs-container2${index}`}`}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
               <div>
                 <div className="text-deep-gray">Tindak Lanjut</div>
-                <div className="container border-2 border-light-gray rounded-lg">
-                  <EditorBlock
-                    data={values.tindakLanjut}
-                    onChange={(e) => {
-                      handleChange({
-                        target: { name: "tindakLanjut", value: e },
-                      });
-                    }}
-                    holder="editorjs-container3"
-                  />
-                </div>
+                {index !== undefined && notulens[index].uuid !== undefined ? (
+                  <div className="md:mt-0 mt-2 w-full">
+                    <div className="border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                      {values.tindakLanjut !== null && <Blocks data={values.tindakLanjut} config={{
+                        list: {
+                          className: "list-decimal ml-10"
+                        },
+                        paragraph: {
+                          className: "text-base text-opacity-75",
+                          actionsClassNames: {
+                            alignment: "text-justify",
+                          }
+                        }
+                      }} />}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="container border-2 border-light-gray rounded-lg">
+                    <EditorBlock
+                      data={values.tindakLanjut}
+                      onChange={(e) => {
+                        handleChange({
+                          target: { name: "tindakLanjut", value: e },
+                        });
+                      }}
+                      holder={`editorjs-container3${index}`}
+                    />
+                  </div>
+                )}
               </div>
               <div className="data flex flex-row w-full z-50">
                 {!openLocation ? (
@@ -739,24 +798,26 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                         <span>{formatDate(values.dibuatTanggal)}</span>
                       </div>
                     </div>
-                    <div className="data flex flex-row w-full">
-                      <div className="flex flex-col gap-2">
-                        <div>Edit tanggal pembuatan notulen :</div>
-                        <TextInput
-                          type="date-picker"
-                          id="dibuatTanggal"
-                          name="dibuatTanggal"
-                          // minDate={}
-                          touched={touched.dibuatTanggal}
-                          change={(e: any) => {
-                            handleChange({
-                              target: { name: "dibuatTanggal", value: e.$d },
-                            });
-                          }}
-                          errors={errors.dibuatTanggal}
-                        />
+                    {index !== undefined && notulens[index].uuid === undefined ? (
+                      <div className="data flex flex-row w-full">
+                        <div className="flex flex-col gap-2">
+                          <div>Edit tanggal pembuatan notulen :</div>
+                          <TextInput
+                            type="date-picker"
+                            id="dibuatTanggal"
+                            name="dibuatTanggal"
+                            // minDate={}
+                            touched={touched.dibuatTanggal}
+                            change={(e: any) => {
+                              handleChange({
+                                target: { name: "dibuatTanggal", value: e.$d },
+                              });
+                            }}
+                            errors={errors.dibuatTanggal}
+                          />
+                        </div>
                       </div>
-                    </div>
+                    ) : <div className="w-full"></div>}
                   </div>
                 </div>
               )}
@@ -940,49 +1001,45 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               ) : (
                 <div className="flex md:flex-row md:items-center md:justify-between flex-col mb-2 md:mb-0">
                   <img src={values.signature} />
-                  <div className="text-danger text-title-xsm2 hover:cursor-pointer" onClick={handleDeleteSignature}>Hapus</div>
+                  {index !== undefined && notulens[index].uuid === undefined && (
+                    <div className="text-danger text-title-xsm2 hover:cursor-pointer" onClick={handleDeleteSignature}>Hapus</div>
+                  )}
                 </div>
               )}
             </div>
             <div className="text-danger text-title-ss mx-8 mt-3">*Pastikan mengisi seluruh data notulen, (kecuali yang opsional)</div>
 
             <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
-              <div className="w-[8em] absolute bottom-6 right-8">
-                <Button
-                  type="button"
-                  variant="xl"
-                  className="button-container"
-                  loading={loading}
-                  rounded
-                  disabled={
-                    values.rangeTanggal.length == 0 ||
-                      values.jam === null ||
-                      values.pendahuluan === "" ||
-                      values.pesertaArray.length == 0 ||
-                      values.isiRapat === null ||
-                      values.tindakLanjut === null ||
-                      values.lokasi === "" ||
-                      values.acara === "" ||
-                      values.atasan === null ||
-                      values.dibuatTanggal === null ?
-                      true : false
-                  }
-                  onClick={handleSubmit}
-                >
-                  <div className="flex justify-center items-center text-white font-Nunito">
-                    <span className="button-text">Tambah</span>
-                  </div>
-                </Button>
-              </div>
+              {index !== undefined && notulens[index].uuid === undefined && (
+                <div className="w-[8em] absolute bottom-6 right-8">
+                  <Button
+                    type="button"
+                    variant="xl"
+                    className="button-container"
+                    loading={loading}
+                    disabled={
+                      values.rangeTanggal.length == 0 ||
+                        values.jam === null ||
+                        values.pendahuluan === "" ||
+                        values.pesertaArray.length == 0 ||
+                        values.isiRapat === null ||
+                        values.tindakLanjut === null ||
+                        values.lokasi === "" ||
+                        values.acara === "" ||
+                        values.atasan === null ||
+                        values.dibuatTanggal === null ?
+                        true : false
+                    }
+                    onClick={handleSubmit}
+                  >
+                    <div className="flex gap-2 justify-center items-center text-white font-Nunito">
+                      <div><IoIosSave size={20} /></div>
+                      <span className="button-text">Simpan</span>
+                    </div>
+                  </Button>
+                </div>
+              )}
             </div>
-          </div>
-          <div className="w-[8em] pb-6 pt-2 pl-6">
-            <CancelBtn
-              title="Keluar"
-              data={data}
-              url="/undangan/addUndangan"
-              setLoading={setLoading}
-            />
           </div>
 
           <DateRangePicker
@@ -1001,32 +1058,32 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   );
 };
 
-function CreateForm({ handleSubmit, atasan, dibuatTanggal, payload, ...otherProps }: MyFormProps) {
+function CreateForm({ handleSubmit, order, payload, tanggal, dibuatTanggal, ...otherProps }: MyFormProps) {
   const FormWithFormik = withFormik({
     mapPropsToValues: () => ({
       tagging: [],
       rangeTanggal: [
         {
-          startDate: payload.length != 0 ? payload.tanggal[0]?.startDate != null ? new Date(payload.tanggal[0]?.startDate) : null : null,
-          endDate: payload.length != 0 ? payload.tanggal[0]?.endDate != null ? new Date(payload.tanggal[0]?.endDate) : null : null,
+          startDate: tanggal.length != 0 && order !== undefined ? tanggal[order].startDate : payload.rangeTanggal[0]?.startDate,
+          endDate: tanggal.length != 0 && order !== undefined ? tanggal[order].endDate : payload.rangeTanggal[0]?.endDate,
           key: "selection",
         },
       ],
-      jam: payload.length != 0 ? payload.waktu !== null ? payload.waktu : null : null,
-      pendahuluan: payload.length != 0 ? payload.pendahuluan !== null ? JSON.parse(payload.pendahuluan) : null : null,
-      pesertaArray: payload.length != 0 ? payload.peserta_rapat !== undefined ? payload.peserta_rapat : [] : [],
-      isiRapat: payload.length != 0 ? payload?.isi_rapat !== undefined ? JSON.parse(payload?.isi_rapat) : null : null,
-      tindakLanjut: payload.length != 0 ? payload.tindak_lanjut !== undefined ? JSON.parse(payload.tindak_lanjut) : null : null,
-      lokasi: payload.length != 0 ? payload.lokasi !== "" ? payload.lokasi : "" : "",
-      acara: payload.length != 0 ? payload.acara !== "" ? payload.acara : "" : "",
-      atasan: payload.length != 0 ? atasan : null,
-      suratUndangan: payload.link_img_surat_undangan !== null ? payload.link_img_surat_undangan : null,
-      daftarHadir: payload.link_img_daftar_hadir !== null ? payload.link_img_daftar_hadir : null,
-      spj: payload.link_img_spj !== null ? payload.link_img_spj : null,
-      foto: payload.link_img_foto !== null ? payload.link_img_foto : null,
-      pendukung: payload.link_img_pendukung !== null ? payload.link_img_pendukung : null,
-      signature: payload.signature !== undefined ? payload.signature !== '-' ? payload.signature : null : null,
-      dibuatTanggal: dibuatTanggal !== null ? dibuatTanggal : null
+      jam: payload.waktu,
+      pendahuluan: payload.pendahuluan !== null ? JSON.parse(payload.pendahuluan) : null,
+      pesertaArray: payload.peserta_rapat,
+      isiRapat: payload.isi_rapat !== null ? JSON.parse(payload?.isi_rapat) : null,
+      tindakLanjut: payload.tindak_lanjut !== null ? JSON.parse(payload.tindak_lanjut) : null,
+      lokasi: payload.lokasi,
+      acara: payload.acara,
+      atasan: payload.atasan,
+      suratUndangan: payload.link_img_surat_undangan,
+      daftarHadir: payload.link_img_daftar_hadir,
+      spj: payload.link_img_spj,
+      foto: payload.link_img_foto,
+      pendukung: payload.link_img_pendukung,
+      signature: payload.signature,
+      dibuatTanggal: dibuatTanggal
     }),
     validationSchema: Yup.object().shape({
       rangeTanggal: Yup.array()
@@ -1065,62 +1122,46 @@ interface PropTypes {
   profile: any;
   payload: any;
   notulen: any;
+  notulens: any;
+  setNotulens: any;
+  step: string;
+  index: number;
+  rangeDate: any;
+  tanggal: any;
   dataAtasan: any;
-  step: string
+  setLoading: any;
+  trigger: boolean;
+  setTrigger: any;
 }
 
-const AddNotulenForm = ({ profile, payload, notulen, dataAtasan, step }: PropTypes) => {
+const AddNotulenForm = ({
+  profile,
+  payload,
+  notulen,
+  notulens,
+  setNotulens,
+  step,
+  index,
+  rangeDate,
+  tanggal,
+  dataAtasan,
+  setLoading,
+  trigger,
+  setTrigger
+}: PropTypes) => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const [atasan, setAtasan] = useState<any>(null);
   const [dibuatTanggal, setDibuatTanggal] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [sudenly, setSudenly] = useState<number>(0);
+  const [isFilled, setIsFilled] = useState<any>([]);
 
   useEffect(() => {
-    if (notulen.length != 0) {
-      setAtasan({
-        label: notulen.atasan.nama,
-        value: notulen.atasan.nip,
-        data: {
-          nama: notulen.atasan.nama,
-          nip: notulen.atasan.nip,
-          pangkat: notulen.atasan.pangkat,
-          namaPangkat: notulen.atasan.nama_pangkat,
-          jabatan: notulen.atasan.jabatan
-        },
-      })
-      formattedDate();
+    if (notulen.hari != undefined && notulen.bulan !== undefined && notulen.tahun !== undefined) {
+      let tempDate: any = notulen.hari + '/' + Number(notulen.bulan - 1) + '/' + notulen.tahun;
+
+      setDibuatTanggal(formattedDate(tempDate));
     }
-    setLoading(false);
   }, [])
-
-  const formattedDate = () => {
-    let tempDate: any = notulen.hari + '/' + Number(notulen.bulan - 1) + '/' + notulen.tahun;
-    const dateParts = tempDate.split('/');
-    const day = parseInt(dateParts[0], 10);
-    const month = parseInt(dateParts[1], 10); // Months are 0-based (0 = January, 1 = February, etc.)
-    const year = parseInt(dateParts[2], 10);
-    // Create a Date object with the parsed values
-    const formattedDate = new Date(year, month, day);
-
-    // Define a formatting option for the date
-    const options: any = {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZoneName: 'long',
-      timeZone: 'Asia/Jakarta' // Set the desired time zone
-    };
-
-    // Format the date using the Intl.DateTimeFormat API
-    const formatter = new Intl.DateTimeFormat('en-US', options);
-    const formattedDateString = formatter.format(formattedDate);
-    setDibuatTanggal(formattedDate);
-  }
 
   const handleSubmit = async (values: FormValues) => {
     setLoading(true);
@@ -1148,8 +1189,12 @@ const AddNotulenForm = ({ profile, payload, notulen, dataAtasan, step }: PropTyp
       signature: values.signature !== '' ? values.signature : '-',
       kode_opd: profile.Perangkat_Daerah.kode_opd,
       nip_pegawai: profile.nip,
-      nip_atasan: values.atasan.value
+      nip_atasan: values.atasan.value,
     };
+
+    // const newArr = [...notulens];
+    // newArr[index] = dataNotulen;
+    // setNotulens(newArr);
 
     const response = await fetchApi({
       url: `/notulen/addNotulen`,
@@ -1175,88 +1220,117 @@ const AddNotulenForm = ({ profile, payload, notulen, dataAtasan, step }: PropTyp
         });
       }
     } else {
-      if (step !== null) {
-        const response2 = await fetchApi({
-          url: '/undangan/addUndangan',
-          method: 'post',
-          type: 'auth',
-          body: payload.step1
-        })
-
-        if (!response2.success) {
-          if (response2.data.code == 400) {
-            setLoading(false);
-            Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: "Periksa kembali data Undangan!",
-            });
-          } else if (response2.data.code == 500) {
-            setLoading(false);
-            Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: "Koneksi bermasalah!",
-            });
-          }
-        } else {
-          const { data } = response2.data;
-
-          const response3 = await fetchApi({
-            url: `/undangan/addJumlahPeserta/${data.id}`,
-            method: 'post',
-            type: 'auth',
-            body: payload.step2
-          })
-          console.log(response3, 'response');
-
-          if (!response3.success) {
-            setLoading(false);
-            Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: "Periksa kembali data peserta!",
-            });
-          } else {
-            Swal.fire({
-              position: "center",
-              icon: "success",
-              title: "Berhasil menambahkan notulen",
-              showConfirmButton: false,
-              timer: 1500,
-            });
-            dispatch(setPayload([]));
-            router.push("/notulen/laporan");
-          }
-        }
-      } else {
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: "Berhasil menambahkan notulen",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        dispatch(setPayload([]));
-        router.push("/notulen/laporan");
-      }
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Berhasil menambahkan notulen",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      setLoading(false);
+      setTrigger(true);
     }
 
+    // if (!response.success) {
+    // if (response.data.code == 400) {
+    //   setLoading(false);
+    //   Swal.fire({
+    //     icon: "error",
+    //     title: "Oops...",
+    //     text: "Periksa kembali data Notulen!",
+    //   });
+    // } else if (response.data.code == 500) {
+    //   setLoading(false);
+    //   Swal.fire({
+    //     icon: "error",
+    //     title: "Oops...",
+    //     text: "Koneksi bermasalah!",
+    //   });
+    // }
+    // } else {
+    //   if (step !== null) {
+    //     const response2 = await fetchApi({
+    //       url: '/undangan/addUndangan',
+    //       method: 'post',
+    //       type: 'auth',
+    //       body: payload.step1
+    //     })
+
+    //     if (!response2.success) {
+    //       if (response2.data.code == 400) {
+    //         setLoading(false);
+    //         Swal.fire({
+    //           icon: "error",
+    //           title: "Oops...",
+    //           text: "Periksa kembali data Undangan!",
+    //         });
+    //       } else if (response2.data.code == 500) {
+    //         setLoading(false);
+    //         Swal.fire({
+    //           icon: "error",
+    //           title: "Oops...",
+    //           text: "Koneksi bermasalah!",
+    //         });
+    //       }
+    //     } else {
+    //       const { data } = response2.data;
+
+    //       const response3 = await fetchApi({
+    //         url: `/undangan/addJumlahPeserta/${data.id}`,
+    //         method: 'post',
+    //         type: 'auth',
+    //         body: payload.step2
+    //       })
+    //       console.log(response3, 'response');
+
+    //       if (!response3.success) {
+    //         setLoading(false);
+    //         Swal.fire({
+    //           icon: "error",
+    //           title: "Oops...",
+    //           text: "Periksa kembali data peserta!",
+    //         });
+    //       } else {
+    // Swal.fire({
+    //   position: "center",
+    //   icon: "success",
+    //   title: "Berhasil menambahkan notulen",
+    //   showConfirmButton: false,
+    //   timer: 1500,
+    // });
+    // dispatch(setPayload([]));
+    // router.push("/notulen/laporan");
+    //       }
+    //     }
+    //   } else {
+    //     Swal.fire({
+    //       position: "center",
+    //       icon: "success",
+    //       title: "Berhasil menambahkan notulen",
+    //       showConfirmButton: false,
+    //       timer: 1500,
+    //     });
+    //     dispatch(setPayload([]));
+    //     router.push("/notulen/laporan");
+    //   }
+    // }
   };
 
   return (
     <div>
-      {loading ? (
-        <Loading loading={loading} setLoading={setLoading} />
-      ) : (
+      {dibuatTanggal !== null && (
         <CreateForm
           handleSubmit={handleSubmit}
-          dataAtasan={dataAtasan}
-          data={notulen}
-          atasan={atasan}
-          dibuatTanggal={dibuatTanggal}
+          key={sudenly}
           payload={notulen}
           step={step}
+          index={index}
+          rangeDate={rangeDate}
+          tanggal={tanggal}
+          order={sudenly}
+          notulens={notulens}
+          dibuatTanggal={dibuatTanggal}
+          dataAtasan={dataAtasan}
         />
       )}
     </div>

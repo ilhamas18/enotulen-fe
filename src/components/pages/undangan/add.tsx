@@ -792,15 +792,7 @@ const AddUndanganForm = ({
     else handleConfirmSubmit(dataUndangan);
   }
 
-  const handleNext = () => {
-    setOpenConfirm(true);
-    const storedData = {
-      ...payload,
-      step1: dataPayload
-    }
-    dispatch(setPayload(storedData));
-    router.push(`/peserta/2?step=2`);
-  }
+  const handleNext = () => handleConfirmSubmit(dataPayload);
 
   const handleConfirmSubmit = async (data: any) => {
     setLoading(true);
@@ -835,8 +827,19 @@ const AddUndanganForm = ({
         showConfirmButton: false,
         timer: 1500,
       });
-      dispatch(setPayload([]));
-      router.push("/undangan/laporan");
+
+      if (step !== null) {
+        setOpenConfirm(true);
+        const storedData = {
+          ...payload,
+          step1: dataPayload
+        }
+        dispatch(setPayload(storedData));
+        router.push(`/peserta/2?step=2`);
+      } else {
+        dispatch(setPayload([]));
+        router.push("/undangan/laporan");
+      }
     }
   }
 

@@ -12,7 +12,7 @@ const Page = () => {
   return (
     <div className="login-page-wrapper w-full">
       <div className="bg-white w-full min-h-screen flex">
-        <div className="w-full bg-[#f5f7f9] flex flex-col h-screen justify-center items-center justify-center">
+        <div className="w-full bg-[#f5f7f9] flex flex-col h-screen justify-center items-center">
           <div className="bg-white md:w-[40%] w-full">
             <div className="flex flex-row items-center space-x-4 px-8" style={gradientStyle}>
               <img src="/logo/Lambang_Kota_Madiun.png" className="h-[58px] w-[58]" alt="Logo Kota Madiun" />

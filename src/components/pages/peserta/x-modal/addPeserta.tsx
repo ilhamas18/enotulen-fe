@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/common/button/button';
 import { CommonModal } from '@/components/common/common-modal/modal';
 import TextInput from '@/components/common/text-input/input';
@@ -8,6 +9,8 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import { fetchApi } from '@/app/api/request';
+import Swal from 'sweetalert2';
 
 interface PropTypes {
   index: number;
@@ -24,6 +27,7 @@ const XAddPeserta = ({
   peserta,
   setPeserta
 }: PropTypes) => {
+  const router = useRouter();
   const [storedNumber, setStoredNumber] = useState<number>(0);
   const [storedParticipant, setStoredParticipant] = useState<string>('');
 
@@ -96,7 +100,7 @@ const XAddPeserta = ({
               rounded
             >
               <div className="flex justify-center items-center text-white">
-                <span className="button-text">Lanjut</span>
+                <span className="button-text">Tambah</span>
               </div>
             </Button>
           </div>
