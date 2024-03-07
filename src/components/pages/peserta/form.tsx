@@ -79,8 +79,10 @@ const AddPesertaForm = ({
     const payload = {
       uuid: undangan.uuid,
       jumlah_peserta: peserta[index].jumlah_peserta,
-      jenis_peserta: peserta[index].jenis_peserta
+      jenis_peserta: peserta[index].jenis_peserta,
+      tanggal: rangeDate
     }
+
     const response = await fetchApi({
       url: '/peserta/addPeserta',
       method: 'post',

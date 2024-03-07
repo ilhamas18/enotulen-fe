@@ -11,7 +11,7 @@ import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
 import Loading from "@/components/global/Loading/loading";
 import StepsWrapper from "@/components/global/Steps";
-import dateRangeFormat from "@/components/helpers/dateRange";
+import { dateRangeFormat, dateISOFormat } from "@/components/helpers/dateRange";
 import { Button } from "@/components/common/button/button";
 
 const AddNotulenProps = () => {
@@ -53,16 +53,11 @@ const AddNotulenProps = () => {
   }, [trigger]);
 
   const setStateHandler = (data: any, atasan: any) => {
+
     const dateRange = dateRangeFormat(data.tanggal !== undefined && data.tanggal[0]);
-    const tempArr = Array.from({ length: dateRange.length }, () => ({
+    const tempArr = dateRange.map((date: any) => ({
       tagging: [],
-      tanggal: [
-        {
-          startDate: data.length != 0 ? data.tanggal[0]?.startDate != null ? new Date(data.tanggal[0]?.startDate) : null : null,
-          endDate: data.length != 0 ? data.tanggal[0]?.endDate != null ? new Date(data.tanggal[0]?.endDate) : null : null,
-          key: "selection",
-        },
-      ],
+      tanggal: dateISOFormat(date),
       waktu: data.length != 0 ? data.waktu !== null ? data.waktu : null : null,
       pendahuluan: data.length != 0 ? data.pendahuluan !== null ? data.pendahuluan : null : null,
       peserta_rapat: data.length != 0 ? data.peserta_rapat !== undefined ? data.peserta_rapat : [] : [],
@@ -85,7 +80,6 @@ const AddNotulenProps = () => {
       nip_pegawai: profile.nip,
       nip_atasan: null,
     }));
-
     setNotulens(tempArr);
     fetchNotulen(tempArr);
   }
@@ -109,11 +103,21 @@ const AddNotulenProps = () => {
       });
     } else {
       const { data } = response.data;
+      const updatedState = arr.map((item: any) => {
+        const matchingData = data[0].Notulens.find((data: any) => {
+          const date = new Date(data.tanggal[0].startDate).getDate();
+          return date.toString() === new Date(item.tanggal.startDate).getDate().toString();
+        });
+
+        return matchingData
+          ? matchingData
+          : item;
+      });
       const temp = [...arr];
       data[0].Notulens.forEach((el: any, i: number) => {
         temp[i] = el
       })
-      if (data[0].Notulens.length != 0) setNotulens(temp);
+      if (data[0].Notulens.length != 0) setNotulens(updatedState);
       setLoading(false);
       setTrigger(false);
     }
@@ -158,6 +162,7 @@ const AddNotulenProps = () => {
       setLoading(false);
     }
   };
+  console.log(notulens);
 
   const handleRangeDate = (data: any) => {
     const transformedData = data.tanggal.map((item: any) => {
@@ -259,4 +264,5 @@ const AddNotulenProps = () => {
 }
 
 export default withAuth(AddNotulenProps)
+
 

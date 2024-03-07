@@ -5,6 +5,11 @@ const webpack = require("webpack");
 const ContentSecurityPolicy = `frame-ancestors 'none'`;
 
 module.exports = {
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['my-proxy.com', '*.my-proxy.com'],
+    },
+  },
   trailingSlash: false,
   // webpackDevMiddleware: (config) => {
   //   config.watchOptions = {

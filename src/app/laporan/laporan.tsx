@@ -73,6 +73,7 @@ const LaporanPage = () => {
     }
     setMonth(temp)
   }
+  console.log(laporan);
 
   return (
     <div className='list-laporan-container relative'>

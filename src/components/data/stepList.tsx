@@ -6,7 +6,7 @@ export const dataStepbar = [
     },
     {
         label: "Daftar Hadir",
-        url: "/peserta?step=2"
+        url: "/peserta/tambah?step=2"
     },
     {
         label: "Notulen",

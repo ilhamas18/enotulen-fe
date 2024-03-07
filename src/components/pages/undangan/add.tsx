@@ -835,7 +835,7 @@ const AddUndanganForm = ({
           step1: dataPayload
         }
         dispatch(setPayload(storedData));
-        router.push(`/peserta/2?step=2`);
+        router.push(`/peserta/tambah?step=2`);
       } else {
         dispatch(setPayload([]));
         router.push("/undangan/laporan");

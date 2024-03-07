@@ -9,7 +9,7 @@ import { State } from "@/store/reducer";
 import StepsWrapper from "@/components/global/Steps";
 import { FaWpforms } from "react-icons/fa";
 import AddPesertaForm from "@/components/pages/peserta/form";
-import dateRangeFormat from "@/components/helpers/dateRange";
+import { dateRangeFormat } from "@/components/helpers/dateRange";
 import CancelBtn from "@/components/hooks/cancelBtn";
 import { Button } from "@/components/common/button/button";
 import Loading from "@/components/global/Loading/loading";
@@ -44,12 +44,14 @@ const PesertaProps = ({ id }: PropTypes) => {
     }
     setData(payload.step1);
     const dateRange = dateRangeFormat(payload.step1?.tanggal !== undefined && payload.step1?.tanggal[0]);
-    const tempArr = Array.from({ length: dateRange.length }, () => ({
-      "jumlah_peserta": 0,
-      "jenis_peserta": ""
+    const temp = dateRange.map((date: any) => ({
+      tanggal: date.split(' ')[0],
+      jumlah_peserta: 0,
+      jenis_peserta: '',
     }));
-    setPeserta(tempArr);
-    fetchPeserta(tempArr)
+
+    setPeserta(temp);
+    fetchPeserta(temp)
   }, [trigger]);
 
   const fetchPeserta = async (arr: any) => {
@@ -69,15 +71,22 @@ const PesertaProps = ({ id }: PropTypes) => {
       });
     } else {
       const { data } = response.data;
-      const temp = [...arr];
-      data[0].Peserta.forEach((el: any, i: number) => {
-        temp[i] = {
-          uuid: el.uuid,
-          jumlah_peserta: el.jumlah_peserta,
-          jenis_peserta: el.jenis_peserta
-        }
-      })
-      if (data[0].Peserta.length != 0) setPeserta(temp);
+      const updatedState = arr.map((item: any) => {
+        const matchingData = data[0].Peserta.find((data: any) => {
+          const date = new Date(data.tanggal).getDate();
+          return date.toString() === item.tanggal;
+        });
+
+        return matchingData
+          ? {
+            tanggal: item.tanggal,
+            uuid: matchingData.uuid,
+            jumlah_peserta: matchingData.jumlah_peserta,
+            jenis_peserta: matchingData.jenis_peserta
+          }
+          : item;
+      });
+      if (data[0].Peserta.length != 0) setPeserta(updatedState);
       setLoading(false);
       setTrigger(false);
     }
@@ -97,7 +106,6 @@ const PesertaProps = ({ id }: PropTypes) => {
       handleSubmit(peserta)
     }
   }
-  console.log(peserta);
 
   const handleSubmit = async (data: any) => {
     setLoading(true);
@@ -193,3 +201,6 @@ const PesertaProps = ({ id }: PropTypes) => {
 }
 
 export default withAuth(PesertaProps);
+
+
+

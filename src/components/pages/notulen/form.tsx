@@ -1064,8 +1064,8 @@ function CreateForm({ handleSubmit, order, payload, tanggal, dibuatTanggal, ...o
       tagging: [],
       rangeTanggal: [
         {
-          startDate: tanggal.length != 0 && order !== undefined ? tanggal[order].startDate : payload.rangeTanggal[0]?.startDate,
-          endDate: tanggal.length != 0 && order !== undefined ? tanggal[order].endDate : payload.rangeTanggal[0]?.endDate,
+          startDate: tanggal.length != 0 && order !== undefined ? payload.tanggal.startDate : payload.rangeTanggal[0]?.startDate,
+          endDate: tanggal.length != 0 && order !== undefined ? payload.tanggal.endDate : payload.rangeTanggal[0]?.endDate,
           key: "selection",
         },
       ],
@@ -1166,7 +1166,7 @@ const AddNotulenForm = ({
   const handleSubmit = async (values: FormValues) => {
     setLoading(true);
     const dataNotulen = {
-      uuid: notulen.length != 0 ? notulen.uuid : uuidv4(),
+      uuid: payload.length != 0 ? payload.step1.uuid : uuidv4(),
       tanggal: values.rangeTanggal,
       waktu: values.jam,
       pendahuluan: JSON.stringify(values.pendahuluan),
