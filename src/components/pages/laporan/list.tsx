@@ -16,7 +16,7 @@ import { setPayload } from '@/store/payload/action';
 import { MdBookmarkAdd } from "react-icons/md";
 import XAddTagging from './x-modal/XAddTagging';
 import XAddSasaran from './x-modal/XAddSasaran';
-import dateRangeFormat from '@/components/helpers/dateRange';
+import { dateRangeFormat } from '@/components/helpers/dateRange';
 
 interface PropTypes {
   data: any,

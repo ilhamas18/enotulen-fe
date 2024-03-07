@@ -15,4 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag enotulen-fe:latest
+      run: |
+        docker login --username ilhamas18 --password ${{ secrets.GH_TOKEN }} ghcr.io
+        docker build . --file Dockerfile --tag ghcr.io/ilhamas18/enotulen-fe:latest
+        docker push ghcr.io/ilhamas18/enotulen-fe:latest
