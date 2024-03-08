@@ -21,6 +21,7 @@ const AddNotulenProps = () => {
   const [notulens, setNotulens] = useState<any>([]);
   const [dataAtasan, setDataAtasan] = useState<any>([]);
   const [tanggal, setTanggal] = useState<any>([]);
+  const [dataSubmit, setDataSubmit] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<boolean>(false);
 
@@ -35,25 +36,26 @@ const AddNotulenProps = () => {
     if (profile.role != 2 && profile.role != 3 && profile.role != 4) router.push('/unauthorized');
     fetchDataAtasan();
     if (payload.step3 !== undefined) setNotulen(payload.step3);
-    else if (payload.step1 !== undefined) setNotulen(payload.step1);
-    const atasan = {
-      label: payload.step1.atasan.nama,
-      value: payload.step1.atasan.nip,
-      data: {
-        nama: payload.step1.atasan.nama,
-        nip: payload.step1.atasan.nip,
-        pangkat: payload.step1.atasan.pangkat,
-        namaPangkat: payload.step1.atasan.namaPangkat,
-        jabatan: payload.step1.atasan.jabatan
-      },
-    }
+    else if (payload.step1 !== undefined) {
+      setNotulen(payload.step1);
+      const atasan = {
+        label: payload.step1.atasan.nama,
+        value: payload.step1.atasan.nip,
+        data: {
+          nama: payload.step1.atasan.nama,
+          nip: payload.step1.atasan.nip,
+          pangkat: payload.step1.atasan.pangkat,
+          namaPangkat: payload.step1.atasan.namaPangkat,
+          jabatan: payload.step1.atasan.jabatan
+        },
+      }
 
-    setStateHandler(payload.step1, atasan);
-    handleRangeDate(payload.step1);
+      setStateHandler(payload.step1, atasan);
+      handleRangeDate(payload.step1);
+    }
   }, [trigger]);
 
   const setStateHandler = (data: any, atasan: any) => {
-
     const dateRange = dateRangeFormat(data.tanggal !== undefined && data.tanggal[0]);
     const tempArr = dateRange.map((date: any) => ({
       tagging: [],
@@ -162,7 +164,6 @@ const AddNotulenProps = () => {
       setLoading(false);
     }
   };
-  console.log(notulens);
 
   const handleRangeDate = (data: any) => {
     const transformedData = data.tanggal.map((item: any) => {
@@ -207,56 +208,76 @@ const AddNotulenProps = () => {
         <Loading loading={loading} setLoading={setLoading} />
       ) : (
         <div>
-          {notulen.length != 0 ? (
-            rangeDate.length == notulens.length && notulens.map((el: any, i: number) => (
-              <div key={i}>
-                <AddNotulenForm
-                  profile={profile}
-                  payload={payload}
-                  notulen={el}
-                  notulens={notulens}
-                  setNotulens={setNotulens}
-                  step={step}
-                  index={i}
-                  rangeDate={rangeDate}
-                  tanggal={tanggal}
-                  dataAtasan={dataAtasan}
-                  setLoading={setLoading}
-                  trigger={trigger}
-                  setTrigger={setTrigger}
-                />
+          {step !== null ? (
+            notulen.length != 0 ? (
+              rangeDate.length == notulens.length && notulens.map((el: any, i: number) => (
+                <div key={i}>
+                  <AddNotulenForm
+                    profile={profile}
+                    payload={payload}
+                    notulen={el}
+                    notulens={notulens}
+                    setNotulens={setNotulens}
+                    step={step}
+                    index={i}
+                    rangeDate={rangeDate}
+                    tanggal={tanggal}
+                    dataAtasan={dataAtasan}
+                    setLoading={setLoading}
+                    trigger={trigger}
+                    setTrigger={setTrigger}
+                  />
+                </div>
+              ))
+            ) : null
+          ) : (
+            <div>
+              <AddNotulenForm
+                profile={profile}
+                payload={payload}
+                notulens={notulens}
+                setNotulens={setNotulens}
+                step={step}
+                rangeDate={rangeDate}
+                tanggal={tanggal}
+                dataAtasan={dataAtasan}
+                setLoading={setLoading}
+                trigger={trigger}
+                setTrigger={setTrigger}
+              />
+            </div>
+          )}
+          {step !== null && (
+            <div className="flex justify-between mt-6">
+              <div>
+                <Button
+                  variant="xl"
+                  type="secondary"
+                  className="button-container px-8 py-2"
+                  onClick={handleCancel}
+                  rounded
+                >
+                  <div className="flex justify-center items-center text-[#002DBB] font-Nunito">
+                    <span className="button-text">Batal</span>
+                  </div>
+                </Button>
               </div>
-            ))
-          ) : null}
-          <div className="flex justify-between mt-6">
-            <div>
-              <Button
-                variant="xl"
-                type="secondary"
-                className="button-container px-8 py-2"
-                onClick={handleCancel}
-                rounded
-              >
-                <div className="flex justify-center items-center text-[#002DBB] font-Nunito">
-                  <span className="button-text">Batal</span>
-                </div>
-              </Button>
+              <div>
+                <Button
+                  type="button"
+                  variant="xl"
+                  rounded
+                  className="button-container px-8 py-2"
+                  loading={loading}
+                  onClick={handleFinish}
+                >
+                  <div className="flex gap-2 justify-center items-center text-white font-Nunito">
+                    <span className="button-text">Selesai</span>
+                  </div>
+                </Button>
+              </div>
             </div>
-            <div>
-              <Button
-                type="button"
-                variant="xl"
-                rounded
-                className="button-container px-8 py-2"
-                loading={loading}
-                onClick={handleFinish}
-              >
-                <div className="flex gap-2 justify-center items-center text-white font-Nunito">
-                  <span className="button-text">Selesai</span>
-                </div>
-              </Button>
-            </div>
-          </div>
+          )}
         </div>
       )}
     </div>

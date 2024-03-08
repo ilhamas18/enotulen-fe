@@ -520,7 +520,39 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 )}
               </div>
               <div className="flex flex-col justify-center mb-2">
-                {index !== undefined && notulens[index].uuid === undefined && (
+                {step !== null ? (
+                  index !== undefined && notulens[index].uuid === undefined && (
+                    <div>
+                      <div className="flex gap-2">
+                        <button onClick={(e) => handleOpenAddPeserta(e)}>
+                          <AiFillPlusCircle size={26} />
+                        </button>
+                        <div>Tambah Peserta</div>
+                      </div>
+                      <div>
+                        <div className="flex flex-col w-full mt-8">
+                          <TextInput
+                            type="text"
+                            id="pesertaRapat"
+                            name="pesertaRapat"
+                            label="Peserta Rapat"
+                            change={(e: any) => setPesertaRapat(e.target.value)}
+                            value={pesertaRapat}
+                            handleBlur={handleBlur}
+                          />
+                          <div className="flex justify-center items-center md:gap-8 md:mx-10 mt-3">
+                            <button
+                              className="text-xl-base"
+                              onClick={(e) => handleAddParticipant(e)}
+                            >
+                              Tambah
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                ) : (
                   <div>
                     <div className="flex gap-2">
                       <button onClick={(e) => handleOpenAddPeserta(e)}>
@@ -552,7 +584,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   </div>
                 )}
                 <ul className="mt-4 ml-4">
-                  {index !== undefined && notulens[index].uuid !== undefined && (
+                  {step !== null ? (
+                    index !== undefined && notulens[index].uuid !== undefined && (
+                      <div className="mb-6">Peserta :</div>
+                    )
+                  ) : (
                     <div className="mb-6">Peserta :</div>
                   )}
                   {values.pesertaArray.map((el: any, i: number) => (
@@ -567,7 +603,19 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                           </div>
                           <div>{el.nama}</div>
                         </div>
-                        {index !== undefined && notulens[index].uuid === undefined && (
+                        {step !== null ? (
+                          index !== undefined && notulens[index].uuid === undefined && (
+                            <div>
+                              <button
+                                onClick={(e: any) =>
+                                  handleDeletePesertaArray(e, el.nama)
+                                }
+                              >
+                                <AiOutlineClose size={18} />
+                              </button>
+                            </div>
+                          )
+                        ) : (
                           <div>
                             <button
                               onClick={(e: any) =>
@@ -1010,33 +1058,79 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
             <div className="text-danger text-title-ss mx-8 mt-3">*Pastikan mengisi seluruh data notulen, (kecuali yang opsional)</div>
 
             <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
-              {index !== undefined && notulens[index].uuid === undefined && (
-                <div className="w-[8em] absolute bottom-6 right-8">
-                  <Button
-                    type="button"
-                    variant="xl"
-                    className="button-container"
-                    loading={loading}
-                    disabled={
-                      values.rangeTanggal.length == 0 ||
-                        values.jam === null ||
-                        values.pendahuluan === "" ||
-                        values.pesertaArray.length == 0 ||
-                        values.isiRapat === null ||
-                        values.tindakLanjut === null ||
-                        values.lokasi === "" ||
-                        values.acara === "" ||
-                        values.atasan === null ||
-                        values.dibuatTanggal === null ?
-                        true : false
-                    }
-                    onClick={handleSubmit}
-                  >
-                    <div className="flex gap-2 justify-center items-center text-white font-Nunito">
-                      <div><IoIosSave size={20} /></div>
-                      <span className="button-text">Simpan</span>
-                    </div>
-                  </Button>
+              {step !== null ? (
+                index !== undefined && notulens[index].uuid === undefined && (
+                  <div className="w-[8em] absolute bottom-6 right-8">
+                    <Button
+                      type="button"
+                      variant="xl"
+                      className="button-container"
+                      loading={loading}
+                      disabled={
+                        values.rangeTanggal.length == 0 ||
+                          values.jam === null ||
+                          values.pendahuluan === "" ||
+                          values.pesertaArray.length == 0 ||
+                          values.isiRapat === null ||
+                          values.tindakLanjut === null ||
+                          values.lokasi === "" ||
+                          values.acara === "" ||
+                          values.atasan === null ||
+                          values.dibuatTanggal === null ?
+                          true : false
+                      }
+                      onClick={handleSubmit}
+                    >
+                      <div className="flex gap-2 justify-center items-center text-white font-Nunito">
+                        <div><IoIosSave size={20} /></div>
+                        <span className="button-text">Simpan</span>
+                      </div>
+                    </Button>
+                  </div>
+                )
+              ) : (
+                <div className="flex items-center justify-between w-full mt-6">
+                  <div>
+                    {/* <Button
+                      type="secondary"
+                      variant="xl"
+                      className="button-container px-8 py-2"
+                      loading={loading}
+                      rounded
+                    onClick={handleCancel}
+                    >
+                      <div className="flex gap-2 justify-center items-center text-white font-Nunito">
+                        <span className="button-text text-xl-base">Batal</span>
+                      </div>
+                    </Button> */}
+                  </div>
+                  <div>
+                    <Button
+                      type="button"
+                      variant="xl"
+                      className="button-container px-8 py-2"
+                      loading={loading}
+                      rounded
+                      disabled={
+                        values.rangeTanggal.length == 0 ||
+                          values.jam === null ||
+                          values.pendahuluan === "" ||
+                          values.pesertaArray.length == 0 ||
+                          values.isiRapat === null ||
+                          values.tindakLanjut === null ||
+                          values.lokasi === "" ||
+                          values.acara === "" ||
+                          values.atasan === null ||
+                          values.dibuatTanggal === null ?
+                          true : false
+                      }
+                      onClick={handleSubmit}
+                    >
+                      <div className="flex gap-2 justify-center items-center text-white font-Nunito">
+                        <span className="button-text">Submit</span>
+                      </div>
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
@@ -1064,26 +1158,26 @@ function CreateForm({ handleSubmit, order, payload, tanggal, dibuatTanggal, ...o
       tagging: [],
       rangeTanggal: [
         {
-          startDate: tanggal.length != 0 && order !== undefined ? payload.tanggal.startDate : payload.rangeTanggal[0]?.startDate,
-          endDate: tanggal.length != 0 && order !== undefined ? payload.tanggal.endDate : payload.rangeTanggal[0]?.endDate,
+          startDate: tanggal.length != 0 && order !== undefined ? payload !== undefined ? payload.tanggal.startDate : payload.rangeTanggal[0]?.startDate : null,
+          endDate: tanggal.length != 0 && order !== undefined ? payload !== undefined ? payload.tanggal.endDate : payload.rangeTanggal[0]?.endDate : null,
           key: "selection",
         },
       ],
-      jam: payload.waktu,
-      pendahuluan: payload.pendahuluan !== null ? JSON.parse(payload.pendahuluan) : null,
-      pesertaArray: payload.peserta_rapat,
-      isiRapat: payload.isi_rapat !== null ? JSON.parse(payload?.isi_rapat) : null,
-      tindakLanjut: payload.tindak_lanjut !== null ? JSON.parse(payload.tindak_lanjut) : null,
-      lokasi: payload.lokasi,
-      acara: payload.acara,
-      atasan: payload.atasan,
-      suratUndangan: payload.link_img_surat_undangan,
-      daftarHadir: payload.link_img_daftar_hadir,
-      spj: payload.link_img_spj,
-      foto: payload.link_img_foto,
-      pendukung: payload.link_img_pendukung,
-      signature: payload.signature,
-      dibuatTanggal: dibuatTanggal
+      jam: payload !== undefined ? payload.waktu : null,
+      pendahuluan: payload !== undefined ? payload.pendahuluan !== null ? JSON.parse(payload.pendahuluan) : null : null,
+      pesertaArray: payload !== undefined ? payload.peserta_rapat : [],
+      isiRapat: payload !== undefined ? payload.isi_rapat !== null ? JSON.parse(payload?.isi_rapat) : null : null,
+      tindakLanjut: payload !== undefined ? payload.tindak_lanjut !== null ? JSON.parse(payload.tindak_lanjut) : null : null,
+      lokasi: payload !== undefined ? payload.lokasi : '',
+      acara: payload !== undefined ? payload.acara : '',
+      atasan: payload !== undefined ? payload.atasan : null,
+      suratUndangan: payload !== undefined ? payload.link_img_surat_undangan : null,
+      daftarHadir: payload !== undefined ? payload.link_img_daftar_hadir : null,
+      spj: payload !== undefined ? payload.link_img_spj : null,
+      foto: payload !== undefined ? payload.link_img_foto : null,
+      pendukung: payload !== undefined ? payload.link_img_pendukung : null,
+      signature: payload !== undefined ? payload.signature : null,
+      dibuatTanggal: payload !== undefined ? dibuatTanggal : null
     }),
     validationSchema: Yup.object().shape({
       rangeTanggal: Yup.array()
@@ -1121,11 +1215,11 @@ function CreateForm({ handleSubmit, order, payload, tanggal, dibuatTanggal, ...o
 interface PropTypes {
   profile: any;
   payload: any;
-  notulen: any;
+  notulen?: any;
   notulens: any;
   setNotulens: any;
   step: string;
-  index: number;
+  index?: number;
   rangeDate: any;
   tanggal: any;
   dataAtasan: any;
@@ -1156,17 +1250,25 @@ const AddNotulenForm = ({
   const [isFilled, setIsFilled] = useState<any>([]);
 
   useEffect(() => {
-    if (notulen.hari != undefined && notulen.bulan !== undefined && notulen.tahun !== undefined) {
-      let tempDate: any = notulen.hari + '/' + Number(notulen.bulan - 1) + '/' + notulen.tahun;
-
-      setDibuatTanggal(formattedDate(tempDate));
+    if (step !== null) {
+      if (notulen.hari != undefined && notulen.bulan !== undefined && notulen.tahun !== undefined) {
+        let tempDate: any = notulen.hari + '/' + Number(notulen.bulan - 1) + '/' + notulen.tahun;
+        setDibuatTanggal(formattedDate(tempDate));
+      }
     }
   }, [])
 
   const handleSubmit = async (values: FormValues) => {
-    setLoading(true);
+    // setLoading(true);
+    let uuid;
+    if (step !== null) {
+      uuid = payload.step1.uuid;
+    } else {
+      uuid = uuidv4();
+    }
+
     const dataNotulen = {
-      uuid: payload.length != 0 ? payload.step1.uuid : uuidv4(),
+      uuid: uuid,
       tanggal: values.rangeTanggal,
       waktu: values.jam,
       pendahuluan: JSON.stringify(values.pendahuluan),
@@ -1191,10 +1293,6 @@ const AddNotulenForm = ({
       nip_pegawai: profile.nip,
       nip_atasan: values.atasan.value,
     };
-
-    // const newArr = [...notulens];
-    // newArr[index] = dataNotulen;
-    // setNotulens(newArr);
 
     const response = await fetchApi({
       url: `/notulen/addNotulen`,
@@ -1227,8 +1325,12 @@ const AddNotulenForm = ({
         showConfirmButton: false,
         timer: 1500,
       });
-      setLoading(false);
-      setTrigger(true);
+      if (step !== null) {
+        setLoading(false);
+        setTrigger(true);
+      } else {
+        router.push('/notulen/laporan');
+      }
     }
 
     // if (!response.success) {
@@ -1318,7 +1420,23 @@ const AddNotulenForm = ({
 
   return (
     <div>
-      {dibuatTanggal !== null && (
+      {step !== null ? (
+        dibuatTanggal !== null && (
+          <CreateForm
+            handleSubmit={handleSubmit}
+            key={sudenly}
+            payload={notulen}
+            step={step}
+            index={index}
+            rangeDate={rangeDate}
+            tanggal={tanggal}
+            order={sudenly}
+            notulens={notulens}
+            dibuatTanggal={dibuatTanggal}
+            dataAtasan={dataAtasan}
+          />
+        )
+      ) : (
         <CreateForm
           handleSubmit={handleSubmit}
           key={sudenly}
@@ -1332,6 +1450,7 @@ const AddNotulenForm = ({
           dibuatTanggal={dibuatTanggal}
           dataAtasan={dataAtasan}
         />
+
       )}
     </div>
   );

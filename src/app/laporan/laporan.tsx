@@ -13,6 +13,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { ImTable2 } from 'react-icons/im';
 import Loading from '@/components/global/Loading/loading';
+import { dateRangeFormat, dateISOFormat } from '@/components/helpers/dateRange';
+import { localDateFormat } from '@/components/helpers/formatMonth';
 
 const LaporanPage = () => {
   const [laporan, setLaporan] = useState<any>([]);
@@ -56,9 +58,94 @@ const LaporanPage = () => {
     } else {
       const { data } = response.data;
       const filtered: any = data.filter((el: any) => el.Notulen !== null || el.Undangan !== null);
-      setLaporan(filtered);
+
+      let tanggalArr: any = []
+      let temp: any = [...filtered]
+      filtered.forEach((el: any, index: number) => {
+        const dateRange = dateRangeFormat(el.Undangan !== null ? el.Undangan.tanggal !== null && el.Undangan.tanggal[0] : el.Notulens[0].tanggal[0])
+        const tanggal = dateRange.map((date: any) => ({
+          tanggal: date,
+        }))
+        tanggalArr.push(tanggal);
+        if (el.Undangan !== null) {
+          temp[index] = {
+            uuid: el.uuid,
+            hari: el.hari,
+            bulan: el.bulan,
+            tahun: el.tahun,
+            kode_opd: el.kode_opd,
+            nip_pegawai: el.nip_pegawai,
+            Perangkat_Daerah: el.Perangkat_Daerah,
+            Pegawai: el.Pegawai,
+            Sasarans: el.Sasarans,
+            Taggings: el.Taggings,
+            Undangan: el.Undangan,
+            Peserta: tanggalArr[index],
+            Notulens: tanggalArr[index]
+          }
+        } else {
+          temp[index] = {
+            uuid: el.uuid,
+            hari: el.hari,
+            bulan: el.bulan,
+            tahun: el.tahun,
+            kode_opd: el.kode_opd,
+            nip_pegawai: el.nip_pegawai,
+            Perangkat_Daerah: el.Perangkat_Daerah,
+            Pegawai: el.Pegawai,
+            Sasarans: el.Sasarans,
+            Taggings: el.Taggings,
+            Undangan: el.Undangan,
+            Peserta: tanggalArr[index],
+            Notulens: el.Notulens
+          }
+        }
+      })
+      setLaporan(temp);
+      handleSetPeserta(filtered, temp);
       setLoading(false);
     }
+  }
+
+  const handleSetPeserta = (filtered: any, arr: any) => {
+    const updatedLaporan = arr.map((item: any) => {
+      const matchingResponseItem = filtered.find((responseItem: any) => responseItem.uuid === item.uuid);
+
+      if (matchingResponseItem) {
+        const updatedPeserta = item.Peserta.map((peserta: any) => {
+          const matchingData = matchingResponseItem.Peserta.find(
+            (responsePeserta: any) => responsePeserta.tanggal === peserta.tanggal
+          );
+
+          return matchingData ? { ...matchingData } : peserta;
+        });
+
+        const newPeserta = matchingResponseItem.Peserta
+          .filter((responsePeserta: any) => !item.Peserta.some((peserta: any) => peserta.tanggal === responsePeserta.tanggal))
+          .map((responsePeserta: any) => ({ ...responsePeserta }));
+
+        const updatedNotulen = item.Notulens.map((notulen: any) => {
+          const matchingData = matchingResponseItem.Notulens.find(
+            (responseNotulen: any) => localDateFormat(responseNotulen.tanggal[0].startDate) === notulen.tanggal
+          )
+
+          return matchingData ? { ...matchingData } : notulen
+        })
+
+        const newNotulen = matchingResponseItem.Notulens
+          .filter((filtered: any) => !item.Notulens?.some((el: any) => el.tanggal === localDateFormat(filtered.tanggal[0].startDate)))
+          .map((responseNotulen: any) => ({ ...responseNotulen }));
+
+        return {
+          ...item,
+          Peserta: [...updatedPeserta, ...newPeserta],
+          Notulens: [...updatedNotulen, ...newNotulen]
+        };
+      }
+
+      return item;
+    });
+    setLaporan(updatedLaporan);
   }
 
   const gradientStyle = {
@@ -72,8 +159,7 @@ const LaporanPage = () => {
       year: val.$y
     }
     setMonth(temp)
-  }
-  console.log(laporan);
+  };
 
   return (
     <div className='list-laporan-container relative'>
@@ -108,3 +194,148 @@ const LaporanPage = () => {
 }
 
 export default withAuth(LaporanPage);
+
+// const [laporan, setLaporan] = useState(
+//   [
+//     {
+//       "uuid": "8ed7b48c-e481-41b3-91f7-ecde3e54403b",
+//       "Perangkat_Daerah": {
+//         "nama_opd": "BADAN PERENCANAAN, PENELITIAN DAN PEMBANGUNAN DAERAH"
+//       },
+//       "Pegawai": {
+//         "nama": " ALI YOGA UTAMA ,S.STP",
+//         "nip": "198605162004121002"
+//       },
+//       "Peserta": [
+//         {
+//           "tanggal": "8"
+//         },
+//         {
+//           "tanggal": "9"
+//         }
+//       ]
+//     },
+//     {
+//       "uuid": "df99355e-6ac1-43e8-8e01-41949ee077f6",
+//       "Perangkat_Daerah": {
+//         "nama_opd": "BADAN PERENCANAAN, PENELITIAN DAN PEMBANGUNAN DAERAH"
+//       },
+//       "Pegawai": {
+//         "nama": " ALI YOGA UTAMA ,S.STP",
+//         "nip": "198605162004121002"
+//       },
+//       "Peserta": [
+//         {
+//           "tanggal": "7 Maret 2024"
+//         },
+//         {
+//           "tanggal": "8 Maret 2024"
+//         },
+//         {
+//           "tanggal": "9 Maret 2024"
+//         }
+//       ]
+//     }
+//   ]
+// )
+
+// const response = [
+//   {
+//     "uuid": "8ed7b48c-e481-41b3-91f7-ecde3e54403b",
+//     "Perangkat_Daerah": {
+//       "nama_opd": "BADAN PERENCANAAN, PENELITIAN DAN PEMBANGUNAN DAERAH"
+//     },
+//     "Pegawai": {
+//       "nama": " ALI YOGA UTAMA ,S.STP",
+//       "nip": "198605162004121002"
+//     },
+//     "Peserta": [],
+//   },
+//   {
+//     "uuid": "df99355e-6ac1-43e8-8e01-41949ee077f6",
+//     "Perangkat_Daerah": {
+//       "nama_opd": "BADAN PERENCANAAN, PENELITIAN DAN PEMBANGUNAN DAERAH"
+//     },
+//     "Pegawai": {
+//       "nama": " ALI YOGA UTAMA ,S.STP",
+//       "nip": "198605162004121002"
+//     },
+//     "Peserta": [
+//       {
+//         "id": 19,
+//         "uuid": "df99355e-6ac1-43e8-8e01-41949ee077f6",
+//         "jumlah_peserta": 5,
+//         "jenis_peserta": "eksternal",
+//         "tanggal": "9 Maret 2024",
+//         "createdAt": "2024-03-07T07:48:26.664Z",
+//         "updatedAt": "2024-03-07T07:48:26.664Z"
+//       },
+//       {
+//         "id": 18,
+//         "uuid": "df99355e-6ac1-43e8-8e01-41949ee077f6",
+//         "jumlah_peserta": 10,
+//         "jenis_peserta": "internal",
+//         "tanggal": "7 Maret 2024",
+//         "createdAt": "2024-03-07T07:48:18.129Z",
+//         "updatedAt": "2024-03-07T07:48:18.129Z"
+//       }
+//     ]
+//   }
+// ]
+
+
+
+
+// [
+//   {
+//     "uuid": "8ed7b48c-e481-41b3-91f7-ecde3e54403b",
+//     "Perangkat_Daerah": {
+//       "nama_opd": "BADAN PERENCANAAN, PENELITIAN DAN PEMBANGUNAN DAERAH"
+//     },
+//     "Pegawai": {
+//       "nama": " ALI YOGA UTAMA ,S.STP",
+//       "nip": "198605162004121002"
+//     },
+//     "Peserta": [
+//       {
+//         "tanggal": "8 Maret 2024"
+//       },
+//       {
+//         "tanggal": "9 Maret 2024"
+//       }
+//     ]
+//   },
+//   {
+//     "uuid": "df99355e-6ac1-43e8-8e01-41949ee077f6",
+//     "Perangkat_Daerah": {
+//       "nama_opd": "BADAN PERENCANAAN, PENELITIAN DAN PEMBANGUNAN DAERAH"
+//     },
+//     "Pegawai": {
+//       "nama": " ALI YOGA UTAMA ,S.STP",
+//       "nip": "198605162004121002"
+//     },
+//     "Peserta": [
+//       {
+//         "id": 18,
+//         "uuid": "df99355e-6ac1-43e8-8e01-41949ee077f6",
+//         "jumlah_peserta": 10,
+//         "jenis_peserta": "internal",
+//         "tanggal": "7 Maret 2024",
+//         "createdAt": "2024-03-07T07:48:18.129Z",
+//         "updatedAt": "2024-03-07T07:48:18.129Z"
+//       },
+//       {
+//         "tanggal": "8 Maret 2024"
+//       },
+//       {
+//         "id": 19,
+//         "uuid": "df99355e-6ac1-43e8-8e01-41949ee077f6",
+//         "jumlah_peserta": 5,
+//         "jenis_peserta": "eksternal",
+//         "tanggal": "9 Maret 2024",
+//         "createdAt": "2024-03-07T07:48:26.664Z",
+//         "updatedAt": "2024-03-07T07:48:26.664Z"
+//       },
+//     ]
+//   }
+// ]
