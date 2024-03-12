@@ -37,6 +37,7 @@ interface FormValues {
   penutup: any;
   atasan: any;
   signature: string;
+  isFilled: boolean;
 }
 
 interface OtherProps {
@@ -49,7 +50,7 @@ interface OtherProps {
   step?: string;
   sifat?: any;
   atasan?: any;
-  payload?: any;
+  undangan?: any;
   dibuatTanggal?: any;
 }
 
@@ -558,51 +559,53 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
             </div>
           )}
         </div> */}
-        <div className="text-danger text-title-ss mx-8 mt-3 mb-10">*Pastikan mengisi seluruh data undangan, (kecuali yang opsional)</div>
-        <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
-          <div className="w-[8em]">
-            <Button
-              variant="xl"
-              type="secondary"
-              className="button-container"
-              onClick={handleCancel}
-              rounded
-            >
-              <div className="flex justify-center items-center text-[#002DBB] font-Nunito" onClick={handleCancel}>
-                <span className="button-text">Batal</span>
-              </div>
-            </Button>
+        {!values.isFilled && (
+          <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
+            <div className="text-danger text-title-ss mx-8 mt-3 mb-10">*Pastikan mengisi seluruh data undangan, (kecuali yang opsional)</div>
+            <div className="w-[8em]">
+              <Button
+                variant="xl"
+                type="secondary"
+                className="button-container"
+                onClick={handleCancel}
+                rounded
+              >
+                <div className="flex justify-center items-center text-[#002DBB] font-Nunito" onClick={handleCancel}>
+                  <span className="button-text">Batal</span>
+                </div>
+              </Button>
+            </div>
+            <div className="w-[8em]">
+              <Button
+                type="button"
+                variant="xl"
+                className="button-container"
+                loading={loading}
+                rounded
+                onClick={handleSubmit}
+                disabled={
+                  values.ditujukan.length == 0 ||
+                    values.tanggalSurat === null ||
+                    values.nomorSurat === null ||
+                    values.sifat === null ||
+                    values.perihal === null ||
+                    values.pendahuluan === "" ||
+                    values.isiUndangan === "" ||
+                    values.rangeTanggal.length == 0 ||
+                    values.jam === null ||
+                    values.tempat === "" ||
+                    values.penutup === "" ||
+                    values.atasan === null ?
+                    true : false
+                }
+              >
+                <div className="flex justify-center items-center text-white font-Nunito">
+                  <span className="button-text">Simpan</span>
+                </div>
+              </Button>
+            </div>
           </div>
-          <div className="w-[8em]">
-            <Button
-              type="button"
-              variant="xl"
-              className="button-container"
-              loading={loading}
-              rounded
-              onClick={handleSubmit}
-              disabled={
-                values.ditujukan.length == 0 ||
-                  values.tanggalSurat === null ||
-                  values.nomorSurat === null ||
-                  values.sifat === null ||
-                  values.perihal === null ||
-                  values.pendahuluan === "" ||
-                  values.isiUndangan === "" ||
-                  values.rangeTanggal.length == 0 ||
-                  values.jam === null ||
-                  values.tempat === "" ||
-                  values.penutup === "" ||
-                  values.atasan === null ?
-                  true : false
-              }
-            >
-              <div className="flex justify-center items-center text-white font-Nunito">
-                <span className="button-text">Simpan</span>
-              </div>
-            </Button>
-          </div>
-        </div>
+        )}
       </div>
 
       <DateRangePicker
@@ -619,29 +622,30 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   )
 }
 
-function CreateForm({ handleSubmit, sifat, atasan, dibuatTanggal, payload, ...otherProps }: MyFormProps) {
+function CreateForm({ handleSubmit, sifat, atasan, dibuatTanggal, undangan, ...otherProps }: MyFormProps) {
   const FormWithFormik = withFormik({
     mapPropsToValues: () => ({
-      ditujukan: payload?.length != 0 ? payload?.ditujukan !== undefined ? payload?.ditujukan : [] : [],
+      ditujukan: undangan?.length != 0 ? undangan?.ditujukan !== undefined ? undangan?.ditujukan : [] : [],
       tanggalSurat: dibuatTanggal !== undefined ? dibuatTanggal : null,
-      nomorSurat: payload?.length != 0 ? payload?.nomor_surat !== undefined ? payload?.nomor_surat : null : null,
-      sifat: payload?.sifat !== undefined ? sifat : null,
-      perihal: payload?.length != 0 ? payload?.acara !== undefined ? payload?.acara : null : null,
-      pendahuluan: payload?.length != 0 ? payload?.pendahuluan !== undefined ? JSON.parse(payload?.pendahuluan) : "" : "",
-      isiUndangan: payload?.length != 0 ? payload?.isi_undangan !== undefined ? JSON.parse(payload?.isi_undangan) : "" : "",
+      nomorSurat: undangan?.length != 0 ? undangan?.nomor_surat !== undefined ? undangan?.nomor_surat : null : null,
+      sifat: undangan?.sifat !== undefined ? sifat : null,
+      perihal: undangan?.length != 0 ? undangan?.acara !== undefined ? undangan?.acara : null : null,
+      pendahuluan: undangan?.length != 0 ? undangan?.pendahuluan !== undefined ? JSON.parse(undangan?.pendahuluan) : "" : "",
+      isiUndangan: undangan?.length != 0 ? undangan?.isi_undangan !== undefined ? JSON.parse(undangan?.isi_undangan) : "" : "",
       rangeTanggal: [
         {
-          startDate: payload?.length != 0 ? payload?.tanggal[0]?.startDate != null ? new Date(payload?.tanggal[0]?.startDate) : null : null,
-          endDate: payload?.length != 0 ? payload?.tanggal[0]?.endDate != null ? new Date(payload?.tanggal[0]?.endDate) : null : null,
+          startDate: undangan?.length != 0 ? undangan?.tanggal[0]?.startDate != null ? new Date(undangan?.tanggal[0]?.startDate) : null : null,
+          endDate: undangan?.length != 0 ? undangan?.tanggal[0]?.endDate != null ? new Date(undangan?.tanggal[0]?.endDate) : null : null,
           key: "selection",
         },
       ],
-      jam: payload?.length != 0 ? payload?.waktu !== undefined ? payload?.waktu : null : null,
-      tempat: payload.length != 0 ? payload.lokasi !== undefined ? payload.lokasi !== "" ? payload.lokasi : "" : "" : "",
-      catatan: payload?.length != 0 ? payload?.catatan !== undefined ? JSON.parse(payload?.catatan) : "" : "",
-      penutup: payload?.length != 0 ? payload?.penutup !== undefined ? JSON.parse(payload?.penutup) : "" : "",
-      atasan: payload?.atasan !== undefined ? atasan : null,
-      signature: payload.signature !== undefined ? payload.signature !== '-' ? payload.signature : null : null
+      jam: undangan?.length != 0 ? undangan?.waktu !== undefined ? undangan?.waktu : null : null,
+      tempat: undangan.length != 0 ? undangan.lokasi !== undefined ? undangan.lokasi !== "" ? undangan.lokasi : "" : "" : "",
+      catatan: undangan?.length != 0 ? undangan?.catatan !== undefined ? JSON.parse(undangan?.catatan) : "" : "",
+      penutup: undangan?.length != 0 ? undangan?.penutup !== undefined ? JSON.parse(undangan?.penutup) : "" : "",
+      atasan: undangan?.atasan !== undefined ? atasan : null,
+      signature: undangan.signature !== undefined ? undangan.signature !== '-' ? undangan.signature : null : null,
+      isFilled: undangan.isFilled !== undefined ? undangan.isFilled : false
     }),
     validationSchema: Yup.object().shape({
       ditujukan: Yup.array()
@@ -784,7 +788,8 @@ const AddUndanganForm = ({
       signature: values.signature !== '' ? values.signature : '-',
       kode_opd: profile.Perangkat_Daerah.kode_opd,
       nip_pegawai: profile.nip,
-      nip_atasan: values.atasan.value
+      nip_atasan: values.atasan.value,
+      isFilled: true
     }
 
     setDataPayload(dataUndangan);
@@ -860,7 +865,7 @@ const AddUndanganForm = ({
           loading={loading}
           atasan={atasan}
           dibuatTanggal={dibuatTanggal}
-          payload={undangan}
+          undangan={undangan}
           step={step}
           sifat={sifat}
         />

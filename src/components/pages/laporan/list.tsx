@@ -11,7 +11,7 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { FaCheck } from "react-icons/fa";
-import { getShortDate } from '@/components/hooks/formatDate';
+import { formatDate, getShortDate } from '@/components/hooks/formatDate';
 import { setPayload } from '@/store/payload/action';
 import { MdBookmarkAdd } from "react-icons/md";
 import XAddTagging from './x-modal/XAddTagging';
@@ -34,28 +34,39 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
   const [peserta, setPeserta] = useState<any>([]);
   const [notulen, setNotulen] = useState<number>(0);
   const [notulens, setNotulens] = useState<any>([]);
-  const [rangeDate, setRangeDate] = useState<any>([]);
+  const [rangeDateUndangan, setRangeDateUndangan] = useState<any>([]);
+  const [rangeDateNotulen, setRangeDateNotulen] = useState<any>([]);
 
   useEffect(() => {
     handleSetPeserta();
   }, []);
 
   const handleSetPeserta = () => {
-    let dates: any = [];
-    data.forEach((el: any) => {
-      const dateRangeUndangan = dateRangeFormat(el.Undangan !== null && el.Undangan.tanggal !== null && el.Undangan.tanggal[0]);
-      const dateRangeNotulen = dateRangeFormat(el.Notulens.length != 0 && el.Notulens[0].tanggal[0]);
-      // console.log(dateRangeUndangan, 'plpl');
+    let datesUndangan: any = [];
+    let datesNotulen: any = [];
 
-      let dateRange = [...dateRangeUndangan, ...dateRangeNotulen];
-      const temp = dateRange.map((date: any) => ({
+    data.forEach((el: any, index: number) => {
+      const dateRangeUndangan = dateRangeFormat(el.Undangan !== null && el.Undangan.tanggal !== null && el.Undangan.tanggal[0]);
+      const dateRangeNotulen = dateRangeFormat(el.Notulens.length != 0 && el.Notulens[index].tanggal[0]);
+
+      const tempUndangan = dateRangeUndangan.map((date: any) => ({
         tanggal: date,
         jumlah_peserta: 0,
         jenis_peserta: '',
       }))
-      dates.push(temp);
+      datesUndangan.push(tempUndangan);
+
+      const tempNotulen = dateRangeNotulen.map((date: any) => ({
+        tanggal: date,
+        jumlah_peserta: 0,
+        jenis_peserta: '',
+      }))
+      datesNotulen.push(tempNotulen);
     })
-    setRangeDate(dates);
+    // console.log(dates);
+
+    setRangeDateUndangan(datesUndangan);
+    setRangeDateNotulen(datesNotulen)
     // const updatedState = temp.map((item: any) => {
     //   const matchingData = data[0].Peserta.find((data: any) => {
     //     const date = new Date(data.tanggal).getDate();
@@ -84,12 +95,17 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
     setPage(0);
   };
 
-  const handleClickAddForm = (data: any, url: string) => {
+  const handleClickAddForm = (data: any, index: number, url: string) => {
     if (data.Undangan !== null) {
+      const dateRange = dateRangeFormat(data.Undangan.tanggal[0]);
+      const dateFormat = dateISOFormat(dateRange[index]);
+
       let temp: any = data.Undangan;
+      temp.tanggal = new Array(dateFormat);
       temp.hari = data.hari;
       temp.bulan = data.bulan;
       temp.tahun = data.tahun;
+
       const stored = { step1: temp };
       dispatch(setPayload(stored));
       router.push(url);
@@ -132,17 +148,17 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
     }
   }
 
-  const handleDetail = (id: number, type: string, data?: any) => {
+  const handleDetail = (data?: any, id?: number, type?: string) => {
     switch (type) {
       case 'undangan':
-        router.push(`/undangan/detail/${id}`);
+        router.push(`/undangan/detail/${data.Undangan.id}`);
         break;
       case 'peserta':
         const temp = {
           step1: data.Undangan
         }
         dispatch(setPayload(temp));
-        router.push(`/peserta/${id}?type=detail`);
+        router.push(`/peserta/${data.Undangan.id}?type=detail`);
         break;
       case 'notulen':
         router.push(`/notulen/detail/${id}`);
@@ -198,9 +214,28 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                         </TableCell>
                         <TableCell align='center'>
                           <div className='flex flex-col gap-4 items-center justify-center'>
-                            {rangeDate.length != 0 && rangeDate[index].map((el: any, i: number) => (
-                              <TableRow key={i}>{el.tanggal}</TableRow>
-                            ))}
+                            {row.Undangan !== null ? (
+                              rangeDateUndangan.length != 0 && rangeDateUndangan[index].map((el: any, i: number) => (
+                                <TableRow key={i}>{el.tanggal}</TableRow>
+                              ))
+                            ) : (
+                              <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+                                <div className="flex py-3 px-4">
+                                  <div className="flex">
+                                    {row.Notulens[0].tanggal[0]?.startDate !== null && (
+                                      <span>{formatDate(row.Notulens[0].tanggal[0]?.startDate).split(', ')[1]}</span>
+                                    )}
+                                    {row.Notulens[0].tanggal[0]?.endDate !== null &&
+                                      row.Notulens[0].tanggal[0]?.endDate !== row.Notulens[0].tanggal[0]?.startDate && (
+                                        <>
+                                          <span>-</span>
+                                          <span>{formatDate(row.Notulens[0].tanggal[0]?.endDate).split(', ')[1]}</span>
+                                        </>
+                                      )}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </TableCell>
                         <TableCell align='center'>
@@ -226,7 +261,7 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                                     {el.uuid !== undefined ? (
                                       <div
                                         className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
-                                        onClick={() => handleDetail(row.Peserta[i].id, 'peserta', row)}><FaCheck size={14} />
+                                        onClick={() => handleDetail(row, 'peserta')}><FaCheck size={14} />
                                       </div>
                                     ) : (
                                       <div
@@ -236,7 +271,24 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                                   </TableRow>
                                 ))
                               ) : (
-                                <div className='text-danger w-[28px] h-[28px] flex items-center justify-center'><FaCheck size={14} /></div>
+                                row.Undangan !== null ? (
+                                  row.Peserta.map((el: any, i: number) => (
+                                    <TableRow key={i}>
+                                      {el.uuid !== undefined ? (
+                                        <div
+                                          className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
+                                          onClick={() => handleDetail(row, 'peserta')}><FaCheck size={14} />
+                                        </div>
+                                      ) : (
+                                        <div
+                                          className='rounded-full bg-xl-base w-6 h-6 flex items-center justify-center text-white hover:shadow-lg hover:cursor-pointer duration-300'
+                                        >+</div>
+                                      )}
+                                    </TableRow>
+                                  ))
+                                ) : (
+                                  <div className='text-danger w-[28px] h-[28px] flex items-center justify-center'><FaCheck size={14} /></div>
+                                )
                               )
                             )}
                           </div>
@@ -249,59 +301,41 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                                   {el.uuid !== undefined ? (
                                     <div
                                       className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
-                                      onClick={() => handleDetail(el.id, 'notulen', row)}><FaCheck size={14} />
+                                      onClick={() => handleDetail(row, el.id, 'notulen')}><FaCheck size={14} />
                                     </div>
                                   ) : (
                                     <div
                                       className='rounded-full bg-xl-base w-6 h-6 flex items-center justify-center text-white hover:shadow-lg hover:cursor-pointer duration-300'
-                                      onClick={() => handleClickAddForm(row, '/notulen/form')}
+                                      onClick={() => handleClickAddForm(row, i, '/notulen/form?type=add')}
                                     >+</div>
                                   )}
                                 </TableRow>
                               ))
                             ) : (
-                              <div
-                                className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
-                                onClick={() => handleDetail(row, 'notulen', row)}><FaCheck size={14} />
-                              </div>
+                              row.Undangan !== null ? (
+                                row.Notulens.map((el: any, i: number) => (
+                                  <TableRow key={i}>
+                                    {el.uuid !== undefined ? (
+                                      <div
+                                        className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
+                                        onClick={() => handleDetail(row, el.id, 'notulen')}><FaCheck size={14} />
+                                      </div>
+                                    ) : (
+                                      <div
+                                        className='rounded-full bg-xl-base w-6 h-6 flex items-center justify-center text-white hover:shadow-lg hover:cursor-pointer duration-300'
+                                        onClick={() => handleClickAddForm(row, i, '/notulen/form?type=add')}
+                                      >+</div>
+                                    )}
+                                  </TableRow>
+                                ))
+                              ) : (
+                                <div
+                                  className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
+                                  onClick={() => handleDetail(row, row.Notulens[0].id, 'notulen')}><FaCheck size={14} />
+                                </div>
+                              )
                             )}
-                            {/* {row.Notulens.map((el: any, i: number) => (
-                              <TableRow key={i}>
-                                {el.uuid !== undefined ? (
-                                  <div
-                                    className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
-                                    onClick={() => handleDetail(el.id, 'notulen', row)}><FaCheck size={14} />
-                                  </div>
-                                ) : (
-                                  <div
-                                    className='rounded-full bg-xl-base w-6 h-6 flex items-center justify-center text-white hover:shadow-lg hover:cursor-pointer duration-300'
-                                    onClick={() => handleClickAddForm(row, '/notulen/form')}
-                                  >+</div>
-                                )}
-                              </TableRow>
-                            ))} */}
-                            {/* {row.Notulens.length != 0 ? (
-                              notulens.map((el: any, i: number) => (
-                                <TableRow key={i}>
-                                  {el.uuid !== undefined ? (
-                                    <div
-                                      className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
-                                      onClick={() => handleDetail(el.id, 'notulen', row)}><FaCheck size={14} />
-                                    </div>
-                                  ) : (
-                                    <div
-                                      className='rounded-full bg-xl-base w-6 h-6 flex items-center justify-center text-white hover:shadow-lg hover:cursor-pointer duration-300'
-                                      onClick={() => handleClickAddForm(row, '/notulen/form')}
-                                    >+</div>
-                                  )}
-                                </TableRow>
-                              ))
-                            ) : (
-                              <div
-                                className='rounded-full bg-xl-base w-6 h-6 flex items-center justify-center text-white hover:shadow-lg hover:cursor-pointer duration-300'
-                                onClick={() => handleClickAddForm(row, '/notulen/form')}
-                              >+</div>
-                            )} */}
+
                           </div>
                         </TableCell>
                       </TableRow>
@@ -310,97 +344,6 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                   )
               }
             </TableBody>
-            {/* <TableBody>
-              {
-                data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .sort((a: any, b: any) => b.id - a.id)
-                  .map((row: any, index: number) => (
-                    <React.Fragment>
-                      <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                        <TableCell align="center">{index + 1}</TableCell>
-                        <TableCell align="center">
-                          {row.Undangan !== null ? (
-                            row.Undangan.tanggal[0]?.startDate !== row.Undangan.tanggal[0]?.endDate
-                              ? getShortDate(row.Undangan.tanggal[0]?.startDate) + "-" + getShortDate(row.Undangan.tanggal[0]?.endDate)
-                              : getShortDate(row.Undangan.tanggal[0]?.startDate)
-                          ) : row.Notulen !== null ? (
-                            row.Notulen.tanggal[0]?.startDate !== row.Notulen.tanggal[0]?.endDate
-                              ? getShortDate(row.Notulen.tanggal[0]?.startDate) + "-" + getShortDate(row.Notulen.tanggal[0]?.endDate)
-                              : getShortDate(row.Notulen.tanggal[0]?.startDate)
-                          ) : null}
-                        </TableCell>
-                        <TableCell align="center" width={150}>
-                          <div className='flex gap-2 items-center justify-center'>
-                            {row.Taggings.length !== 0 ? (row.Taggings.map((el: any, i: number) => (
-                              <div key={i} className={`${row.Taggings.length != 1 && 'bg-[#6b7280] text-white px-4 rounded-xl'}`}>{el.nama_tagging}</div>
-                            ))
-                            ) : "-"}
-                          </div>
-                        </TableCell>
-                        {profile.role == 1 && <TableCell align="center">{trimText(row.Perangkat_Daerah.nama_opd)}</TableCell>}
-                        {profile.role == 1 || profile.role == 2 && <TableCell align="center">{row.Pegawai.nama}</TableCell>}
-                        <TableCell align="center">
-                          {row.Undangan !== null
-                            ? row.Undangan.acara
-                            : row.Notulen.length != 0 ? row.Notulen.acara : null
-                          }
-                        </TableCell>
-                        <TableCell align="center" className='flex items-center justify-center'>
-                          <div className='flex items-center justify-center'>
-                            {row.Undangan !== null ? (
-                              <div className='text-danger w-[28px] h-[28px] flex items-center justify-center'><FaCheck size={14} /></div>
-                            ) : (
-                              <div
-                                className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
-                                onClick={() => handleDetail(row.Undangan?.id, 'undangan')}><FaCheck size={14}
-                                /></div>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell align="center">
-                          <div className='flex items-center justify-center'>
-                            {row.Undangan !== null ? (
-                              <div className='text-danger w-[28px] h-[28px] flex items-center justify-center'><FaCheck size={14} /></div>
-                            ) : (
-                              row.Undangan.jumlah_peserta !== null ? (
-                                <div
-                                  className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
-                                  onClick={() => handleDetail(row.Undangan?.id, 'peserta', row)}><FaCheck size={14} />
-                                </div>
-                              ) : (
-                                <div
-                                  className='border border-xl-base p-2 text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1'
-                                  onClick={() => handleClickAddForm(row, `/peserta/${row.Undangan?.id}?type=detail`)}
-                                >+</div>
-                              )
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell align="center">
-                          <div className='flex items-center justify-center'>
-                            {row.Notulen === null ? (
-                              <div
-                                className='border border-xl-base p-2 text-xl-base rounded-md hover:shadow-lg hover:cursor-pointer text-title-ss2 text-center py-1'
-                                onClick={() => handleClickAddForm(row, '/notulen/form')}
-                              >+</div>
-                            ) : (
-                              <div
-                                className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
-                                onClick={() => handleDetail(row.Notulen?.id, 'notulen')}><FaCheck size={14}
-                                /></div>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell align="center">
-                          <button onClick={() => handleAddTags(row)}>
-                            <MdBookmarkAdd size={22} />
-                          </button>
-                        </TableCell>
-                      </TableRow>
-                    </React.Fragment>
-                  ))
-              }
-            </TableBody> */}
           </Table>
         </TableContainer>
         <TablePagination

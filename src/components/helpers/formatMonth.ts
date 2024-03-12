@@ -42,11 +42,10 @@ export const formattedDate = (data: any) => {
 }
 
 export const localDateFormat = (data: any) => {
-  const inputDate = new Date("2024-03-07T17:00:00.000Z");
 
   // Convert to the desired time zone (e.g., 'Asia/Jakarta')
   const options = { timeZone: 'Asia/Jakarta' };
-  const convertedDate = new Date(inputDate.toLocaleString('en-US', options));
+  const convertedDate = new Date(data.toLocaleString('en-US', options));
 
   // Format the date as "8 Maret 2024"
   const formattedDate = convertedDate.toLocaleDateString('id-ID', {

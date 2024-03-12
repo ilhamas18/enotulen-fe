@@ -26,6 +26,7 @@ const AddNotulenProps = () => {
   const [trigger, setTrigger] = useState<boolean>(false);
 
   const step: any = searchParams.get('step');
+  const type: any = searchParams.get('type');
 
   const { profile, payload } = useSelector((state: State) => ({
     profile: state.profile.profile,
@@ -34,7 +35,7 @@ const AddNotulenProps = () => {
 
   useEffect(() => {
     if (profile.role != 2 && profile.role != 3 && profile.role != 4) router.push('/unauthorized');
-    fetchDataAtasan();
+    if (profile.length != 0) fetchDataAtasan();
     if (payload.step3 !== undefined) setNotulen(payload.step3);
     else if (payload.step1 !== undefined) {
       setNotulen(payload.step1);
@@ -82,9 +83,38 @@ const AddNotulenProps = () => {
       nip_pegawai: profile.nip,
       nip_atasan: null,
     }));
-    setNotulens(tempArr);
-    fetchNotulen(tempArr);
+    if (step !== null) {
+      setNotulens(tempArr);
+      fetchNotulen(tempArr);
+    } else {
+      setNotulens({
+        tagging: [],
+        tanggal: data.length != 0 ? data.tanggal : null,
+        waktu: data.length != 0 ? data.waktu !== null ? data.waktu : null : null,
+        pendahuluan: data.length != 0 ? data.pendahuluan !== null ? data.pendahuluan : null : null,
+        peserta_rapat: data.length != 0 ? data.peserta_rapat !== undefined ? data.peserta_rapat : [] : [],
+        isi_rapat: data.length != 0 ? data?.isi_rapat !== undefined ? data?.isi_rapat : null : null,
+        tindak_lanjut: data.length != 0 ? data.tindak_lanjut !== undefined ? data.tindak_lanjut : null : null,
+        lokasi: data.length != 0 ? data.lokasi !== "" ? data.lokasi : "" : "",
+        acara: data.length != 0 ? data.acara !== "" ? data.acara : "" : "",
+        atasan: data.length != 0 ? atasan : null,
+        status: "-",
+        hari: data.length != 0 ? data.hari : null,
+        bulan: data.length != 0 ? data.bulan : null,
+        tahun: data.length != 0 ? data.tahun : null,
+        link_img_surat_undangan: data.link_img_surat_undangan !== null ? data.link_img_surat_undangan : null,
+        link_img_daftar_hadir: data.link_img_daftar_hadir !== null ? data.link_img_daftar_hadir : null,
+        link_img_spj: data.link_img_spj !== null ? data.link_img_spj : null,
+        link_img_foto: data.link_img_foto !== null ? data.link_img_foto : null,
+        link_img_pendukung: data.link_img_pendukung !== null ? data.link_img_pendukung : null,
+        signature: data.signature !== undefined ? data.signature !== '-' ? data.signature : null : null,
+        kode_opd: profile.Perangkat_Daerah.kode_opd,
+        nip_pegawai: profile.nip,
+        nip_atasan: null,
+      });
+    }
   }
+  // console.log(notulens, 'notulen');
 
   const rangeDate = dateRangeFormat(notulen?.tanggal !== undefined && notulen?.tanggal[0]);
 
@@ -217,35 +247,48 @@ const AddNotulenProps = () => {
                     payload={payload}
                     notulen={el}
                     notulens={notulens}
-                    setNotulens={setNotulens}
                     step={step}
                     index={i}
                     rangeDate={rangeDate}
                     tanggal={tanggal}
                     dataAtasan={dataAtasan}
                     setLoading={setLoading}
-                    trigger={trigger}
                     setTrigger={setTrigger}
                   />
                 </div>
               ))
             ) : null
           ) : (
-            <div>
+            type === 'add' ? (
+              notulens.length != 0 && (
+                <AddNotulenForm
+                  profile={profile}
+                  payload={payload}
+                  notulen={notulens}
+                  notulens={notulens}
+                  step={step}
+                  rangeDate={rangeDate}
+                  tanggal={tanggal}
+                  dataAtasan={dataAtasan}
+                  setLoading={setLoading}
+                  setTrigger={setTrigger}
+                  type={type}
+                />
+              )
+            ) : (
               <AddNotulenForm
                 profile={profile}
                 payload={payload}
+                notulen={notulens}
                 notulens={notulens}
-                setNotulens={setNotulens}
                 step={step}
                 rangeDate={rangeDate}
                 tanggal={tanggal}
                 dataAtasan={dataAtasan}
                 setLoading={setLoading}
-                trigger={trigger}
                 setTrigger={setTrigger}
               />
-            </div>
+            )
           )}
           {step !== null && (
             <div className="flex justify-between mt-6">

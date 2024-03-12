@@ -68,6 +68,7 @@ interface OtherProps {
   key?: number;
   order?: number;
   notulens?: any;
+  type?: string;
 }
 
 interface MyFormProps extends OtherProps {
@@ -91,6 +92,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     index,
     rangeDate,
     notulens,
+    type,
     ref,
   } = props;
   const router = useRouter();
@@ -427,14 +429,34 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
             {step !== null && <div className="flex items-center justify-center text-center bg-meta-6 font-bold py-2 w-full text-white mt-6">{index !== undefined && rangeDate[index]}</div>}
             <div className="px-8 flex flex-col space-y-7 mt-4">
               <div className="data flex flex-row mt-4">
-                <div
-                  className={`flex border-2 ${errors.rangeTanggal ? "border-xl-pink" : "border-light-gray"
-                    } rounded-lg w-full py-3 px-4`}
-                  onClick={() => step === null && setOpenDateRange(true)}
-                >
-                  {values?.rangeTanggal[0]?.startDate === null ? (
-                    <span>Pilih Hari / Tanggal</span>
-                  ) : (
+                {step === null && type === undefined ? (
+                  <div
+                    className={`flex border-2 ${errors.rangeTanggal ? "border-xl-pink" : "border-light-gray"
+                      } rounded-lg w-full py-3 px-4`}
+                    onClick={() => step === null && setOpenDateRange(true)}
+                  >
+                    {values?.rangeTanggal[0]?.startDate === null ? (
+                      <span>Pilih Hari / Tanggal</span>
+                    ) : (
+                      <div className="flex gap-4">
+                        {values?.rangeTanggal[0]?.startDate !== null && (
+                          <span>
+                            {formatDate(values?.rangeTanggal[0]?.startDate)}
+                          </span>
+                        )}
+                        {values?.rangeTanggal[0]?.endDate !== null &&
+                          values?.rangeTanggal[0]?.endDate !==
+                          values?.rangeTanggal[0]?.startDate && (
+                            <span>
+                              {" "}
+                              - {formatDate(values.rangeTanggal[0]?.endDate)}
+                            </span>
+                          )}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="w-full border-2 border-light-gray px-4 py-2 rounded-md">
                     <div className="flex gap-4">
                       {values?.rangeTanggal[0]?.startDate !== null && (
                         <span>
@@ -450,8 +472,8 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                           </span>
                         )}
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
               <div className="data flex flex-row w-full">
                 <TextInput
@@ -465,7 +487,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                       target: { name: "jam", value: e.$d },
                     });
                   }}
-                  disabled={step !== null ? true : false}
+                  disabled={step !== null || type !== undefined ? true : false}
                   value={values.jam}
                   errors={errors.jam}
                 />
@@ -480,14 +502,14 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   change={handleChange}
                   value={values.acara}
                   handleBlur={handleBlur}
-                  disabled={step !== null ? true : false}
+                  disabled={step !== null || type !== undefined ? true : false}
                   errors={errors.acara}
                 />
               </div>
               <div className="mt-2 -pb-2 text-title-xsm font-bold">Penjelasan :</div>
               <div>
                 <div className="text-deep-gray">Pendahuluan</div>
-                {step === null ? (
+                {step === null && type === undefined ? (
                   <>
                     <div className="container border-2 border-light-gray rounded-lg">
                       <EditorBlock
@@ -736,7 +758,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                           <div>{el}</div>
                         ))}
                       </div>
-                      {step === null && <div>
+                      {step === null && type === undefined && <div>
                         <button
                           onClick={handleDeleteLocation}
                         >
@@ -784,7 +806,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                             <div>{el}</div>
                           ))}
                         </div>
-                        {step === null && <div>
+                        {step === null && type === undefined && <div>
                           <button
                             onClick={handleDeleteLocation}
                           >
@@ -807,7 +829,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   value={values.atasan}
                   placeholder="Ketik dan pilih atasan"
                   options={dataAtasan}
-                  disabled={step !== null ? true : false}
+                  disabled={step !== null || type !== undefined ? true : false}
                   handleBlur={handleBlur}
                   setValueSelected={handleChange}
                   change={(selectedOption: any) => {
@@ -1158,26 +1180,26 @@ function CreateForm({ handleSubmit, order, payload, tanggal, dibuatTanggal, ...o
       tagging: [],
       rangeTanggal: [
         {
-          startDate: tanggal.length != 0 && order !== undefined ? payload !== undefined ? payload.tanggal.startDate : payload.rangeTanggal[0]?.startDate : null,
-          endDate: tanggal.length != 0 && order !== undefined ? payload !== undefined ? payload.tanggal.endDate : payload.rangeTanggal[0]?.endDate : null,
+          startDate: tanggal.length != 0 && order !== undefined ? payload.length != 0 ? tanggal[order].startDate : tanggal[0]?.startDate : null,
+          endDate: tanggal.length != 0 && order !== undefined ? payload.length != 0 ? tanggal[order].endDate : tanggal[0]?.endDate : null,
           key: "selection",
         },
       ],
-      jam: payload !== undefined ? payload.waktu : null,
-      pendahuluan: payload !== undefined ? payload.pendahuluan !== null ? JSON.parse(payload.pendahuluan) : null : null,
-      pesertaArray: payload !== undefined ? payload.peserta_rapat : [],
-      isiRapat: payload !== undefined ? payload.isi_rapat !== null ? JSON.parse(payload?.isi_rapat) : null : null,
-      tindakLanjut: payload !== undefined ? payload.tindak_lanjut !== null ? JSON.parse(payload.tindak_lanjut) : null : null,
-      lokasi: payload !== undefined ? payload.lokasi : '',
-      acara: payload !== undefined ? payload.acara : '',
-      atasan: payload !== undefined ? payload.atasan : null,
-      suratUndangan: payload !== undefined ? payload.link_img_surat_undangan : null,
-      daftarHadir: payload !== undefined ? payload.link_img_daftar_hadir : null,
-      spj: payload !== undefined ? payload.link_img_spj : null,
-      foto: payload !== undefined ? payload.link_img_foto : null,
-      pendukung: payload !== undefined ? payload.link_img_pendukung : null,
-      signature: payload !== undefined ? payload.signature : null,
-      dibuatTanggal: payload !== undefined ? dibuatTanggal : null
+      jam: payload.length != 0 ? payload.waktu : null,
+      pendahuluan: payload.length != 0 ? payload.pendahuluan !== null ? JSON.parse(payload.pendahuluan) : null : null,
+      pesertaArray: payload.length != 0 ? payload.peserta_rapat : [],
+      isiRapat: payload.length != 0 ? payload.isi_rapat !== null ? JSON.parse(payload?.isi_rapat) : null : null,
+      tindakLanjut: payload.length != 0 ? payload.tindak_lanjut !== null ? JSON.parse(payload.tindak_lanjut) : null : null,
+      lokasi: payload.length != 0 ? payload.lokasi : '',
+      acara: payload.length != 0 ? payload.acara : '',
+      atasan: payload.length != 0 ? payload.atasan : null,
+      suratUndangan: payload.length != 0 ? payload.link_img_surat_undangan : null,
+      daftarHadir: payload.length != 0 ? payload.link_img_daftar_hadir : null,
+      spj: payload.length != 0 ? payload.link_img_spj : null,
+      foto: payload.length != 0 ? payload.link_img_foto : null,
+      pendukung: payload.length != 0 ? payload.link_img_pendukung : null,
+      signature: payload.length != 0 ? payload.signature : null,
+      dibuatTanggal: payload.length != 0 ? dibuatTanggal : null
     }),
     validationSchema: Yup.object().shape({
       rangeTanggal: Yup.array()
@@ -1217,15 +1239,14 @@ interface PropTypes {
   payload: any;
   notulen?: any;
   notulens: any;
-  setNotulens: any;
   step: string;
   index?: number;
   rangeDate: any;
   tanggal: any;
   dataAtasan: any;
   setLoading: any;
-  trigger: boolean;
   setTrigger: any;
+  type?: string;
 }
 
 const AddNotulenForm = ({
@@ -1233,15 +1254,14 @@ const AddNotulenForm = ({
   payload,
   notulen,
   notulens,
-  setNotulens,
   step,
   index,
   rangeDate,
   tanggal,
   dataAtasan,
   setLoading,
-  trigger,
-  setTrigger
+  setTrigger,
+  type
 }: PropTypes) => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -1256,12 +1276,13 @@ const AddNotulenForm = ({
         setDibuatTanggal(formattedDate(tempDate));
       }
     }
+    if (index !== undefined) setSudenly(index)
   }, [])
 
   const handleSubmit = async (values: FormValues) => {
     // setLoading(true);
     let uuid;
-    if (step !== null) {
+    if (payload.step1 !== undefined) {
       uuid = payload.step1.uuid;
     } else {
       uuid = uuidv4();
@@ -1329,7 +1350,11 @@ const AddNotulenForm = ({
         setLoading(false);
         setTrigger(true);
       } else {
-        router.push('/notulen/laporan');
+        if (type !== undefined) {
+          router.push('/laporan');
+        } else {
+          router.push('/notulen/laporan');
+        }
       }
     }
 
@@ -1417,6 +1442,7 @@ const AddNotulenForm = ({
     //   }
     // }
   };
+  // console.log(notulens, 'mombai');
 
   return (
     <div>
@@ -1440,7 +1466,7 @@ const AddNotulenForm = ({
         <CreateForm
           handleSubmit={handleSubmit}
           key={sudenly}
-          payload={notulen}
+          payload={notulens}
           step={step}
           index={index}
           rangeDate={rangeDate}
@@ -1449,8 +1475,8 @@ const AddNotulenForm = ({
           notulens={notulens}
           dibuatTanggal={dibuatTanggal}
           dataAtasan={dataAtasan}
+          type={type}
         />
-
       )}
     </div>
   );

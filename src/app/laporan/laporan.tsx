@@ -1,7 +1,7 @@
 "use client";
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useSelector, useDispatch } from 'react-redux';
 import { State } from '@/store/reducer';
 import withAuth from '@/components/hocs/withAuth';
 import { fetchApi } from '@/app/api/request';
@@ -15,8 +15,10 @@ import { ImTable2 } from 'react-icons/im';
 import Loading from '@/components/global/Loading/loading';
 import { dateRangeFormat, dateISOFormat } from '@/components/helpers/dateRange';
 import { localDateFormat } from '@/components/helpers/formatMonth';
+import { setPayload } from '@/store/payload/action';
 
 const LaporanPage = () => {
+  const dispatch = useDispatch();
   const [laporan, setLaporan] = useState<any>([]);
   const [month, setMonth] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -35,9 +37,9 @@ const LaporanPage = () => {
       const currentShortMonth = currentDate.getMonth() + 1;
       const currentMonth = month !== null ? month.toLocaleString("id-ID", { month: "long", }) : currentDate.toLocaleString("id-ID", { month: "long", });
       const currentYear = currentDate.getFullYear();
-
       setMonth({ month: currentShortMonth, year: currentYear })
     }
+    dispatch(setPayload([]));
   }, [month]);
 
   const fetchLaporan = async () => {
@@ -57,8 +59,9 @@ const LaporanPage = () => {
       });
     } else {
       const { data } = response.data;
-      const filtered: any = data.filter((el: any) => el.Notulen !== null || el.Undangan !== null);
+      console.log(data);
 
+      const filtered: any = data.filter((el: any) => el.Notulen !== null || el.Undangan !== null);
       let tanggalArr: any = []
       let temp: any = [...filtered]
       filtered.forEach((el: any, index: number) => {
@@ -83,7 +86,7 @@ const LaporanPage = () => {
             Peserta: tanggalArr[index],
             Notulens: tanggalArr[index]
           }
-        } else {
+        } else if (el.Notulens.length != 0) {
           temp[index] = {
             uuid: el.uuid,
             hari: el.hari,
@@ -101,7 +104,6 @@ const LaporanPage = () => {
           }
         }
       })
-      setLaporan(temp);
       handleSetPeserta(filtered, temp);
       setLoading(false);
     }
