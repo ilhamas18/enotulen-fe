@@ -165,7 +165,7 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
                 </div>
               ) : (
                 <div className="flex space-x-4">
-                  <div className="border bg-white border-danger text-danger hover:shadow-lg rounded-lg px-8 py-1 hover:shadow-lg hover:cursor-pointer" onClick={handleBack}>
+                  <div className="border bg-white border-danger text-danger hover:shadow-lg rounded-lg px-8 py-1 hover:cursor-pointer" onClick={handleBack}>
                     Kembali
                   </div>
                   <div className={`${data.Uuid.Pegawai?.nip === profile.nip ? 'block' : 'hidden'} border border-none rounded-lg px-8 py-1 hover:shadow-lg bg-warning text-white hover:cursor-pointer`} onClick={() => setIsOpenEdit(true)}>
@@ -272,7 +272,11 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
                 </div>
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                    {data.lokasi}
+                    <div className="flex flex-col">
+                      {data.lokasi.split(', ').map((el: any, i: number) => (
+                        <div>{el}</div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

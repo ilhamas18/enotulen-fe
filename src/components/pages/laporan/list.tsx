@@ -31,9 +31,7 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [openAddTagging, setOpenAddTagging] = useState<boolean>(false);
   const [openAddSasaran, setOpenAddSasaran] = useState<boolean>(false);
-  const [peserta, setPeserta] = useState<any>([]);
   const [notulen, setNotulen] = useState<number>(0);
-  const [notulens, setNotulens] = useState<any>([]);
   const [rangeDateUndangan, setRangeDateUndangan] = useState<any>([]);
   const [rangeDateNotulen, setRangeDateNotulen] = useState<any>([]);
 
@@ -63,27 +61,9 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
       }))
       datesNotulen.push(tempNotulen);
     })
-    // console.log(dates);
 
     setRangeDateUndangan(datesUndangan);
-    setRangeDateNotulen(datesNotulen)
-    // const updatedState = temp.map((item: any) => {
-    //   const matchingData = data[0].Peserta.find((data: any) => {
-    //     const date = new Date(data.tanggal).getDate();
-    //     return date.toString() === item.tanggal;
-    //   });
-
-    //   return matchingData
-    //     ? {
-    //       tanggal: item.tanggal,
-    //       uuid: matchingData.uuid,
-    //       jumlah_peserta: matchingData.jumlah_peserta,
-    //       jenis_peserta: matchingData.jenis_peserta
-    //     }
-    //     : item;
-    // })
-    // setPeserta(updatedState);
-    // if (data[0].Peserta.length != 0) setPeserta(updatedState);
+    setRangeDateNotulen(datesNotulen);
   }
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -95,20 +75,29 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
     setPage(0);
   };
 
-  const handleClickAddForm = (data: any, index: number, url: string) => {
+  const handleClickAddForm = (data: any, index: number, type: string, url: string) => {
     if (data.Undangan !== null) {
       const dateRange = dateRangeFormat(data.Undangan.tanggal[0]);
       const dateFormat = dateISOFormat(dateRange[index]);
-
       let temp: any = data.Undangan;
       temp.tanggal = new Array(dateFormat);
       temp.hari = data.hari;
       temp.bulan = data.bulan;
       temp.tahun = data.tahun;
-
       const stored = { step1: temp };
-      dispatch(setPayload(stored));
-      router.push(url);
+
+      switch (type) {
+        case 'peserta':
+          dispatch(setPayload(stored));
+          router.push(url);
+          break;
+        case 'notulen':
+          dispatch(setPayload(stored));
+          router.push(url);
+          break;
+        default:
+          break;
+      }
     }
     // if (data.Notulen !== null) {
     //   let temp: any = data.Notulen;
@@ -154,11 +143,7 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
         router.push(`/undangan/detail/${data.Undangan.id}`);
         break;
       case 'peserta':
-        const temp = {
-          step1: data.Undangan
-        }
-        dispatch(setPayload(temp));
-        router.push(`/peserta/${data.Undangan.id}?type=detail`);
+        router.push(`/peserta/detail/${id}`);
         break;
       case 'notulen':
         router.push(`/notulen/detail/${id}`);
@@ -167,7 +152,6 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
         null;
     }
   }
-  console.log(data);
 
   return (
     <React.Fragment>
@@ -244,7 +228,7 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                               {row.Undangan !== null ? (
                                 <div
                                   className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
-                                  onClick={() => handleDetail(row.Undangan?.id, 'undangan')}><FaCheck size={14}
+                                  onClick={() => handleDetail(row, row.Undangan?.id, 'undangan')}><FaCheck size={14}
                                   /></div>
                               ) : (
                                 <div className='text-danger w-[28px] h-[28px] flex items-center justify-center'><FaCheck size={14} /></div>
@@ -261,11 +245,12 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                                     {el.uuid !== undefined ? (
                                       <div
                                         className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
-                                        onClick={() => handleDetail(row, 'peserta')}><FaCheck size={14} />
+                                        onClick={() => handleDetail(row, el.id, 'peserta')}><FaCheck size={14} />
                                       </div>
                                     ) : (
                                       <div
                                         className='rounded-full bg-xl-base w-6 h-6 flex items-center justify-center text-white hover:shadow-lg hover:cursor-pointer duration-300'
+                                        onClick={() => handleClickAddForm(row, i, 'peserta', '/peserta/tambah?type=add')}
                                       >+</div>
                                     )}
                                   </TableRow>
@@ -277,11 +262,12 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                                       {el.uuid !== undefined ? (
                                         <div
                                           className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
-                                          onClick={() => handleDetail(row, 'peserta')}><FaCheck size={14} />
+                                          onClick={() => handleDetail(row, el.id, 'peserta')}><FaCheck size={14} />
                                         </div>
                                       ) : (
                                         <div
                                           className='rounded-full bg-xl-base w-6 h-6 flex items-center justify-center text-white hover:shadow-lg hover:cursor-pointer duration-300'
+                                          onClick={() => handleClickAddForm(row, i, 'peserta', '/peserta/tambah?type=add')}
                                         >+</div>
                                       )}
                                     </TableRow>
@@ -306,7 +292,7 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                                   ) : (
                                     <div
                                       className='rounded-full bg-xl-base w-6 h-6 flex items-center justify-center text-white hover:shadow-lg hover:cursor-pointer duration-300'
-                                      onClick={() => handleClickAddForm(row, i, '/notulen/form?type=add')}
+                                      onClick={() => handleClickAddForm(row, i, 'notulen', '/notulen/form?type=add')}
                                     >+</div>
                                   )}
                                 </TableRow>
@@ -323,7 +309,7 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                                     ) : (
                                       <div
                                         className='rounded-full bg-xl-base w-6 h-6 flex items-center justify-center text-white hover:shadow-lg hover:cursor-pointer duration-300'
-                                        onClick={() => handleClickAddForm(row, i, '/notulen/form?type=add')}
+                                        onClick={() => handleClickAddForm(row, i, 'notulen', '/notulen/form?type=add')}
                                       >+</div>
                                     )}
                                   </TableRow>

@@ -12,12 +12,14 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { getTime } from '@/components/hooks/formatDate';
+import { formatDate, getTime } from '@/components/hooks/formatDate';
 import { BsPrinter } from "react-icons/bs";
 import XAddPeserta from './x-modal/addPeserta';
 import { IoIosSave } from "react-icons/io";
 import { fetchApi } from '@/app/api/request';
 import Swal from 'sweetalert2';
+import { formattedDate } from '@/components/helpers/formatMonth';
+import { Button } from '@/components/common/button/button';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -37,27 +39,17 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 interface PropTypes {
+  id: number;
   profile: any;
-  undangan: any;
-  step: string;
-  rangeDate: any;
-  index: number;
-  type: string;
   peserta: any;
   setPeserta: any;
-  setTrigger: any;
 }
 
-const AddPesertaForm = ({
+const DetailPeserta = ({
+  id,
   profile,
-  undangan,
-  step,
-  rangeDate,
-  index,
   peserta,
   setPeserta,
-  setTrigger,
-  type
 }: PropTypes) => {
   const printRef: any = useRef();
   const router = useRouter();
@@ -70,23 +62,31 @@ const AddPesertaForm = ({
 
   const hanleAddParticipant = () => setOpenAddPeserta(true);
 
-  const mappedPeserta = peserta.map((item: any) => ({
-    ...item,
-    jumlah_peserta: Array.from({ length: item.jumlah_peserta }, (_, index) => index + 1)
-  }));
+  const getDay = (dateString: string) => {
+    var dateParts = dateString.split(" ");
+    var day = parseInt(dateParts[0]);
+    var month = dateParts[1];
+    var year = parseInt(dateParts[2]);
+    var date = new Date(year, ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"].indexOf(month), day);
+    var days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    var dayName = days[date.getDay()];
+    var formattedDate = dayName + ", " + dateString;
 
-  const handleSave = async () => {
+    return formattedDate;
+  }
+
+  const mappedPeserta = Array.from({ length: peserta.jumlah_peserta }, (_, index) => index + 1);
+
+  const handleSubmit = async () => {
     setLoading(true);
     const payload = {
-      uuid: undangan.uuid,
-      jumlah_peserta: peserta[index].jumlah_peserta,
-      jenis_peserta: peserta[index].jenis_peserta,
-      tanggal: rangeDate
+      uuid: peserta.uuid,
+      jumlah_peserta: peserta.jumlah_peserta,
+      jenis_peserta: peserta.jenis_peserta,
     }
-
     const response = await fetchApi({
-      url: '/peserta/addPeserta',
-      method: 'post',
+      url: `/peserta/editPeserta/${id}`,
+      method: 'put',
       type: 'auth',
       body: payload
     })
@@ -102,36 +102,79 @@ const AddPesertaForm = ({
       Swal.fire({
         position: "center",
         icon: "success",
-        title: `${peserta[index].jumlah_peserta} Peserta ditambahkan`,
+        title: "Berhasil Edit Daftar Hadir",
         showConfirmButton: false,
         timer: 1500,
       });
-      setLoading(false);
-      setTrigger(true);
+      router.push('/laporan');
     }
   }
 
+  const handleDelete = async () => {
+    Swal.fire({
+      title: `Yakin Hapus Permanen ${peserta.jumlah_peserta} Daftar Hadir ?`,
+      showDenyButton: true,
+      confirmButtonText: 'Hapus',
+      denyButtonText: `Batal`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setLoading(true);
+        const response = await fetchApi({
+          url: `/peserta/deletePeserta/${id}`,
+          method: 'delete',
+          type: 'auth'
+        })
+
+        if (!response.success) {
+          setLoading(false);
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Koneksi bermasalah!",
+          });
+        } else {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: `Sukses hapus daftar hadir`,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          router.push('/laporan');
+        }
+      } else if (result.isDenied) {
+        Swal.fire('Changes are not saved', '', 'info')
+      }
+    })
+  }
+
+  const handleCancel = () => router.push('/laporan');
+
   return (
     <div className='py-8 dark:bg-meta-4 w-full'>
-      {peserta[index].uuid !== undefined ? (
-        <div className='flex justify-between'>
-          <button
-            className="border border-xl-base rounded-md px-4 py-1 flex items-center gap-2 bg-white dark:bg-meta-4 dark:text-white mb-2 hover:shadow-md hover:cursor-pointer"
-            onClick={handlePrint}
-          >
-            <BsPrinter size={20} />
-            <div>Cetak</div>
-          </button>
-          <div></div>
-        </div>
-      ) : (
-        <div className='flex justify-between'>
-          <div></div>
+      <div className='flex justify-between'>
+        <button
+          className="border border-xl-base rounded-md px-4 py-1 flex items-center gap-2 bg-white dark:bg-meta-4 dark:text-white mb-2 hover:shadow-md hover:cursor-pointer"
+          onClick={handlePrint}
+        >
+          <BsPrinter size={20} />
+          <div>Cetak</div>
+        </button>
+        <div className='flex gap-2'>
+          <div>
+            <button
+              className='border border-none rounded-lg px-8 py-1 hover:shadow-lg bg-danger text-white hover:cursor-pointer'
+              onClick={handleDelete}
+            >
+              Hapus
+            </button>
+          </div>
           <div>
             <button className='bg-xl-base rounded-lg px-4 py-2 text-white hover:shadow-lg' onClick={hanleAddParticipant}><IoPersonAdd size={18} /></button>
           </div>
         </div>
-      )}
+      </div>
+
       <div
         className="cetak-wrapper bg-white dark:bg-meta-4 px-8"
         id="container"
@@ -139,7 +182,7 @@ const AddPesertaForm = ({
       >
         <div className='title flex flex-col text-center font-bold gap-2 text-title-xsm'>
           <div className='uppercase'>Daftar Hadir</div>
-          <div className='uppercase'>{undangan.perihal}</div>
+          <div className='uppercase'>{peserta.Uuid.Undangan.perihal}</div>
         </div>
         <div className='text-black mt-[4em] text-ss font-medium'>
           <div className="flex gap-2 w-full">
@@ -147,7 +190,7 @@ const AddPesertaForm = ({
               Hari
             </div>
             <div className="w-[2%]">:</div>
-            <div className="w-[85%]">{rangeDate}</div>
+            <div className="w-[85%]">{getDay(peserta.tanggal)}</div>
           </div>
           <div className="flex gap-2 w-full">
             <div className="w-[10%]">
@@ -155,7 +198,7 @@ const AddPesertaForm = ({
             </div>
             <div className="w-[2%]">:</div>
             <div className="w-[85%]">
-              {getTime(undangan.waktu)} WIB
+              {getTime(peserta.Uuid.Undangan.waktu)} WIB
             </div>
           </div>
           <div className="flex gap-2 w-full">
@@ -165,7 +208,7 @@ const AddPesertaForm = ({
             <div className="w-[2%]">:</div>
             <div className="w-[85%]">
               <div className='flex flex-col'>
-                {undangan.lokasi.split(', ').map((el: any, i: number) => (
+                {peserta.Uuid.Undangan.lokasi.split(', ').map((el: any, i: number) => (
                   <div key={i}>{el}</div>
                 ))}
               </div>
@@ -181,7 +224,7 @@ const AddPesertaForm = ({
                   <StyledTableCell align="center" width={250} className='border border-black'>NAMA</StyledTableCell>
                   <StyledTableCell align="center" width={10} className='border border-black'>LAKI-LAKI</StyledTableCell>
                   <StyledTableCell align="center" width={10} className='border border-black'>PEREM PUAN</StyledTableCell>
-                  <StyledTableCell align="center" width={250} className='border border-black'>{peserta[index].jenis_peserta === 'internal' ? 'JABATAN' : 'INSTANSI'}</StyledTableCell>
+                  <StyledTableCell align="center" width={250} className='border border-black'>{peserta.jenis_peserta === 'internal' ? 'JABATAN' : 'INSTANSI'}</StyledTableCell>
                   <StyledTableCell align="center" width={300} className='border border-black'>TANDA TANGAN</StyledTableCell>
                 </TableRow>
               </TableHead>
@@ -194,9 +237,9 @@ const AddPesertaForm = ({
                   <StyledTableCell align="center" width={250} className='border border-black italic'>5</StyledTableCell>
                   <StyledTableCell align="center" width={300} className='border border-black italic'>6</StyledTableCell>
                 </TableRow>
-                {mappedPeserta.length != 0 && mappedPeserta[index].jumlah_peserta.map((number: number, i: number) => (
+                {mappedPeserta.length != 0 && mappedPeserta.map((number: number, i: number) => (
                   <StyledTableRow key={i} className='border border-black'>
-                    <StyledTableCell className='border border-black'>{number}</StyledTableCell>
+                    <StyledTableCell className='border border-black'>{i + 1}</StyledTableCell>
                     <StyledTableCell className='border border-black'></StyledTableCell>
                     <StyledTableCell className='border border-black'></StyledTableCell>
                     <StyledTableCell className='border border-black'></StyledTableCell>
@@ -222,8 +265,8 @@ const AddPesertaForm = ({
                 Pembuat
               </div>
             </div>
-            {undangan.signature !== "-" && undangan.signature !== null ? (
-              <img src={undangan.signature} className="w-[270px] h-[180px]" alt="TTD" />
+            {peserta.Uuid.Undangan.signature !== "-" && peserta.Uuid.Undangan.signature !== null ? (
+              <img src={peserta.Uuid.Undangan.signature} className="w-[270px] h-[180px]" alt="TTD" />
             ) : <></>}
             <div>
               <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
@@ -239,42 +282,38 @@ const AddPesertaForm = ({
             </div>
           </div>
         </div>
-        {peserta[index].jumlah_peserta != 0 && peserta[index].uuid === undefined && (
-          <div className='flex justify-between mt-8'>
-            <div></div>
-            <div
-              className='rounded-md px-4 py-1 bg-xl-base text-white flex gap-2 items-center justify-center hover:cursor-pointer'
-              onClick={handleSave}
-            ><IoIosSave size={20} /> Simpan</div>
-          </div>
-        )}
       </div>
-      {/* <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-10 space-x-3">
+      <div className="btn-submit flex flex-row justify-between mt-10 space-x-3">
         <div className="w-[8em]">
-          <CancelBtn
-            title="Keluar"
-            data={undangan}
-            url="/undangan/addUndangan"
-            setLoading={setLoading}
-          />
+          <Button
+            variant="xl"
+            type="secondary"
+            className="button-container"
+            onClick={handleCancel}
+            rounded
+          >
+            <div className="flex justify-center items-center text-[#002DBB] font-Nunito">
+              <span className="button-text">Batal</span>
+            </div>
+          </Button>
         </div>
         <div className="w-[8em]">
           <Button
             variant="xl"
             className="button-container"
-            onClick={handleNext}
+            onClick={handleSubmit}
             loading={loading}
+            disabled={!peserta.isFilled ? true : false}
             rounded
           >
             <div className="flex justify-center items-center text-white">
-              <span className="button-text">{step !== null ? 'Lanjut' : 'Simpan'}</span>
+              <span className="button-text">Simpan</span>
             </div>
           </Button>
         </div>
-      </div> */}
+      </div>
 
       <XAddPeserta
-        index={index}
         openAddPeserta={openAddPeserta}
         setOpenAddPeserta={setOpenAddPeserta}
         peserta={peserta}
@@ -284,4 +323,4 @@ const AddPesertaForm = ({
   )
 }
 
-export default AddPesertaForm;
+export default DetailPeserta;

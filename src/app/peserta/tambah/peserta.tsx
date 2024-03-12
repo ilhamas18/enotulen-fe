@@ -2,7 +2,6 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useDispatch } from "react-redux";
 import withAuth from "@/components/hocs/withAuth";
 import { shallowEqual, useSelector } from "react-redux";
 import { State } from "@/store/reducer";
@@ -15,7 +14,6 @@ import { Button } from "@/components/common/button/button";
 import Loading from "@/components/global/Loading/loading";
 import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
-import { setPayload } from "@/store/payload/action";
 
 interface PropTypes {
   id: number
@@ -24,7 +22,6 @@ interface PropTypes {
 const PesertaProps = ({ id }: PropTypes) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const dispatch = useDispatch();
   const [data, setData] = useState<any>([]);
   const [peserta, setPeserta] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -96,42 +93,8 @@ const PesertaProps = ({ id }: PropTypes) => {
 
   const handleNext = () => {
     if (step !== null) {
-      // const storedData = {
-      //   ...payload,
-      //   step2: peserta
-      // }
-      // dispatch(setPayload(storedData));
       router.push('/notulen/form?step=3');
     } else {
-      handleSubmit(peserta)
-    }
-  }
-
-  const handleSubmit = async (data: any) => {
-    setLoading(true);
-    const response = await fetchApi({
-      url: `/undangan/addJumlahPeserta/${id}`,
-      method: 'post',
-      type: 'auth',
-      body: data
-    })
-
-    if (!response.success) {
-      setLoading(false);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Koneksi bermasalah!",
-      });
-    } else {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: `Peserta ditambahkan`,
-        showConfirmButton: false,
-        timer: 1500,
-      });
-      setLoading(false);
       router.push('/laporan');
     }
   }

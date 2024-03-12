@@ -13,7 +13,7 @@ import { fetchApi } from '@/app/api/request';
 import Swal from 'sweetalert2';
 
 interface PropTypes {
-  index: number;
+  index?: number;
   openAddPeserta: boolean;
   setOpenAddPeserta: any;
   peserta: any;
@@ -36,14 +36,22 @@ const XAddPeserta = ({
   };
 
   const handleSave = () => {
-    if (!isNaN(storedNumber)) {
-      const newArr1 = [...peserta];
-      newArr1[index].jumlah_peserta = +storedNumber
-      setPeserta(newArr1)
+    if (index !== undefined) {
+      if (!isNaN(storedNumber)) {
+        const newArr1 = [...peserta];
+        newArr1[index].jumlah_peserta = +storedNumber
+        setPeserta(newArr1)
+      }
+      const newArr2 = [...peserta];
+      newArr2[index].jenis_peserta = storedParticipant;
+      setPeserta(newArr2)
+    } else {
+      const temp = peserta;
+      temp.jumlah_peserta = +storedNumber;
+      temp.jenis_peserta = storedParticipant;
+      temp.isFilled = true;
+      setPeserta(temp);
     }
-    const newArr2 = [...peserta];
-    newArr2[index].jenis_peserta = storedParticipant;
-    setPeserta(newArr2)
     setOpenAddPeserta(false);
   }
 

@@ -59,8 +59,6 @@ const LaporanPage = () => {
       });
     } else {
       const { data } = response.data;
-      console.log(data);
-
       const filtered: any = data.filter((el: any) => el.Notulen !== null || el.Undangan !== null);
       let tanggalArr: any = []
       let temp: any = [...filtered]

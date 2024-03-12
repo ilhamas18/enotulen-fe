@@ -197,7 +197,11 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                       <div className="flex">
                         <div className="title w-[20%]">Tempat</div>
                         <div className="title w-[5%]">:</div>
-                        <div className="title w-[75%]">{laporan.lokasi}</div>
+                        <div className="title w-[75%]">
+                          {laporan.lokasi.split(', ').map((el: any, i: number) => (
+                            <div>{el}</div>
+                          ))}
+                        </div>
                       </div>
                       <div className="flex">
                         <div className="title w-[20%]">Pimpinan</div>

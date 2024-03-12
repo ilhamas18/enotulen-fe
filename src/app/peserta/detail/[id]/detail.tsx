@@ -7,14 +7,14 @@ import Swal from 'sweetalert2';
 import withAuth from '@/components/hocs/withAuth';
 import { shallowEqual, useSelector } from 'react-redux';
 import { State } from '@/store/reducer';
-import UndanganDetailProps from '@/components/pages/undangan/detail';
+import DetailPeserta from '@/components/pages/peserta/detail';
 
 interface PropTypes {
   id: number
 }
 
 const DetailProps = ({ id }: PropTypes) => {
-  const [undangan, setUndangan] = useState<any>([]);
+  const [peserta, setPeserta] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   const { profile } = useSelector((state: State) => ({
@@ -28,7 +28,7 @@ const DetailProps = ({ id }: PropTypes) => {
   const fetchData = async () => {
     setLoading(true);
     const response = await fetchApi({
-      url: `/undangan/getUndanganDetail/${id}`,
+      url: `/peserta/getPesertaDetail/${id}`,
       method: 'get',
       type: 'auth'
     });
@@ -42,32 +42,31 @@ const DetailProps = ({ id }: PropTypes) => {
       });
     } else {
       const { data } = response.data;
-      setUndangan(data);
+      setPeserta(data);
       setLoading(false);
     }
   }
 
   return (
-    <div className='detail-undangan-container'>
+    <div className='detail-peseta-container'>
       <div className="bg-white dark:bg-meta-4 flex flex-col gap-2 shadow-lg py-4 text-center font-bold text-title-sm rounded rounded-lg border-none">
         <div className='uppercase'>
-          {undangan?.status === 'archieve' ? (
-            <div>Hapus Undangan</div>
-          ) : undangan?.atasan?.nip !== profile.nip ? (
-            <div>Laporan Undangan</div>
-          ) : (
-            <div>Verifikasi Undangan</div>
-          )}
+          Daftar Hadir
         </div>
-        <div className='text-title-xsm2'>{undangan?.Uuid?.Pegawai?.nama}</div>
+        <div className='text-title-xsm2'>{peserta?.Uuid?.Pegawai?.nama}</div>
       </div>
       {loading ? (
         <Loading loading={loading} setLoading={setLoading} />
       ) : (
-        undangan.length == 0 ? (
-          <div>Maaf, Data Undangan Kosong !</div>
+        peserta.length == 0 ? (
+          <div>Maaf, Data Daftar Hadir Kosong !</div>
         ) : (
-          <UndanganDetailProps data={undangan} profile={profile} />
+          <DetailPeserta
+            id={id}
+            profile={profile}
+            peserta={peserta}
+            setPeserta={setPeserta}
+          />
         )
       )}
     </div>
