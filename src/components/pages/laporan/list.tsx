@@ -152,6 +152,7 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
         null;
     }
   }
+  console.log(data);
 
   return (
     <React.Fragment>
@@ -286,7 +287,8 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                                 <TableRow key={i}>
                                   {el.uuid !== undefined ? (
                                     <div
-                                      className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
+                                      className={`flex items-center justify-center w-6 h-6 rounded-full border hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300
+                                    ${el.status.toLowerCase() === 'disetujui' ? 'text-xl-base border-xl-base' : 'text-meta-3 border-meta-3'}`}
                                       onClick={() => handleDetail(row, el.id, 'notulen')}><FaCheck size={14} />
                                     </div>
                                   ) : (
@@ -303,7 +305,8 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                                   <TableRow key={i}>
                                     {el.uuid !== undefined ? (
                                       <div
-                                        className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
+                                        className={`flex items-center justify-center w-6 h-6 rounded-full border hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300
+                                        ${el.status.toLowerCase() === 'disetujui' ? 'text-xl-base border-xl-base' : 'text-meta-3 border-meta-3'}`}
                                         onClick={() => handleDetail(row, el.id, 'notulen')}><FaCheck size={14} />
                                       </div>
                                     ) : (
@@ -321,7 +324,6 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                                 </div>
                               )
                             )}
-
                           </div>
                         </TableCell>
                       </TableRow>
