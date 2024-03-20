@@ -403,28 +403,30 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
                 </div>
               </div>
             </div>
-            <div className="lampiran border-t-6 border-light-gray my-8 w-full">
-              <div className="text-label mt-6 text-title-xsm font-bold mb-6 md:text-left text-center">
-                Lampiran
-              </div>
-              <div className="flex flex-col gap-4">
-                {JSON.parse(data.lampiran).map((el: any, i: number) => (
-                  <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                    {<Blocks data={el} config={{
-                      list: {
-                        className: "list-decimal ml-10"
-                      },
-                      paragraph: {
-                        className: "text-base text-opacity-75",
-                        actionsClassNames: {
-                          alignment: "text-justify",
+            {data.lampiran !== null && (
+              <div className="lampiran border-t-6 border-light-gray my-8 w-full">
+                <div className="text-label mt-6 text-title-xsm font-bold mb-6 md:text-left text-center">
+                  Lampiran
+                </div>
+                <div className="flex flex-col gap-4">
+                  {JSON.parse(data.lampiran).map((el: any, i: number) => (
+                    <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                      {<Blocks data={el} config={{
+                        list: {
+                          className: "list-decimal ml-10"
+                        },
+                        paragraph: {
+                          className: "text-base text-opacity-75",
+                          actionsClassNames: {
+                            alignment: "text-justify",
+                          }
                         }
-                      }
-                    }} />}
-                  </div>
-                ))}
+                      }} />}
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
           {isOpenEdit && <EditUndanganForm profile={profile} undangan={data} />}
         </>

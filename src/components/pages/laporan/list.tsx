@@ -230,10 +230,15 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                           <div className='flex flex-col gap-2 items-center justify-center'>
                             <TableRow>
                               {row.Undangan !== null ? (
-                                <div
-                                  className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
-                                  onClick={() => handleDetail(row, row.Undangan?.id, 'undangan')}><FaCheck size={14}
-                                  /></div>
+                                <div className='flex flex-col gap-2 items-center justify-center'>
+                                  <div
+                                    className='flex items-center justify-center text-meta-3 w-6 h-6 rounded-full border border-meta-3 hover:cursor-pointer hover:bg-meta-3 hover:text-white duration-300'
+                                    onClick={() => handleDetail(row, row.Undangan?.id, 'undangan')}
+                                  >
+                                    <FaCheck size={14} />
+                                  </div>
+                                  <div className='text-deep-gray'>{row.Undangan.lampiran !== null && `${JSON.parse(row.Undangan.lampiran).length} lampiran`}</div>
+                                </div>
                               ) : (
                                 <div className='text-danger w-[28px] h-[28px] flex items-center justify-center'><FaCheck size={14} /></div>
                               )}
