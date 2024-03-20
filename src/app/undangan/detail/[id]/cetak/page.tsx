@@ -102,11 +102,11 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                     <div className="w-[20%]">
                       <img
                         src="/logo/Lambang_Kota_Madiun.png"
-                        className="w-[110px] h-auto"
+                        className="w-[100px] h-auto"
                       />
                     </div>
                     <div className="title text-center flex-col space-y-[1px] w-[80%]">
-                      <div className="text-black dark:text-white font-bold text-title-sm">
+                      <div className="text-black dark:text-white font-bold text-title-xsm2">
                         PEMERINTAH KOTA MADIUN
                       </div>
                       <div className="text-black dark:text-white font-bold text-title-ss uppercase">
@@ -138,12 +138,12 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                   <div className="flex justify-between mt-8">
                     <div></div>
                     <div className="text-right">
-                      <div className="text-black dark:text-white text-title-xsm">
+                      <div className="text-black dark:text-white text-title-ss2">
                         Madiun, {laporan.Uuid.hari} {formatMonth[laporan.Uuid.bulan - 1]} {laporan.Uuid.tahun}
                       </div>
                     </div>
                   </div>
-                  <div className="flex justify-between mt-6 text-title-xsm2 text-black font-medium">
+                  <div className="flex justify-between mt-6 text-title-ss2 text-black font-medium">
                     <div className="flex flex-col w-[50%]">
                       <div className="flex gap-2 w-full">
                         <div className="w-[20%]">
@@ -191,7 +191,7 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                     </div>
                     {laporan.ditujukan !== null ? (
                       <div className="flex flex-col w-[50%] pl-[10%] text-left">
-                        <div className="pl-[36px]">Kepada</div>
+                        <div className="pl-[31px]">Kepada</div>
                         <div className="flex gap-2">
                           <div>Yth.</div>
                           <div>
@@ -214,27 +214,27 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                       </div>
                     ) : '-'}
                   </div>
-                  <div className="body mt-8">
-                    <div className="text-black dark:text-white text-title-xsm mt-3 ml-4 text-justify indent-10 ml-[12%]">
+                  <div className="body mt-8 text-title-ss">
+                    <div className="text-black dark:text-white mt-3 ml-4 text-justify indent-10 ml-[12%]">
                       {laporan?.pendahuluan !== null && <Blocks data={JSON.parse(laporan?.pendahuluan)} config={{
                         list: {
-                          className: "list-decimal ml-10"
+                          className: "list-decimal ml-10 text-title-ss"
                         },
                         paragraph: {
-                          className: "text-base text-opacity-75",
+                          className: "text-base text-title-ss text-opacity-75",
                           actionsClassNames: {
                             alignment: "text-justify",
                           }
                         }
                       }} />}
                     </div>
-                    <div className="text-black dark:text-white text-title-xsm mt-3 ml-4 text-justify indent-10 ml-[12%]">
+                    <div className="text-black dark:text-white mt-3 ml-4 text-justify indent-10 ml-[12%]">
                       {laporan?.isi_undangan !== null && <Blocks data={JSON.parse(laporan?.isi_undangan)} config={{
                         list: {
-                          className: "list-decimal ml-10"
+                          className: "list-decimal ml-10 text-title-ss"
                         },
                         paragraph: {
-                          className: "text-base text-opacity-75",
+                          className: "text-base text-title-ss text-opacity-75",
                           actionsClassNames: {
                             alignment: "text-justify",
                           }
@@ -342,7 +342,7 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                     <div></div>
                     <div className="flex flex-col items-center justify-between text-center w-[45%] h-[13em]">
                       <div>
-                        <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                        <div className="font-bold text-black dark:text-white text-title-ss2 mt-1">
                           {profile.Perangkat_Daerah.kepala_opd.jabatan}
                         </div>
                       </div>
@@ -353,11 +353,11 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                         <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
                           {profile.Perangkat_Daerah.kepala_opd.nama}
                         </div>
-                        <div className="text-black dark:text-white text-title-ss mt-1">
+                        <div className="text-black dark:text-white text-title-ss2 mt-1">
                           {" "}
                           {profile.Perangkat_Daerah.kepala_opd.namaPangkat}{" "}
                         </div>
-                        <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                        <div className="font-bold text-black dark:text-white text-title-ss2 mt-1">
                           NIP. {profile.Perangkat_Daerah.kepala_opd.nip}
                         </div>
                       </div>
@@ -369,14 +369,14 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                 <div className="second-layer text-black">
                   {JSON.parse(laporan.lampiran).map((el: any, i: number) => (
                     <div className="pagebreak">
-                      <div className="text-title-sm font-bold uppercase text-center">Lampiran</div>
+                      <div className="text-title-xsm font-bold uppercase text-center">Lampiran</div>
                       <div className="text-black dark:text-white text-title-xsm text-justify indent-10 mt-8">
                         {<Blocks data={el} config={{
                           list: {
-                            className: "list-decimal text-title-ss ml-14 text-black"
+                            className: "list-decimal text-title-ss2 ml-14 text-black"
                           },
                           paragraph: {
-                            className: "text-base text-opacity-75 my-3 text-black",
+                            className: "text-base text-title-ss2 text-opacity-75 my-3 text-black",
                             actionsClassNames: {
                               alignment: "text-justify",
                             }

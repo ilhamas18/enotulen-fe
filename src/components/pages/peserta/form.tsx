@@ -75,6 +75,19 @@ const AddPesertaForm = ({
     jumlah_peserta: Array.from({ length: item.jumlah_peserta }, (_, index) => index + 1)
   }));
 
+  const getDay = (dateString: string) => {
+    var dateParts = dateString.split(" ");
+    var day = parseInt(dateParts[0]);
+    var month = dateParts[1];
+    var year = parseInt(dateParts[2]);
+    var date = new Date(year, ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"].indexOf(month), day);
+    var days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    var dayName = days[date.getDay()];
+    var formattedDate = dayName + ", " + dateString;
+
+    return formattedDate;
+  }
+
   const handleSave = async () => {
     setLoading(true);
     const payload = {
@@ -111,6 +124,19 @@ const AddPesertaForm = ({
     }
   }
 
+  const formatDateHandle = (data: any) => {
+    const startDateString = data[0].startDate;
+    const startDate = new Date(startDateString);
+    const daysInIndonesian = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    const monthsInIndonesian = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    const day = daysInIndonesian[startDate.getUTCDay() + 1];
+    const date = startDate.getUTCDate() + 1;
+    const month = monthsInIndonesian[startDate.getUTCMonth()];
+    const year = startDate.getUTCFullYear();
+    const formattedDate = `${day}, ${date} ${month} ${year}`;
+    return formattedDate;
+  }
+
   return (
     <div className='py-8 dark:bg-meta-4 w-full'>
       {peserta[index].uuid !== undefined ? (
@@ -144,10 +170,12 @@ const AddPesertaForm = ({
         <div className='text-black mt-[4em] text-ss font-medium'>
           <div className="flex gap-2 w-full">
             <div className="w-[10%]">
-              Hari
+              Hari / Tanggal
             </div>
             <div className="w-[2%]">:</div>
-            <div className="w-[85%]">{rangeDate}</div>
+            <div className="w-[85%]">
+              {formatDateHandle(undangan.tanggal)}
+            </div>
           </div>
           <div className="flex gap-2 w-full">
             <div className="w-[10%]">

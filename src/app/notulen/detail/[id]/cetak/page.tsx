@@ -156,14 +156,7 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                     Rapat dilaksanakan pada :
                     <div className="flex flex-col space-y-1 mt-2">
                       <div className="flex">
-                        <div className="title w-[20%]">Hari</div>
-                        <div className="title w-[5%]">:</div>
-                        <div className="title w-[75%]">
-                          {getDayOfWeek(laporan.tanggal[0]?.startDate)}
-                        </div>
-                      </div>
-                      <div className="flex">
-                        <div className="title w-[20%]">Tanggal</div>
+                        <div className="title w-[20%]">Hari / Tanggal</div>
                         <div className="title w-[5%]">:</div>
                         <div className="title w-[75%]">
                           {laporan.tanggal[0]?.startDate !== null &&
@@ -187,6 +180,31 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                             )}
                         </div>
                       </div>
+                      {/* <div className="flex">
+                        <div className="title w-[20%]">Tanggal</div>
+                        <div className="title w-[5%]">:</div>
+                        <div className="title w-[75%]">
+                          {laporan.tanggal[0]?.startDate !== null &&
+                            laporan.tanggal[0]?.endDate !== null &&
+                            laporan.tanggal[0]?.startDate ===
+                            laporan.tanggal[0]?.endDate && (
+                              <span>
+                                {formatDate(laporan.tanggal[0]?.startDate)}
+                              </span>
+                            )}
+                          {laporan.tanggal[0]?.startDate !== null &&
+                            laporan.tanggal[0]?.endDate !== null &&
+                            laporan.tanggal[0]?.startDate !==
+                            laporan.tanggal[0]?.endDate && (
+                              <span>
+                                {formatDateRange(
+                                  laporan.tanggal[0]?.startDate,
+                                  laporan.tanggal[0]?.endDate
+                                )}
+                              </span>
+                            )}
+                        </div>
+                      </div> */}
                       <div className="flex">
                         <div className="title w-[20%]">Jam</div>
                         <div className="title w-[5%]">:</div>

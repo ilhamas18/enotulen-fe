@@ -187,7 +187,7 @@ const DetailPeserta = ({
         <div className='text-black mt-[4em] text-ss font-medium'>
           <div className="flex gap-2 w-full">
             <div className="w-[10%]">
-              Hari
+              Hari / Tanggal
             </div>
             <div className="w-[2%]">:</div>
             <div className="w-[85%]">{getDay(peserta.tanggal)}</div>
