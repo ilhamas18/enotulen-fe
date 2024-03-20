@@ -45,7 +45,10 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
 
     data.forEach((el: any, index: number) => {
       const dateRangeUndangan = dateRangeFormat(el.Undangan !== null && el.Undangan.tanggal !== null && el.Undangan.tanggal[0]);
-      const dateRangeNotulen = dateRangeFormat(el.Notulens.length != 0 && el.Notulens[index].tanggal[0]);
+      let dateRangeNotulen: any = null;
+      el.Notulens.map((_: any, i: number) => {
+        dateRangeNotulen = dateRangeFormat(el.Notulens.length != 0 && el.Notulens[i].tanggal[0]);
+      })
 
       const tempUndangan = dateRangeUndangan.map((date: any) => ({
         tanggal: date,

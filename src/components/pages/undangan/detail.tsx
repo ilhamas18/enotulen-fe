@@ -243,6 +243,16 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
               </div>
               <div className="body flex flex-row md:flex-row flex-col items-center justify-between">
                 <div className="text-label md:w-[20%] w-full md:text-left text-center">
+                  Lampiran
+                </div>
+                <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+                  <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                    {data.lampiran !== null ? `${JSON.parse(data.lampiran).length} lembar` : '-'}
+                  </div>
+                </div>
+              </div>
+              <div className="body flex flex-row md:flex-row flex-col items-center justify-between">
+                <div className="text-label md:w-[20%] w-full md:text-left text-center">
                   Perihal
                 </div>
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
@@ -391,6 +401,28 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
                     {data.Uuid.hari} {formatMonth[data.Uuid.bulan - 1]} {data.Uuid.tahun}
                   </div>
                 </div>
+              </div>
+            </div>
+            <div className="lampiran border-t-6 border-light-gray my-8 w-full">
+              <div className="text-label mt-6 text-title-xsm font-bold mb-6 md:text-left text-center">
+                Lampiran
+              </div>
+              <div className="flex flex-col gap-4">
+                {JSON.parse(data.lampiran).map((el: any, i: number) => (
+                  <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                    {<Blocks data={el} config={{
+                      list: {
+                        className: "list-decimal ml-10"
+                      },
+                      paragraph: {
+                        className: "text-base text-opacity-75",
+                        actionsClassNames: {
+                          alignment: "text-justify",
+                        }
+                      }
+                    }} />}
+                  </div>
+                ))}
               </div>
             </div>
           </div>

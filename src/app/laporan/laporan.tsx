@@ -59,11 +59,14 @@ const LaporanPage = () => {
       });
     } else {
       const { data } = response.data;
-      const filtered: any = data.filter((el: any) => el.Notulen !== null || el.Undangan !== null);
+
+      const filtered: any = data.filter((el: any) => el.Notulens.length != 0 || el.Undangan !== null);
       let tanggalArr: any = []
-      let temp: any = [...filtered]
+      let temp: any = [...data]
       filtered.forEach((el: any, index: number) => {
-        const dateRange = dateRangeFormat(el.Undangan !== null ? el.Undangan.tanggal !== null && el.Undangan.tanggal[0] : el.Notulens[0].tanggal[0])
+        const dateRange = dateRangeFormat(el.Undangan !== null ? el.Undangan.tanggal !== null ? el.Undangan.tanggal[0] : el.Notulens.length != 0 ? el.Notulens[0].tanggal[0] : null : null);
+        console.log(dateRange);
+
         const tanggal = dateRange.map((date: any) => ({
           tanggal: date,
         }))

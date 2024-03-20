@@ -1,26 +1,36 @@
 @media all {
-    .page-break {
-      display: none;
-    }
+  .page-break {
+    display: none;
   }
-  
-  @media print {
-    html, body {
-      height: initial !important;
-      overflow: initial !important;
-      -webkit-print-color-adjust: exact;
-    }
+}
+
+@media print {
+  .pagebreak {
+    margin-top: 1rem;
+    display: block;
+    page-break-before: always;
   }
-  
-  @media print {
-    .page-break {
-      margin: 20mm 10mm 10mm 10mm;
-      display: block;
-      page-break-before: auto;
-    }
+}
+
+@media print {
+
+  html,
+  body {
+    height: initial !important;
+    overflow: initial !important;
+    -webkit-print-color-adjust: exact;
   }
-  
-  @page {
-    size: auto;
+}
+
+@media print {
+  .page-break {
     margin: 20mm 10mm 10mm 10mm;
+    display: block;
+    page-break-before: auto;
   }
+}
+
+@page {
+  size: auto;
+  margin: 20mm 10mm 10mm 10mm;
+}

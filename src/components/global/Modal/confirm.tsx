@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Image from 'next/image';
 import { CommonModal } from '@/components/common/common-modal/modal';
 import { FiCheckCircle } from "react-icons/fi";
 import { Button } from '@/components/common/button/button';
@@ -27,12 +28,12 @@ const ModalConfirm = ({
       <div className="relative items-center flex flex-col justify-between space-y-4 gap-2 pt-2">
         {condition === "success" ? (
           <>
-            <div className='text-success'><FiCheckCircle size={60} /></div>
+            <Image src="/illustrator/ask.jpg" width={150} height={160} alt="Confirm" />
             <div className='font-bold text-title-md text-meta-3 tracking-wider'>{title}</div>
           </>
         ) : (
           <>
-            <div className='text-success'><FiCheckCircle size={60} /></div>
+            <Image src="/illustrator/ask.jpg" width={150} height={160} alt="Confirm" />
             <div className='font-bold text-title-md text-meta-3 tracking-wider'>{title}</div>
           </>
         )}

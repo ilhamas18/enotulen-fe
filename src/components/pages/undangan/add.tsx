@@ -19,13 +19,16 @@ import ModalConfirm from "@/components/global/Modal/confirm";
 import SignatureCanvas from 'react-signature-canvas';
 import { AiOutlineClose } from "react-icons/ai";
 import { locationList } from "@/components/data/location";
+import XLampiran from "./x-modal/XLampiran";
+import Blocks from "editorjs-blocks-react-renderer";
+import { IoNewspaperSharp } from "react-icons/io5";
 
 const EditorBlock = dynamic(() => import("../../hooks/editor"));
 
 interface FormValues {
   ditujukan: any;
   tanggalSurat: any;
-  nomorSurat: string;
+  nomorSurat: any;
   sifat: any;
   perihal: string;
   pendahuluan: any;
@@ -38,6 +41,7 @@ interface FormValues {
   atasan: any;
   signature: string;
   isFilled: boolean;
+  lampiran: any;
 }
 
 interface OtherProps {
@@ -82,7 +86,8 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   const [tempat, setTempat] = useState<string>("");
   const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
   const [openLocation, setOpenLocation] = useState<boolean>(false);
-  const [sign, setSign] = useState<any>()
+  const [sign, setSign] = useState<any>();
+  const [openLampiran, setOpenLampiran] = useState<boolean>(false);
 
   const dataSifat = [
     {
@@ -164,6 +169,16 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     });
   }
 
+  const handleDeleteLampiran = (e: any, text: string) => {
+    e.preventDefault();
+    const newArray = values.lampiran.filter(
+      (item: any) => item !== text
+    )
+    handleChange({
+      target: { name: 'lampiran', value: newArray }
+    })
+  }
+
   return (
     <div className="form-container relative bg-white rounded-lg">
       <div className="form-wrapper-general">
@@ -210,18 +225,63 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               </div>
             </div>
           )}
-          <div className="data flex flex-row w-full">
-            <TextInput
-              type="text"
-              id="nomorSurat"
-              name="nomorSurat"
-              touched={touched.nomorSurat}
-              label="Nomor Surat"
-              change={handleChange}
-              value={values.nomorSurat}
-              handleBlur={handleBlur}
-              errors={errors.nomorSurat}
-            />
+          <div>Nomor Surat :</div>
+          <div className="data flex flex-row gap-3 w-full -mt-2">
+            <div>
+              <TextInput
+                type="text"
+                id="nomorSurat"
+                name="nomorSurat"
+                touched={touched.nomorSurat}
+                change={(e: any) => {
+                  handleChange({
+                    target: { name: "nomorSurat", value: [{ no: e.target.value }] },
+                  })
+                  handleChange({
+                    target: { name: `nomorSurat[${1}]`, value: { no: " " } }
+                  })
+                }}
+                value={values.nomorSurat[0]?.no}
+                handleBlur={handleBlur}
+                errors={errors.nomorSurat}
+              />
+            </div>
+            <div className="text-title-lg">/</div>
+            <div className="flex items-end justify-end">.........</div>
+            <div className="text-title-lg">/</div>
+            <div>
+              <TextInput
+                type="text"
+                id="nomorSurat"
+                name="nomorSurat"
+                touched={touched.nomorSurat}
+                change={(e: any) => {
+                  handleChange({
+                    target: { name: `nomorSurat[${2}]`, value: { no: e.target.value } }
+                  });
+                }}
+                value={values.nomorSurat[2]?.no}
+                handleBlur={handleBlur}
+                errors={errors.nomorSurat}
+              />
+            </div>
+            <div className="text-title-lg">/</div>
+            <div>
+              <TextInput
+                type="text"
+                id="nomorSurat"
+                name="nomorSurat"
+                touched={touched.nomorSurat}
+                change={(e: any) => {
+                  handleChange({
+                    target: { name: `nomorSurat[${3}]`, value: { no: new Date().getFullYear() } }
+                  });
+                }}
+                value={new Date().getFullYear()}
+                handleBlur={handleBlur}
+                errors={errors.nomorSurat}
+              />
+            </div>
           </div>
           <div className="flex flex-col justify-center mb-2">
             <div>
@@ -237,6 +297,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   placeholder="Kepada Yth."
                   handleBlur={handleBlur}
                 />
+                {errors.ditujukan && <div>Harap isi yang dituju</div>}
                 <div className="flex justify-center items-center md:gap-8 md:mx-10 mt-3">
                   <button
                     className="text-xl-base"
@@ -559,52 +620,83 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
             </div>
           )}
         </div> */}
+        <div
+          className="w-full flex gap-4 items-center justify-center bg-xl-base py-1 text-white text-center rounded-md hover:bg-[#1d4ed8] hover:cursor-pointer duration-300"
+          onClick={() => setOpenLampiran(true)}
+        ><IoNewspaperSharp size={18} />Lampiran <span className="text-title-ss2">(Opsional)</span></div>
+        <div className="mt-4 px-8 flex flex-col gap-4">
+          {values?.pendahuluan !== undefined && values.lampiran.map((el: any, i: number) => (
+            <div key={i}>
+              <div className="py-2">Lampiran {i + 1}</div>
+              <div className="container border-2 border-light-gray rounded-lg">
+                <EditorBlock
+                  data={el}
+                  onChange={(e) => {
+                    handleChange({
+                      target: { name: `lampiran[${i}]`, value: e },
+                    });
+                  }}
+                  holder={`editorjs-container-lampiran${i}`}
+                />
+              </div>
+              <div className="flex items-center justify-between mt-2">
+                <div></div>
+                <div
+                  className="text-danger hover:cursor-pointer"
+                  onClick={(e: any) => handleDeleteLampiran(e, el)}
+                >Hapus</div>
+              </div>
+            </div>
+          ))}
+        </div>
         {!values.isFilled && (
-          <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
+          <>
             <div className="text-danger text-title-ss mx-8 mt-3 mb-10">*Pastikan mengisi seluruh data undangan, (kecuali yang opsional)</div>
-            <div className="w-[8em]">
-              <Button
-                variant="xl"
-                type="secondary"
-                className="button-container"
-                onClick={handleCancel}
-                rounded
-              >
-                <div className="flex justify-center items-center text-[#002DBB] font-Nunito" onClick={handleCancel}>
-                  <span className="button-text">Batal</span>
-                </div>
-              </Button>
+            <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
+              <div className="w-[8em]">
+                <Button
+                  variant="xl"
+                  type="secondary"
+                  className="button-container"
+                  onClick={handleCancel}
+                  rounded
+                >
+                  <div className="flex justify-center items-center text-[#002DBB] font-Nunito" onClick={handleCancel}>
+                    <span className="button-text">Batal</span>
+                  </div>
+                </Button>
+              </div>
+              <div className="w-[8em]">
+                <Button
+                  type="button"
+                  variant="xl"
+                  className="button-container"
+                  loading={loading}
+                  rounded
+                  onClick={handleSubmit}
+                  disabled={
+                    values.ditujukan.length == 0 ||
+                      values.tanggalSurat === null ||
+                      values.nomorSurat === null ||
+                      values.sifat === null ||
+                      values.perihal === null ||
+                      values.pendahuluan === "" ||
+                      values.isiUndangan === "" ||
+                      values.rangeTanggal.length == 0 ||
+                      values.jam === null ||
+                      values.tempat === "" ||
+                      values.penutup === "" ||
+                      values.atasan === null ?
+                      true : false
+                  }
+                >
+                  <div className="flex justify-center items-center text-white font-Nunito">
+                    <span className="button-text">Simpan</span>
+                  </div>
+                </Button>
+              </div>
             </div>
-            <div className="w-[8em]">
-              <Button
-                type="button"
-                variant="xl"
-                className="button-container"
-                loading={loading}
-                rounded
-                onClick={handleSubmit}
-                disabled={
-                  values.ditujukan.length == 0 ||
-                    values.tanggalSurat === null ||
-                    values.nomorSurat === null ||
-                    values.sifat === null ||
-                    values.perihal === null ||
-                    values.pendahuluan === "" ||
-                    values.isiUndangan === "" ||
-                    values.rangeTanggal.length == 0 ||
-                    values.jam === null ||
-                    values.tempat === "" ||
-                    values.penutup === "" ||
-                    values.atasan === null ?
-                    true : false
-                }
-              >
-                <div className="flex justify-center items-center text-white font-Nunito">
-                  <span className="button-text">Simpan</span>
-                </div>
-              </Button>
-            </div>
-          </div>
+          </>
         )}
       </div>
 
@@ -618,6 +710,12 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
           });
         }}
       />
+      <XLampiran
+        openLampiran={openLampiran}
+        setOpenLampiran={setOpenLampiran}
+        values={values}
+        handleChange={handleChange}
+      />
     </div>
   )
 }
@@ -627,7 +725,7 @@ function CreateForm({ handleSubmit, sifat, atasan, dibuatTanggal, undangan, ...o
     mapPropsToValues: () => ({
       ditujukan: undangan?.length != 0 ? undangan?.ditujukan !== undefined ? undangan?.ditujukan : [] : [],
       tanggalSurat: dibuatTanggal !== undefined ? dibuatTanggal : null,
-      nomorSurat: undangan?.length != 0 ? undangan?.nomor_surat !== undefined ? undangan?.nomor_surat : null : null,
+      nomorSurat: undangan?.length != 0 ? undangan?.nomor_surat !== undefined ? undangan?.nomor_surat : [] : [],
       sifat: undangan?.sifat !== undefined ? sifat : null,
       perihal: undangan?.length != 0 ? undangan?.acara !== undefined ? undangan?.acara : null : null,
       pendahuluan: undangan?.length != 0 ? undangan?.pendahuluan !== undefined ? JSON.parse(undangan?.pendahuluan) : "" : "",
@@ -641,19 +739,20 @@ function CreateForm({ handleSubmit, sifat, atasan, dibuatTanggal, undangan, ...o
       ],
       jam: undangan?.length != 0 ? undangan?.waktu !== undefined ? undangan?.waktu : null : null,
       tempat: undangan.length != 0 ? undangan.lokasi !== undefined ? undangan.lokasi !== "" ? undangan.lokasi : "" : "" : "",
-      catatan: undangan?.length != 0 ? undangan?.catatan !== undefined ? JSON.parse(undangan?.catatan) : "" : "",
-      penutup: undangan?.length != 0 ? undangan?.penutup !== undefined ? JSON.parse(undangan?.penutup) : "" : "",
+      catatan: undangan?.length != 0 ? undangan?.catatan !== undefined ? JSON.parse(undangan?.catatan) : null : null,
+      penutup: undangan?.length != 0 ? undangan?.penutup !== undefined ? JSON.parse(undangan?.penutup) : null : null,
       atasan: undangan?.atasan !== undefined ? atasan : null,
       signature: undangan.signature !== undefined ? undangan.signature !== '-' ? undangan.signature : null : null,
-      isFilled: undangan.isFilled !== undefined ? undangan.isFilled : false
+      isFilled: undangan.isFilled !== undefined ? undangan.isFilled : false,
+      lampiran: undangan?.length != 0 ? undangan?.lampiran !== undefined ? JSON.parse(undangan.lampiran) : [] : []
     }),
     validationSchema: Yup.object().shape({
       ditujukan: Yup.array()
-        .required("Harap isi peserta !"),
+        .required("Harap isi penuju"),
       tanggalSurat: Yup.mixed()
         .nullable()
         .required("Tanggal tidak boleh kosong !"),
-      nomorSurat: Yup.string()
+      nomorSurat: Yup.array()
         .required("Harap isi nomor surat"),
       sifat: Yup.object()
         .shape({
@@ -769,7 +868,7 @@ const AddUndanganForm = ({
     const dataUndangan = {
       uuid: undangan.length != 0 ? undangan.uuid : uuidv4(),
       ditujukan: values.ditujukan,
-      nomor_surat: values.nomorSurat,
+      nomor_surat: values.nomorSurat[0].no + '/' + values.nomorSurat[1].no + '/' + values.nomorSurat[2].no + '/' + new Date().getFullYear(),
       sifat: values.sifat.value,
       perihal: values.perihal,
       pendahuluan: JSON.stringify(values.pendahuluan),
@@ -789,9 +888,9 @@ const AddUndanganForm = ({
       kode_opd: profile.Perangkat_Daerah.kode_opd,
       nip_pegawai: profile.nip,
       nip_atasan: values.atasan.value,
+      lampiran: JSON.stringify(values.lampiran),
       isFilled: true
     }
-
     setDataPayload(dataUndangan);
     if (step !== null) setOpenConfirm(true);
     else handleConfirmSubmit(dataUndangan);
@@ -807,6 +906,7 @@ const AddUndanganForm = ({
       type: 'auth',
       body: dataPayload.length == 0 ? data : dataPayload
     })
+    console.log(response);
 
     if (!response.success) {
       if (response.data.code == 400) {
@@ -853,6 +953,8 @@ const AddUndanganForm = ({
     router.push('/undangan/laporan');
   }
 
+  const handleClose = () => setOpenConfirm(false);
+
   return (
     <React.Fragment>
       {loading ? (
@@ -874,9 +976,9 @@ const AddUndanganForm = ({
         openModal={openConfirm}
         setOpenModal={setOpenConfirm}
         condition="success"
-        title="Berhasil Simpan Undangan"
-        text="Ingin Daftar Hadir ?"
-        handleCancel={handleConfirmSubmit}
+        title="Konfirmasi Simpan Undangan"
+        text="Yakin melanjutkan step selanjutnya ?"
+        handleCancel={handleClose}
         handleNext={handleNext}
       />
     </React.Fragment>
