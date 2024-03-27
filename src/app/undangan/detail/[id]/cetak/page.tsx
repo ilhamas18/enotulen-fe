@@ -106,7 +106,7 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                       />
                     </div>
                     <div className="title text-center flex-col space-y-[1px] w-[80%]">
-                      <div className="text-black dark:text-white font-bold text-title-xsm2">
+                      <div className="text-black dark:text-white font-bold text-title-xsm">
                         PEMERINTAH KOTA MADIUN
                       </div>
                       <div className="text-black dark:text-white font-bold text-title-ss uppercase">
@@ -176,7 +176,7 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                         </div>
                         <div className="w-[5%]">:</div>
                         <div className="w-[70%]">
-                          {laporan.lampiran !== null ? `${JSON.parse(laporan.lampiran).length} lembar` : '-'}
+                          {JSON.parse(laporan.lampiran).length != 0 ? `${JSON.parse(laporan.lampiran).length} lembar` : '-'}
                         </div>
                       </div>
                       <div className="flex gap-2 w-full">
@@ -214,14 +214,14 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                       </div>
                     ) : '-'}
                   </div>
-                  <div className="body mt-8 text-title-ss">
+                  <div className="body mt-8 text-title-ss2">
                     <div className="text-black dark:text-white mt-3 ml-4 text-justify indent-10 ml-[12%]">
                       {laporan?.pendahuluan !== null && <Blocks data={JSON.parse(laporan?.pendahuluan)} config={{
                         list: {
-                          className: "list-decimal ml-10 text-title-ss"
+                          className: "list-decimal ml-10 text-title-ss2"
                         },
                         paragraph: {
-                          className: "text-base text-title-ss text-opacity-75",
+                          className: "text-base text-title-ss2 text-opacity-75",
                           actionsClassNames: {
                             alignment: "text-justify",
                           }
@@ -231,10 +231,10 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                     <div className="text-black dark:text-white mt-3 ml-4 text-justify indent-10 ml-[12%]">
                       {laporan?.isi_undangan !== null && <Blocks data={JSON.parse(laporan?.isi_undangan)} config={{
                         list: {
-                          className: "list-decimal ml-10 text-title-ss"
+                          className: "list-decimal ml-10 text-title-ss2"
                         },
                         paragraph: {
-                          className: "text-base text-title-ss text-opacity-75",
+                          className: "text-base text-title-ss2 text-opacity-75",
                           actionsClassNames: {
                             alignment: "text-justify",
                           }
@@ -310,10 +310,10 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                             <div className="text-black dark:text-white text-title-xsm text-justify indent-10">
                               {laporan?.catatan !== null && <Blocks data={JSON.parse(laporan?.catatan)} config={{
                                 list: {
-                                  className: "list-decimal text-title-ss"
+                                  className: "list-decimal text-title-ss2 text-title-ss"
                                 },
                                 paragraph: {
-                                  className: "text-base text-opacity-75",
+                                  className: "text-base text-title-ss2 text-opacity-75",
                                   actionsClassNames: {
                                     alignment: "text-justify",
                                   }
@@ -327,10 +327,10 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                     <div className="text-black dark:text-white text-title-xsm mt-3 ml-4 text-justify indent-10 ml-[12%] mt-4">
                       {laporan?.penutup !== null && <Blocks data={JSON.parse(laporan?.penutup)} config={{
                         list: {
-                          className: "list-decimal ml-10"
+                          className: "list-decimal text-title-ss2 ml-10"
                         },
                         paragraph: {
-                          className: "text-base text-opacity-75",
+                          className: "text-base text-title-ss2 text-opacity-75",
                           actionsClassNames: {
                             alignment: "text-justify",
                           }
@@ -365,10 +365,10 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                   </div>
                 </div>
               </div>
-              {laporan.lampiran !== null && (
+              {laporan.lampiran && (
                 <div className="second-layer text-black">
                   {JSON.parse(laporan.lampiran).map((el: any, i: number) => (
-                    <div className="pagebreak">
+                    <div className="pagebreak" key={i}>
                       <div className="text-title-xsm font-bold uppercase text-center">Lampiran</div>
                       <div className="text-black dark:text-white text-title-xsm text-justify indent-10 mt-8">
                         {<Blocks data={el} config={{

@@ -92,11 +92,11 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                 <div className="w-[20%]">
                   <img
                     src="/logo/Lambang_Kota_Madiun.png"
-                    className="w-[110px] h-auto"
+                    className="w-[100px] h-auto"
                   />
                 </div>
                 <div className="title text-center flex-col space-y-[1px] w-[80%]">
-                  <div className="text-black dark:text-white font-bold text-title-sm">
+                  <div className="text-black dark:text-white font-bold text-title-xsm">
                     PEMERINTAH KOTA MADIUN
                   </div>
                   <div className="text-black dark:text-white font-bold text-title-ss uppercase">
@@ -125,22 +125,22 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
             </div>
             <div className="line border-2 border-black mt-[2px]"></div>
             <div className="body border-t border-black mt-[2px] flex flex-col">
-              <div className="title font-bold text-title-sm flex flex-col space-y-2 py-12 text-black dark:text-white text-center">
+              <div className="title font-bold text-title-xsm2 flex flex-col space-y-2 py-12 text-black dark:text-white text-center">
                 <div>LAPORAN</div>
                 <div>{laporan.acara}</div>
               </div>
               <div className="body">
                 <div className="pendahuluan flex-col">
-                  <div className="text-black dark:text-white text-title-sm">
+                  <div className="text-black dark:text-white text-title-ss">
                     I. Pendahuluan
                   </div>
-                  <div className="text-black dark:text-white text-title-xsm mt-3 ml-4 text-justify">
+                  <div className="text-black dark:text-white text-title-ss2 mt-3 ml-4 text-justify">
                     {laporan?.pendahuluan !== undefined && <Blocks data={JSON.parse(laporan?.pendahuluan)} config={{
                       list: {
                         className: "list-decimal ml-10"
                       },
                       paragraph: {
-                        className: "text-base text-opacity-75",
+                        className: "text-base text-title-ss2 text-opacity-75",
                         actionsClassNames: {
                           alignment: "text-justify",
                         }
@@ -149,10 +149,10 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                   </div>
                 </div>
                 <div className="pendahuluan flex-col">
-                  <div className="text-black dark:text-white text-title-sm mt-12">
+                  <div className="text-black dark:text-white text-title-ss mt-12">
                     II. Isi Laporan
                   </div>
-                  <div className="text-black dark:text-white text-title-xsm mt-3 ml-4">
+                  <div className="text-black dark:text-white text-title-ss2 mt-3 ml-4">
                     Rapat dilaksanakan pada :
                     <div className="flex flex-col space-y-1 mt-2">
                       <div className="flex">
@@ -250,16 +250,16 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                   </div>
                 </div>
                 <div className="penjelasan-rapat flex-col">
-                  <div className="title font-bold text-black dark:text-white text-title-sm mt-12 ml-4">
+                  <div className="title font-bold text-black dark:text-white text-title-ss mt-12 ml-4">
                     Hasil Rapat
                   </div>
                   <div className="body text-black dark:text-white text-title-xsm mt-4 ml-4 ">
                     {laporan.isi_rapat !== undefined && <Blocks data={JSON.parse(laporan.isi_rapat)} config={{
                       list: {
-                        className: "list-decimal ml-10"
+                        className: "list-decimal text-title-ss2 ml-10"
                       },
                       paragraph: {
-                        className: "text-base text-opacity-75",
+                        className: "text-base text-title-ss2 text-opacity-75",
                         actionsClassNames: {
                           alignment: "text-{alignment}",
                         }
@@ -268,16 +268,16 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                   </div>
                 </div>
                 <div className="penjelasan-rapat flex-col">
-                  <div className="title font-bold text-black dark:text-white text-title-sm mt-12 ml-4">
+                  <div className="title font-bold text-black dark:text-white text-title-ss mt-12 ml-4">
                     Rencana Tindak Lanjut
                   </div>
                   <div className="body text-black dark:text-white text-title-xsm mt-4 ml-4 ">
                     {laporan.tindak_lanjut !== undefined && <Blocks data={JSON.parse(laporan.tindak_lanjut)} config={{
                       list: {
-                        className: "list-decimal ml-10"
+                        className: "list-decimal text-title-ss2 ml-10"
                       },
                       paragraph: {
-                        className: "text-base text-opacity-75",
+                        className: "text-base text-title-ss2 text-opacity-75",
                         actionsClassNames: {
                           alignment: "text-{alignment}",
                         }
@@ -290,10 +290,10 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
             <div className="flex items-center justify-between px-4">
               <div className="flex flex-col items-center justify-between text-center w-[45%] h-[25em]">
                 <div className="mt-[10em]">
-                  <div className="font-bold text-black dark:text-white text-title-ss">
+                  <div className="font-bold text-black dark:text-white text-title-ss2">
                     Mengetahui,
                   </div>
-                  <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                  <div className="font-bold text-black dark:text-white text-title-ss2 mt-1">
                     {laporan.atasan?.jabatan}
                   </div>
                 </div>
@@ -304,23 +304,23 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                   <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
                     {laporan.atasan.nama}
                   </div>
-                  <div className="text-black dark:text-white text-title-ss mt-1">
+                  <div className="text-black dark:text-white text-title-ss2 mt-1">
                     {" "}
                     {laporan.atasan?.namaPangkat}{" "}
                   </div>
-                  <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                  <div className="font-bold text-black dark:text-white text-title-ss2 mt-1">
                     NIP. {laporan.atasan?.nip}
                   </div>
                 </div>
               </div>
               <div className="flex flex-col items-center justify-between text-center w-[45%] h-[25em]">
                 <div className="text-right mt-12">
-                  <div className="text-black dark:text-white text-title-xsm">
+                  <div className="text-black dark:text-white text-title-ss2">
                     Madiun, {laporan.Uuid.hari} {formatMonth[laporan.Uuid.bulan - 1]} {laporan.Uuid.tahun}
                   </div>
                 </div>
-                <div className="mt-[2em]">
-                  <div className="font-bold text-black dark:text-white text-title-ss">
+                <div className="">
+                  <div className="font-bold text-black dark:text-white text-title-ss2">
                     Yang Melapor,
                   </div>
                 </div>

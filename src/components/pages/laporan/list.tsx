@@ -47,7 +47,11 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
       const dateRangeUndangan = dateRangeFormat(el.Undangan !== null && el.Undangan.tanggal !== null && el.Undangan.tanggal[0]);
       let dateRangeNotulen: any = null;
       el.Notulens.map((_: any, i: number) => {
-        dateRangeNotulen = dateRangeFormat(el.Notulens.length != 0 && el.Notulens[i].tanggal[0]);
+        if (el.Notulens.length != 0) {
+          dateRangeNotulen = dateRangeFormat(el.Notulens[i].tanggal[0])
+        } else {
+          dateRangeNotulen = null
+        }
       })
 
       const tempUndangan = dateRangeUndangan.map((date: any) => ({
@@ -155,7 +159,6 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
         null;
     }
   }
-  console.log(data);
 
   return (
     <React.Fragment>
@@ -197,7 +200,7 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                         <TableCell align="center">
                           {row.Undangan !== null
                             ? row.Undangan.acara
-                            : row.Notulens.length != 0 ? row.Notulens[index].acara : null
+                            : row.Notulens.length != 0 ? row.Notulens[0].acara : null
                           }
                         </TableCell>
                         <TableCell align='center'>
@@ -237,7 +240,7 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                                   >
                                     <FaCheck size={14} />
                                   </div>
-                                  <div className='text-deep-gray'>{row.Undangan.lampiran !== null && `${JSON.parse(row.Undangan.lampiran).length} lampiran`}</div>
+                                  <div className='text-deep-gray'>{JSON.parse(row.Undangan.lampiran).length != 0 ? `${JSON.parse(row.Undangan.lampiran).length} lampiran` : ''}</div>
                                 </div>
                               ) : (
                                 <div className='text-danger w-[28px] h-[28px] flex items-center justify-center'><FaCheck size={14} /></div>

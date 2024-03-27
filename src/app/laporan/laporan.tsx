@@ -60,12 +60,13 @@ const LaporanPage = () => {
     } else {
       const { data } = response.data;
 
-      const filtered: any = data.filter((el: any) => el.Notulens.length != 0 || el.Undangan !== null);
+      const filtered: any = data.filter((el: any) => el.Notulens.length !== 0 || el.Undangan !== null);
+
       let tanggalArr: any = []
-      let temp: any = [...data]
+      let temp: any = [...filtered]
       filtered.forEach((el: any, index: number) => {
-        const dateRange = dateRangeFormat(el.Undangan !== null ? el.Undangan.tanggal !== null ? el.Undangan.tanggal[0] : el.Notulens.length != 0 ? el.Notulens[0].tanggal[0] : null : null);
-        console.log(dateRange);
+        // const dateRange = dateRangeFormat(el.Undangan !== null ? el.Undangan.tanggal !== null ? el.Undangan.tanggal[0] : el.Notulens.length != 0 ? el.Notulens[0].tanggal[0] : null : null);
+        const dateRange = dateRangeFormat(el.Undangan !== null ? el.Undangan.tanggal[0] : el.Notulens.length != 0 ? el.Notulens[0].tanggal[0] : null)
 
         const tanggal = dateRange.map((date: any) => ({
           tanggal: date,

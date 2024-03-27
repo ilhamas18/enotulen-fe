@@ -625,7 +625,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
           onClick={() => setOpenLampiran(true)}
         ><IoNewspaperSharp size={18} />Lampiran <span className="text-title-ss2">(Opsional)</span></div>
         <div className="mt-4 px-8 flex flex-col gap-4">
-          {values?.pendahuluan !== undefined && values.lampiran.map((el: any, i: number) => (
+          {values?.lampiran !== null && values.lampiran.map((el: any, i: number) => (
             <div key={i}>
               <div className="py-2">Lampiran {i + 1}</div>
               <div className="container border-2 border-light-gray rounded-lg">

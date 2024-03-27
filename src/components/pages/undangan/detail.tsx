@@ -403,7 +403,7 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
                 </div>
               </div>
             </div>
-            {data.lampiran !== null && (
+            {JSON.parse(data.lampiran).length != 0 && (
               <div className="lampiran border-t-6 border-light-gray my-8 w-full">
                 <div className="text-label mt-6 text-title-xsm font-bold mb-6 md:text-left text-center">
                   Lampiran
