@@ -53,7 +53,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
         <div className="px-8 font-Nunito flex flex-col space-y-7 mt-4">
           <div className="data flex flex-row">
             <TextInput
-              type="tel"
+              type="text"
               id="nip"
               name="nip"
               label="NIP/NIPPPK"
