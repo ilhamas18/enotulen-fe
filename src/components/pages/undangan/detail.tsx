@@ -398,7 +398,7 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
                 </div>
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                    {data.Uuid.hari} {formatMonth[data.Uuid.bulan - 1]} {data.Uuid.tahun}
+                    {data.tanggal_surat}
                   </div>
                 </div>
               </div>
@@ -410,7 +410,7 @@ const UndanganDetailProps = ({ data, profile }: DetailProps) => {
                 </div>
                 <div className="flex flex-col gap-4">
                   {JSON.parse(data.lampiran).map((el: any, i: number) => (
-                    <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                    <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4" key={i}>
                       {<Blocks data={el} config={{
                         list: {
                           className: "list-decimal ml-10"

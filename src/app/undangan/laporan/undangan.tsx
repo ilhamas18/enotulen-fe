@@ -2,21 +2,22 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import withAuth from "@/components/hocs/withAuth";
-import { shallowEqual, useSelector } from "react-redux";
+import { shallowEqual, useSelector, useDispatch } from "react-redux";
 import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
 import Loading from "@/components/global/Loading/loading";
 import { State } from "@/store/reducer";
 import { getShortDate, getTime } from "@/components/hooks/formatDate";
-import Breadcrumb from "@/components/global/Breadcrumbs/Breadcrumb";
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { ImTable2 } from "react-icons/im";
 import LaporanUndanganList from "@/components/pages/undangan/list";
+import { setPayload } from "@/store/payload/action";
 
 const LaporanUndanganProps = () => {
+  const dispatch = useDispatch();
   const [undangan, setUndangan] = useState<any>([]);
   const [month, setMonth] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -28,22 +29,29 @@ const LaporanUndanganProps = () => {
     shallowEqual
   );
 
+  const monthNames = [
+    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+  ];
+
   useEffect(() => {
     fetchData();
+    dispatch(setPayload([]));
+
     if (month === null) {
       const currentDate = new Date();
-      const currentShortMonth = currentDate.getMonth() + 1;
-      const currentMonth = month !== null ? month.toLocaleString("id-ID", { month: "long", }) : currentDate.toLocaleString("id-ID", { month: "long", });
+      const currentMonthIndex = currentDate.getMonth();
       const currentYear = currentDate.getFullYear();
-
-      setMonth({ month: currentShortMonth, year: currentYear })
+      const currentMonthName = monthNames[currentMonthIndex];
+      const currentMonthAndYear = currentMonthName + ' ' + currentYear;
+      setMonth(currentMonthAndYear);
     }
   }, [month]);
 
   const fetchData = async () => {
     setLoading(true);
     const response = await fetchApi({
-      url: `/undangan/getAuthUndangan/${profile.Perangkat_Daerah.kode_opd}/${month?.month}/${month?.year}`,
+      url: `/undangan/getAuthUndangan/${profile.Perangkat_Daerah.kode_opd}/${month}`,
       method: "get",
       type: "auth",
     })
@@ -90,26 +98,27 @@ const LaporanUndanganProps = () => {
   };
 
   const handleDatePicked = (val: any) => {
-    let temp: any = {
-      month: val.$M + 1,
-      year: val.$y
-    }
-    setMonth(temp)
+    const date = new Date(val);
+    const month = monthNames[date.getMonth()];
+    const year = date.getFullYear();
+    const formattedDate = `${month} ${year}`;
+    setMonth(formattedDate);
   }
 
   return (
     <div className="list-undangan-container relative">
-      <div className="bg-white dark:bg-meta-4 shadow-card flex flex-col gap-2 py-4 text-center font-bold text-title-sm rounded rounded-lg border-none">
+      <div className="bg-white dark:bg-meta-4 shadow-card flex flex-col gap-2 py-4 text-center font-bold text-title-sm rounded-lg border-none">
         <div>DAFTAR LAPORAN UNDANGAN</div>
         {profile.role == 1 && <div>PEMERINTAH KOTA MADIUN</div>}
-        {profile.role == 2 || profile.role == 3 ? <div>{profile.Perangkat_Daerah?.nama_opd}</div> : null}
+        {profile.role == 2 || profile.role == 3 && <div>{profile.Perangkat_Daerah?.nama_opd}</div>}
+        {profile.role == 4 && <div className="text-title-xsm2">{profile.nama} <br /> <span>{month}</span></div>}
       </div>
       <div className="flex md:justify-between justify-center">
         <div></div>
         <div className="bg-white mt-10">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
-              <DatePicker label={'"Bulan" & "Tahun"'} views={['month', 'year']} onChange={handleDatePicked} />
+              <DatePicker label={'Bulan & Tahun'} views={['month', 'year']} onChange={handleDatePicked} />
             </DemoContainer>
           </LocalizationProvider>
         </div>

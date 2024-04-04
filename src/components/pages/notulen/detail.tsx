@@ -415,7 +415,7 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
                 </div>
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                    {data.Uuid.hari} {formatMonth[data.Uuid.bulan - 1]} {data.Uuid.tahun}
+                    {data.tanggal_surat}
                   </div>
                 </div>
               </div>

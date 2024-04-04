@@ -9,7 +9,7 @@ import { AiFillPlusCircle } from "react-icons/ai";
 import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
 import DateRangePicker from "../laporan/x-modal/XDateRangePicker";
-import { formatDate, getTime } from "@/components/hooks/formatDate";
+import { conversionDate, formatDate, getTime } from "@/components/hooks/formatDate";
 import Loading from "@/components/global/Loading/loading";
 import { AiOutlineClose } from "react-icons/ai";
 import { withFormik, FormikProps, FormikBag } from "formik";
@@ -597,38 +597,30 @@ const EditUndanganForm = ({
   const [dataAtasan, setDataAtasan] = useState<any>([]);
   const [dibuatTanggal, setDibuatTanggal] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
-
-  const formattedDate = () => {
-    let tempDate: any = undangan.Uuid.hari + '/' + Number(undangan.Uuid.bulan - 1) + '/' + undangan.Uuid.tahun;
-    const dateParts = tempDate.split('/');
-    const day = parseInt(dateParts[0], 10);
-    const month = parseInt(dateParts[1], 10); // Months are 0-based (0 = January, 1 = February, etc.)
-    const year = parseInt(dateParts[2], 10);
-    // Create a Date object with the parsed values
-    const formattedDate = new Date(year, month, day);
-
-    // Define a formatting option for the date
-    const options: any = {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZoneName: 'long',
-      timeZone: 'Asia/Jakarta' // Set the desired time zone
-    };
-
-    // Format the date using the Intl.DateTimeFormat API
-    const formatter = new Intl.DateTimeFormat('en-US', options);
-    const formattedDateString = formatter.format(formattedDate);
-    setDibuatTanggal(formattedDate);
-  }
+  console.log();
 
   useEffect(() => {
     fetchDataAtasan();
+    if (undangan.length != 0) {
+      setAtasan({
+        label: undangan.atasan.nama,
+        value: undangan.atasan.nip,
+        data: {
+          nama: undangan.atasan.nama,
+          nip: undangan.atasan.nip,
+          pangkat: undangan.atasan.pangkat,
+          namaPangkat: undangan.atasan.nama_pangkat,
+          jabatan: undangan.atasan.jabatan
+        },
+      })
+      setSifat({
+        label: undangan.sifat,
+        value: undangan.sifat
+      })
+      setDibuatTanggal(conversionDate(undangan.tanggal_surat));
+    }
   }, [])
+  console.log(conversionDate(undangan.tanggal_surat), '???');
 
   const fetchDataAtasan = async () => {
     setLoading(true);
@@ -669,27 +661,6 @@ const EditUndanganForm = ({
       setLoading(false);
     }
   };
-
-  React.useEffect(() => {
-    if (undangan.length != 0) {
-      setAtasan({
-        label: undangan.atasan.nama,
-        value: undangan.atasan.nip,
-        data: {
-          nama: undangan.atasan.nama,
-          nip: undangan.atasan.nip,
-          pangkat: undangan.atasan.pangkat,
-          namaPangkat: undangan.atasan.nama_pangkat,
-          jabatan: undangan.atasan.jabatan
-        },
-      })
-      setSifat({
-        label: undangan.sifat,
-        value: undangan.sifat
-      })
-      formattedDate();
-    }
-  }, []);
 
   const handleSubmmit = async (values: FormValues) => {
     setLoading(true);

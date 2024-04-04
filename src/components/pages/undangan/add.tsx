@@ -9,7 +9,7 @@ import dynamic from "next/dynamic";
 import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
 import DateRangePicker from "../laporan/x-modal/XDateRangePicker";
-import { formatDate } from "@/components/hooks/formatDate";
+import { formatDate, getIndoDate } from "@/components/hooks/formatDate";
 import Loading from "@/components/global/Loading/loading";
 import { withFormik, FormikProps, FormikBag } from "formik";
 import * as Yup from "yup";
@@ -183,48 +183,24 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     <div className="form-container relative bg-white rounded-lg">
       <div className="form-wrapper-general">
         <div className="px-8 flex flex-col space-y-7 mt-4 py-8">
-          {values.tanggalSurat !== null ? (
-            <div className="data items-center flex md:flex-row flex-col md:gap-4 w-full">
-              <div className="data flex flex-row mt-4 md:mt-0 md:w-[25%] w-full">
-                <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                  <span>{formatDate(values.tanggalSurat)}</span>
-                </div>
-              </div>
-              <div className="w-[15%] text-right">Edit Waktu Pembuatan: </div>
-              <div className="w-[60%] mb-2">
-                <TextInput
-                  type="date-picker"
-                  id="tanggalSurat"
-                  name="tanggalSurat"
-                  touched={touched.tanggalSurat}
-                  change={(e: any) => {
-                    handleChange({
-                      target: { name: "tanggalSurat", value: e.$d },
-                    });
-                  }}
-                  errors={errors.tanggalSurat}
-                />
-              </div>
+          <div className="flex flex-col gap-2">
+            <div className="text-title-xsm2 mb-2">Tanggal Pembuatan Undangan :</div>
+            <div>
+              <TextInput
+                type="date-picker"
+                id="tanggalSurat"
+                name="tanggalSurat"
+                touched={touched.tanggalSurat}
+                change={(e: any) => {
+                  handleChange({
+                    target: { name: "tanggalSurat", value: e.$d },
+                  });
+                }}
+                value={values.tanggalSurat}
+                errors={errors.tanggalSurat}
+              />
             </div>
-          ) : (
-            <div className="flex flex-col gap-2">
-              <div className="text-title-xsm2 mb-2">Tanggal Pembuatan Undangan :</div>
-              <div>
-                <TextInput
-                  type="date-picker"
-                  id="tanggalSurat"
-                  name="tanggalSurat"
-                  touched={touched.tanggalSurat}
-                  change={(e: any) => {
-                    handleChange({
-                      target: { name: "tanggalSurat", value: e.$d },
-                    });
-                  }}
-                  errors={errors.tanggalSurat}
-                />
-              </div>
-            </div>
-          )}
+          </div>
           <div>Nomor Surat :</div>
           <div className="data flex flex-row gap-3 w-full -mt-2">
             <div>
@@ -720,11 +696,11 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   )
 }
 
-function CreateForm({ handleSubmit, sifat, atasan, dibuatTanggal, undangan, ...otherProps }: MyFormProps) {
+function CreateForm({ handleSubmit, sifat, atasan, undangan, ...otherProps }: MyFormProps) {
   const FormWithFormik = withFormik({
     mapPropsToValues: () => ({
       ditujukan: undangan?.length != 0 ? undangan?.ditujukan !== undefined ? undangan?.ditujukan : [] : [],
-      tanggalSurat: dibuatTanggal !== undefined ? dibuatTanggal : null,
+      tanggalSurat: undangan?.tanggal_surat !== undefined ? undangan?.tanggal_surat : null,
       nomorSurat: undangan?.length != 0 ? undangan?.nomor_surat !== undefined ? undangan?.nomor_surat : [] : [],
       sifat: undangan?.sifat !== undefined ? sifat : null,
       perihal: undangan?.length != 0 ? undangan?.acara !== undefined ? undangan?.acara : null : null,
@@ -811,7 +787,6 @@ const AddUndanganForm = ({
   const [atasan, setAtasan] = useState<any>(null);
   const [sifat, setSifat] = useState<any>(null);
   const [dataPayload, setDataPayload] = useState<any>([]);
-  const [dibuatTanggal, setDibuatTanggal] = useState<any>(null);
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -832,37 +807,8 @@ const AddUndanganForm = ({
         label: undangan.sifat,
         value: undangan.sifat
       })
-      formattedDate();
     }
   }, []);
-
-  const formattedDate = () => {
-    let tempDate: any = undangan.hari + '/' + Number(undangan.bulan - 1) + '/' + undangan.tahun;
-    const dateParts = tempDate.split('/');
-    const day = parseInt(dateParts[0], 10);
-    const month = parseInt(dateParts[1], 10); // Months are 0-based (0 = January, 1 = February, etc.)
-    const year = parseInt(dateParts[2], 10);
-    // Create a Date object with the parsed values
-    const formattedDate = new Date(year, month, day);
-
-    // Define a formatting option for the date
-    const options: any = {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZoneName: 'long',
-      timeZone: 'Asia/Jakarta' // Set the desired time zone
-    };
-
-    // Format the date using the Intl.DateTimeFormat API
-    const formatter = new Intl.DateTimeFormat('en-US', options);
-    const formattedDateString = formatter.format(formattedDate);
-    setDibuatTanggal(formattedDate);
-  }
 
   const handleSubmmit = async (values: FormValues) => {
     const dataUndangan = {
@@ -881,9 +827,7 @@ const AddUndanganForm = ({
       catatan: JSON.stringify(values.catatan),
       penutup: JSON.stringify(values.penutup),
       status: "-",
-      hari: new Date(values.tanggalSurat).getDate(),
-      bulan: new Date(values.tanggalSurat).getMonth() + 1,
-      tahun: new Date(values.tanggalSurat).getFullYear(),
+      tanggal_surat: getIndoDate(values.tanggalSurat),
       signature: values.signature !== '' ? values.signature : '-',
       kode_opd: profile.Perangkat_Daerah.kode_opd,
       nip_pegawai: profile.nip,
@@ -891,6 +835,7 @@ const AddUndanganForm = ({
       lampiran: JSON.stringify(values.lampiran),
       isFilled: true
     }
+
     setDataPayload(dataUndangan);
     if (step !== null) setOpenConfirm(true);
     else handleConfirmSubmit(dataUndangan);
@@ -966,7 +911,6 @@ const AddUndanganForm = ({
           dataAtasan={dataAtasan}
           loading={loading}
           atasan={atasan}
-          dibuatTanggal={dibuatTanggal}
           undangan={undangan}
           step={step}
           sifat={sifat}

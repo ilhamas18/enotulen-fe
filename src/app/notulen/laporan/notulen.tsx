@@ -30,25 +30,29 @@ const LaporanNotulenProps = () => {
     shallowEqual
   );
 
+  const monthNames = [
+    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+  ];
+
   useEffect(() => {
     fetchData();
+    dispatch(setPayload([]));
 
     if (month === null) {
       const currentDate = new Date();
-      const currentShortMonth = currentDate.getMonth() + 1;
-      const currentMonth = month !== null ? month.toLocaleString("id-ID", { month: "long", }) : currentDate.toLocaleString("id-ID", { month: "long", });
+      const currentMonthIndex = currentDate.getMonth();
       const currentYear = currentDate.getFullYear();
-
-      setMonth({ month: currentShortMonth, year: currentYear })
+      const currentMonthName = monthNames[currentMonthIndex];
+      const currentMonthAndYear = currentMonthName + ' ' + currentYear;
+      setMonth(currentMonthAndYear);
     }
-
-    dispatch(setPayload([]));
   }, [month]);
 
   const fetchData = async () => {
     setLoading(true);
     const response = await fetchApi({
-      url: `/notulen/getAuthNotulen/${profile.Perangkat_Daerah.kode_opd}/${profile.nip}/${month.month}/${month.year}`,
+      url: `/notulen/getAuthNotulen/${profile.Perangkat_Daerah.kode_opd}/${month}`,
       method: "get",
       type: "auth",
     });
@@ -103,11 +107,11 @@ const LaporanNotulenProps = () => {
   };
 
   const handleDatePicked = (val: any) => {
-    let temp: any = {
-      month: val.$M + 1,
-      year: val.$y
-    }
-    setMonth(temp)
+    const date = new Date(val);
+    const month = monthNames[date.getMonth()];
+    const year = date.getFullYear();
+    const formattedDate = `${month} ${year}`;
+    setMonth(formattedDate);
   }
 
   return (
@@ -116,7 +120,7 @@ const LaporanNotulenProps = () => {
         <div>DAFTAR LAPORAN NOTULEN</div>
         {profile.role == 1 && <div>PEMERINTAH KOTA MADIUN</div>}
         {profile.role == 2 || profile.role == 3 ? <div>{profile.Perangkat_Daerah?.nama_opd}</div> : null}
-        {/* <div>Bulan {currentMonth}</div> */}
+        {profile.role == 4 && <div className="text-title-xsm2">{profile.nama} <br /> <span>{month}</span></div>}
       </div>
       {/* <div className='md:w-[30%] w-full md:absolute md:right-0 md:top-[10em] top-[13em] bg-white'> */}
       <div className="flex md:justify-between justify-center">
@@ -124,7 +128,7 @@ const LaporanNotulenProps = () => {
         <div className="bg-white mt-10">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
-              <DatePicker label={'"Bulan" & "Tahun"'} views={['month', 'year']} onChange={handleDatePicked} />
+              <DatePicker label={'Bulan & Tahun'} views={['month', 'year']} onChange={handleDatePicked} />
             </DemoContainer>
           </LocalizationProvider>
         </div>

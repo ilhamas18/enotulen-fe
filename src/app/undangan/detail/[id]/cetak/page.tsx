@@ -139,7 +139,7 @@ const CetakUndangan = ({ params }: { params: { id: number } }) => {
                     <div></div>
                     <div className="text-right">
                       <div className="text-black dark:text-white text-title-ss2">
-                        Madiun, {laporan.Uuid.hari} {formatMonth[laporan.Uuid.bulan - 1]} {laporan.Uuid.tahun}
+                        Madiun, {laporan.tanggal_surat.split(', ')[1]}
                       </div>
                     </div>
                   </div>

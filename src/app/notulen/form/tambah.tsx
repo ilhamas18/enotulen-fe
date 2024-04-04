@@ -70,9 +70,7 @@ const AddNotulenProps = () => {
       acara: data.length != 0 ? data.acara !== "" ? data.acara : "" : "",
       atasan: data.length != 0 ? atasan : null,
       status: "-",
-      hari: data.length != 0 ? data.hari : null,
-      bulan: data.length != 0 ? data.bulan : null,
-      tahun: data.length != 0 ? data.tahun : null,
+      tanggal_surat: data.length != 0 ? data.tanggal_surat : null,
       link_img_surat_undangan: data.link_img_surat_undangan !== null ? data.link_img_surat_undangan : null,
       link_img_daftar_hadir: data.link_img_daftar_hadir !== null ? data.link_img_daftar_hadir : null,
       link_img_spj: data.link_img_spj !== null ? data.link_img_spj : null,
@@ -99,9 +97,7 @@ const AddNotulenProps = () => {
         acara: data.length != 0 ? data.acara !== "" ? data.acara : "" : "",
         atasan: data.length != 0 ? atasan : null,
         status: "-",
-        hari: data.length != 0 ? data.hari : null,
-        bulan: data.length != 0 ? data.bulan : null,
-        tahun: data.length != 0 ? data.tahun : null,
+        tanggal_surat: data.length != 0 ? data.tanggal_surat : null,
         link_img_surat_undangan: data.link_img_surat_undangan !== null ? data.link_img_surat_undangan : null,
         link_img_daftar_hadir: data.link_img_daftar_hadir !== null ? data.link_img_daftar_hadir : null,
         link_img_spj: data.link_img_spj !== null ? data.link_img_spj : null,
@@ -114,7 +110,6 @@ const AddNotulenProps = () => {
       });
     }
   }
-  // console.log(notulens, 'notulen');
 
   const rangeDate = dateRangeFormat(notulen?.tanggal !== undefined && notulen?.tanggal[0]);
 

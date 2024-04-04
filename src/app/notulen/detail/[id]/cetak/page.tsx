@@ -316,7 +316,7 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
               <div className="flex flex-col items-center justify-between text-center w-[45%] h-[25em]">
                 <div className="text-right mt-12">
                   <div className="text-black dark:text-white text-title-ss2">
-                    Madiun, {laporan.Uuid.hari} {formatMonth[laporan.Uuid.bulan - 1]} {laporan.Uuid.tahun}
+                    Madiun, {laporan.tanggal_surat.split(', ')[1]}
                   </div>
                 </div>
                 <div className="">

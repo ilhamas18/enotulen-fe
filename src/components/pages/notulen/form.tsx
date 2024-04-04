@@ -11,7 +11,7 @@ import { AiFillPlusCircle } from "react-icons/ai";
 import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
 import DateRangePicker from "../laporan/x-modal/XDateRangePicker";
-import { formatDate } from "@/components/hooks/formatDate";
+import { formatDate, getIndoDate } from "@/components/hooks/formatDate";
 import Loading from "@/components/global/Loading/loading";
 import { AiOutlineClose } from "react-icons/ai";
 import { withFormik, FormikProps, FormikBag } from "formik";
@@ -863,9 +863,9 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 <div className="data flex flex-col w-full mt-2 gap-2 justify-center">
                   <div className="flex gap-6 w-full items-center justify-center">
                     <div className="data flex flex-col gap-2 w-[50%]">
-                      <div>Waktu pembuatan notulen :</div>
+                      <div>Tanggal pembuatan notulen :</div>
                       <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                        <span>{formatDate(values.dibuatTanggal)}</span>
+                        <span>{values.dibuatTanggal}</span>
                       </div>
                     </div>
                     {index !== undefined && notulens[index].uuid === undefined ? (
@@ -880,7 +880,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                             touched={touched.dibuatTanggal}
                             change={(e: any) => {
                               handleChange({
-                                target: { name: "dibuatTanggal", value: e.$d },
+                                target: { name: "dibuatTanggal", value: getIndoDate(e.$d) },
                               });
                             }}
                             errors={errors.dibuatTanggal}
@@ -1267,26 +1267,21 @@ const AddNotulenForm = ({
   const dispatch = useDispatch();
   const [dibuatTanggal, setDibuatTanggal] = useState<any>(null);
   const [sudenly, setSudenly] = useState<number>(0);
-  const [isFilled, setIsFilled] = useState<any>([]);
 
   useEffect(() => {
     if (step !== null) {
-      if (notulen.hari != undefined && notulen.bulan !== undefined && notulen.tahun !== undefined) {
-        let tempDate: any = notulen.hari + '/' + Number(notulen.bulan - 1) + '/' + notulen.tahun;
-        setDibuatTanggal(formattedDate(tempDate));
+      if (notulen.tanggal_surat) {
+        setDibuatTanggal(notulen.tanggal_surat);
       }
     }
     if (index !== undefined) setSudenly(index)
   }, [])
 
   const handleSubmit = async (values: FormValues) => {
-    // setLoading(true);
+    setLoading(true);
     let uuid;
-    if (payload.step1 !== undefined) {
-      uuid = payload.step1.uuid;
-    } else {
-      uuid = uuidv4();
-    }
+    if (payload.step1 !== undefined) uuid = payload.step1.uuid;
+    else uuid = uuidv4();
 
     const dataNotulen = {
       uuid: uuid,
@@ -1301,9 +1296,7 @@ const AddNotulenForm = ({
       acara: values.acara,
       atasan: values.atasan?.data,
       status: "-",
-      hari: new Date(values.dibuatTanggal).getDate(),
-      bulan: new Date(values.dibuatTanggal).getMonth() + 1,
-      tahun: new Date(values.dibuatTanggal).getFullYear(),
+      tanggal_surat: values.dibuatTanggal,
       link_img_surat_undangan: values.suratUndangan,
       link_img_daftar_hadir: values.daftarHadir,
       link_img_spj: values.spj,
