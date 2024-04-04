@@ -106,9 +106,7 @@ function CreateForm({ handleSubmit }: MyFormProps) {
     }),
     validationSchema: Yup.object().shape({
       nip: Yup.string()
-        .required('Bagian dibutuhkan')
-        .min(18, 'NIP harus 18 angka')
-        .max(18, 'NIP harus 18 angka'),
+        .required('Bagian dibutuhkan'),
       password: Yup.string()
         .required("Bagian dibutuhkan")
         .min(8, "Kata sandi terlalu pendek - minimal harus 8 karakter"),
