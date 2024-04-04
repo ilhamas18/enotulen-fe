@@ -71,7 +71,6 @@ const Registrasi = () => {
 
   return (
     <div className='form-user-container'>
-      <Breadcrumb pageName='Pegawai / Tambah' />
       <div className="bg-white py-4 flex flex-col items-center font-bold justify-center gap-2">
         <div className='md:text-title-sm text-title-xsm'>FORM TAMBAH ROLE PEGAWAI</div>
         <div className={`${profile.role == 2 ? 'block' : 'hidden'} text-title-xsm`}>{profile.Perangkat_Daerah?.nama_opd}</div>

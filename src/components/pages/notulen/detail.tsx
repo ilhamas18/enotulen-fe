@@ -116,7 +116,7 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
       if (result.isConfirmed) {
         setLoading(true);
         const response = await fetchApi({
-          url: `/notulen/deleteNotulen/${data.id}`,
+          url: `/notulen/deleteNotulen/${data.Uuid.uuid}/${data.id}`,
           method: 'delete',
           type: 'auth'
         })
