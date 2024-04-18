@@ -189,11 +189,10 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
                         <TableCell align="center">{index + 1}</TableCell>
                         <TableCell align="center" width={150}>
                           <div className='flex gap-2 items-center justify-center'>
-                            {row.uuid}
-                            {/* {row.Taggings.length !== 0 ? (row.Taggings.map((el: any, i: number) => (
+                            {row.Taggings.length !== 0 ? (row.Taggings.map((el: any, i: number) => (
                               <div key={i} className={`${row.Taggings.length != 1 && 'bg-[#6b7280] text-white px-4 rounded-xl'}`}>{el.nama_tagging}</div>
                             ))
-                            ) : "-"} */}
+                            ) : "-"}
                           </div>
                         </TableCell>
                         {profile.role == 1 && <TableCell align="center">{trimText(row.Perangkat_Daerah.nama_opd)}</TableCell>}

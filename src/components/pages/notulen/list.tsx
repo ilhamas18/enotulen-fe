@@ -31,6 +31,27 @@ const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
     mode === 'dark' ? darken(color, 0.4) : lighten(color, 0.4);
 
   const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+    '& .super-app-theme--drafted': {
+      backgroundColor: getBackgroundColor(theme.palette.secondary.light, theme.palette.mode),
+      '&:hover': {
+        backgroundColor: getHoverBackgroundColor(
+          theme.palette.secondary.light,
+          theme.palette.secondary.light,
+        ),
+      },
+      '&.Mui-selected': {
+        backgroundColor: getSelectedBackgroundColor(
+          theme.palette.secondary.light,
+          theme.palette.secondary.light,
+        ),
+        '&:hover': {
+          backgroundColor: getSelectedHoverBackgroundColor(
+            theme.palette.secondary.light,
+            theme.palette.secondary.light,
+          ),
+        },
+      },
+    },
     '& .super-app-theme--Disetujui': {
       backgroundColor: getBackgroundColor(theme.palette.info.main, theme.palette.mode),
       '&:hover': {
