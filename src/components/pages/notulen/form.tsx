@@ -8,27 +8,21 @@ import { Button } from "@/components/common/button/button";
 import SignatureCanvas from 'react-signature-canvas';
 import dynamic from "next/dynamic";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { fetchApi } from "@/app/api/request";
-import Swal from "sweetalert2";
 import DateRangePicker from "../laporan/x-modal/XDateRangePicker";
 import { formatDate, getIndoDate } from "@/components/hooks/formatDate";
 import Loading from "@/components/global/Loading/loading";
 import { AiOutlineClose } from "react-icons/ai";
 import { withFormik, FormikProps, FormikBag } from "formik";
 import * as Yup from "yup";
-import { shallowEqual, useSelector } from "react-redux";
-import { State } from "@/store/reducer";
 import axios from "axios";
 import { getCookies } from "cookies-next";
 import { IoMdClose } from "react-icons/io";
 import { v4 as uuidv4 } from 'uuid';
-import ModalConfirm from "@/components/global/Modal/confirm";
-import { setPayload } from "@/store/payload/action";
-import CancelBtn from "@/components/hooks/cancelBtn";
 import { IoIosSave } from "react-icons/io";
 import Blocks from "editorjs-blocks-react-renderer";
 import { locationList } from "@/components/data/location";
-import { formattedDate } from "@/components/helpers/formatMonth";
+import { fetchApi } from "@/app/api/request";
+import Swal from "sweetalert2";
 
 const EditorBlock = dynamic(() => import("../../hooks/editor"));
 
@@ -839,7 +833,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                   }}
                 />
               </div>
-              {values.dibuatTanggal == null ? (
+              {values.dibuatTanggal == null || step === null ? (
                 <div className="data flex flex-row w-full mt-2">
                   <div className="flex flex-col gap-3">
                     <div>Masukkan tanggal pembuatan notulen :</div>
@@ -1295,7 +1289,7 @@ const AddNotulenForm = ({
       lokasi: values.lokasi,
       acara: values.acara,
       atasan: values.atasan?.data,
-      status: "-",
+      status: values.dibuatTanggal.split(', ')[1] > getIndoDate(new Date().toString()) ? 'Draft' : '-',
       tanggal_surat: values.dibuatTanggal,
       link_img_surat_undangan: values.suratUndangan,
       link_img_daftar_hadir: values.daftarHadir,
