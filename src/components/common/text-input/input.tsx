@@ -214,7 +214,7 @@ const TextInput = ({
           onChange={change}
           placeholder={placeholder}
           isDisabled={disabled}
-          className={` ${errors && touched ? "error" : ""}`}
+          className={`${errors && touched ? "error" : ""}`}
         />
       )}
       {type === "date-picker" && (

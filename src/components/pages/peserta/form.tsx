@@ -63,6 +63,7 @@ const AddPesertaForm = ({
   const router = useRouter();
   const [openAddPeserta, setOpenAddPeserta] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [user, setUser] = useState<any>([]);
 
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
@@ -75,26 +76,14 @@ const AddPesertaForm = ({
     jumlah_peserta: Array.from({ length: item.jumlah_peserta }, (_, index) => index + 1)
   }));
 
-  const getDay = (dateString: string) => {
-    var dateParts = dateString.split(" ");
-    var day = parseInt(dateParts[0]);
-    var month = dateParts[1];
-    var year = parseInt(dateParts[2]);
-    var date = new Date(year, ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"].indexOf(month), day);
-    var days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-    var dayName = days[date.getDay()];
-    var formattedDate = dayName + ", " + dateString;
-
-    return formattedDate;
-  }
-
   const handleSave = async () => {
     setLoading(true);
     const payload = {
       uuid: undangan.uuid,
       jumlah_peserta: peserta[index].jumlah_peserta,
       jenis_peserta: peserta[index].jenis_peserta,
-      tanggal: rangeDate
+      tanggal: rangeDate,
+      penanggungjawab: user.length != 0 ? user.nip : null
     }
 
     const response = await fetchApi({
@@ -136,6 +125,7 @@ const AddPesertaForm = ({
     const formattedDate = `${day}, ${date} ${month} ${year}`;
     return formattedDate;
   }
+  console.log(undangan, '???');
 
   return (
     <div className='py-8 dark:bg-meta-4 w-full'>
@@ -174,7 +164,8 @@ const AddPesertaForm = ({
             </div>
             <div className="w-[2%]">:</div>
             <div className="w-[85%]">
-              {formatDateHandle(undangan.tanggal)}
+              {/* {formatDateHandle(undangan.tanggal)} */}
+              {peserta[index].tanggal}
             </div>
           </div>
           <div className="flex gap-2 w-full">
@@ -254,16 +245,33 @@ const AddPesertaForm = ({
               <img src={undangan.signature} className="w-[270px] h-[180px]" alt="TTD" />
             ) : <></>}
             <div>
-              <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
-                {profile.nama}
-              </div>
-              <div className="text-black dark:text-white text-title-ss mt-1">
-                {" "}
-                {profile.nama_pangkat}{" "}
-              </div>
-              <div className="font-bold text-black dark:text-white text-title-ss mt-1">
-                NIP. {profile?.nip}
-              </div>
+              {user.length != 0 ? (
+                <>
+                  <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
+                    {user.nama}
+                  </div>
+                  <div className="text-black dark:text-white text-title-ss mt-1">
+                    {" "}
+                    {user.namaPangkat}{" "}
+                  </div>
+                  <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                    NIP. {user?.nip}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
+                    {profile.nama}
+                  </div>
+                  <div className="text-black dark:text-white text-title-ss mt-1">
+                    {" "}
+                    {profile.nama_pangkat}{" "}
+                  </div>
+                  <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                    NIP. {profile?.nip}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -273,7 +281,7 @@ const AddPesertaForm = ({
             <div
               className='rounded-md px-4 py-1 bg-xl-base text-white flex gap-2 items-center justify-center hover:cursor-pointer'
               onClick={handleSave}
-            ><IoIosSave size={20} /> Simpan</div>
+            ><IoIosSave size={20} /> Save</div>
           </div>
         )}
       </div>
@@ -307,6 +315,8 @@ const AddPesertaForm = ({
         setOpenAddPeserta={setOpenAddPeserta}
         peserta={peserta}
         setPeserta={setPeserta}
+        user={user}
+        setUser={setUser}
       />
     </div>
   )

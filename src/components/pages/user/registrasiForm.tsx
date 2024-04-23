@@ -157,7 +157,6 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
     }
   }
   const handleCancel = () => router.push('/master/data-user');
-  console.log(listUser);
 
   return (
     <div className="relative py-6">

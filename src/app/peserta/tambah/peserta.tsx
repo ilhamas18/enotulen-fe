@@ -42,7 +42,7 @@ const PesertaProps = ({ id }: PropTypes) => {
     setData(payload.step1);
     const dateRange = dateRangeFormat(payload.step1?.tanggal !== undefined && payload.step1?.tanggal[0]);
     const temp = dateRange.map((date: any) => ({
-      tanggal: date.split(' ')[0],
+      tanggal: date,
       jumlah_peserta: 0,
       jenis_peserta: '',
     }));
@@ -76,7 +76,7 @@ const PesertaProps = ({ id }: PropTypes) => {
 
         return matchingData
           ? {
-            tanggal: item.tanggal,
+            tanggal: matchingData.tanggal,
             uuid: matchingData.uuid,
             jumlah_peserta: matchingData.jumlah_peserta,
             jenis_peserta: matchingData.jenis_peserta
