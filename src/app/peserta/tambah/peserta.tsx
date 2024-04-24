@@ -34,6 +34,7 @@ const PesertaProps = ({ id }: PropTypes) => {
     profile: state.profile.profile,
     payload: state.payload.payload
   }), shallowEqual);
+  console.log(payload, 'paymo');
 
   useEffect(() => {
     if (profile.role != 2 && profile.role != 3 && profile.role != 4) {
@@ -42,7 +43,7 @@ const PesertaProps = ({ id }: PropTypes) => {
     setData(payload.step1);
     const dateRange = dateRangeFormat(payload.step1?.tanggal !== undefined && payload.step1?.tanggal[0]);
     const temp = dateRange.map((date: any) => ({
-      tanggal: date.split(' ')[0],
+      tanggal: date,
       jumlah_peserta: 0,
       jenis_peserta: '',
     }));
@@ -70,8 +71,7 @@ const PesertaProps = ({ id }: PropTypes) => {
       const { data } = response.data;
       const updatedState = arr.map((item: any) => {
         const matchingData = data[0].Peserta.find((data: any) => {
-          const date = new Date(data.tanggal).getDate();
-          return date.toString() === item.tanggal;
+          return data.tanggal === item.tanggal;
         });
 
         return matchingData
@@ -79,7 +79,8 @@ const PesertaProps = ({ id }: PropTypes) => {
             tanggal: matchingData.tanggal,
             uuid: matchingData.uuid,
             jumlah_peserta: matchingData.jumlah_peserta,
-            jenis_peserta: matchingData.jenis_peserta
+            jenis_peserta: matchingData.jenis_peserta,
+            penanggungjawab: matchingData.Pegawai
           }
           : item;
       });

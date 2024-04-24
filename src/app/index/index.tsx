@@ -55,15 +55,17 @@ function Home() {
     shallowEqual
   );
 
+  const labels = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
   useEffect(() => {
     fetchData();
     if (month === null) {
       const currentDate = new Date();
-      const currentShortMonth = currentDate.getMonth() + 1;
-      const currentMonth = currentDate.toLocaleString("id-ID", { month: "long", });
+      const currentMonthIndex = currentDate.getMonth();
       const currentYear = currentDate.getFullYear();
-
-      setMonth({ month: currentShortMonth, year: currentYear })
+      const currentMonthName = labels[currentMonthIndex];
+      const currentMonthAndYear = currentMonthName + ' ' + currentYear;
+      setMonth(currentMonthAndYear);
     }
 
     switch (profile.role) {
@@ -88,7 +90,7 @@ function Home() {
   const fetchData = async () => {
     setLoading(true)
     const response = await fetchApi({
-      url: `/notulen/getAllNotulens/${profile.Perangkat_Daerah.kode_opd}`,
+      url: `/notulen/getAllNotulens/${profile.Perangkat_Daerah.kode_opd}/${month}`,
       method: "get",
       type: "auth",
     })
@@ -106,49 +108,49 @@ function Home() {
 
         if (profile.role != 3) {
           let temp: any = [
-            data.filter((el: any) => el.Uuid.bulan === "1").length,
-            data.filter((el: any) => el.Uuid.bulan === "2").length,
-            data.filter((el: any) => el.Uuid.bulan === "3").length,
-            data.filter((el: any) => el.Uuid.bulan === "4").length,
-            data.filter((el: any) => el.Uuid.bulan === "5").length,
-            data.filter((el: any) => el.Uuid.bulan === "6").length,
-            data.filter((el: any) => el.Uuid.bulan === "7").length,
-            data.filter((el: any) => el.Uuid.bulan === "8").length,
-            data.filter((el: any) => el.Uuid.bulan === "9").length,
-            data.filter((el: any) => el.Uuid.bulan === "10").length,
-            data.filter((el: any) => el.Uuid.bulan === "11").length,
-            data.filter((el: any) => el.Uuid.bulan === "12").length
+            data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Januari").length,
+            data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Februari").length,
+            data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Maret").length,
+            data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "April").length,
+            data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Mei").length,
+            data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Juni").length,
+            data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Juli").length,
+            data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Agustus").length,
+            data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "September").length,
+            data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Oktober").length,
+            data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "November").length,
+            data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Desember").length,
           ];
           setNotulenLength(temp);
           setNotulens(data);
         } else {
           let temp: any = [
-            data.data.filter((el: any) => el.Uuid.bulan === "1").length,
-            data.data.filter((el: any) => el.Uuid.bulan === "2").length,
-            data.data.filter((el: any) => el.Uuid.bulan === "3").length,
-            data.data.filter((el: any) => el.Uuid.bulan === "4").length,
-            data.data.filter((el: any) => el.Uuid.bulan === "5").length,
-            data.data.filter((el: any) => el.Uuid.bulan === "6").length,
-            data.data.filter((el: any) => el.Uuid.bulan === "7").length,
-            data.data.filter((el: any) => el.Uuid.bulan === "8").length,
-            data.data.filter((el: any) => el.Uuid.bulan === "9").length,
-            data.data.filter((el: any) => el.Uuid.bulan === "10").length,
-            data.data.filter((el: any) => el.Uuid.bulan === "11").length,
-            data.data.filter((el: any) => el.Uuid.bulan === "12").length
+            data.data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Januari").length,
+            data.data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Februari").length,
+            data.data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Maret").length,
+            data.data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "April").length,
+            data.data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Mei").length,
+            data.data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Juni").length,
+            data.data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Juli").length,
+            data.data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Agustus").length,
+            data.data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "September").length,
+            data.data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Oktober").length,
+            data.data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "November").length,
+            data.data.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Desember").length,
           ];
           let temp2: any = [
-            data.verif.filter((el: any) => el.Uuid.bulan === "1").length,
-            data.verif.filter((el: any) => el.Uuid.bulan === "2").length,
-            data.verif.filter((el: any) => el.Uuid.bulan === "3").length,
-            data.verif.filter((el: any) => el.Uuid.bulan === "4").length,
-            data.verif.filter((el: any) => el.Uuid.bulan === "5").length,
-            data.verif.filter((el: any) => el.Uuid.bulan === "6").length,
-            data.verif.filter((el: any) => el.Uuid.bulan === "7").length,
-            data.verif.filter((el: any) => el.Uuid.bulan === "8").length,
-            data.verif.filter((el: any) => el.Uuid.bulan === "9").length,
-            data.verif.filter((el: any) => el.Uuid.bulan === "10").length,
-            data.verif.filter((el: any) => el.Uuid.bulan === "11").length,
-            data.verif.filter((el: any) => el.Uuid.bulan === "12").length
+            data.verif.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Januari").length,
+            data.verif.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Februari").length,
+            data.verif.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Maret").length,
+            data.verif.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "April").length,
+            data.verif.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Mei").length,
+            data.verif.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Juni").length,
+            data.verif.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Juli").length,
+            data.verif.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Agustus").length,
+            data.verif.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "September").length,
+            data.verif.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Oktober").length,
+            data.verif.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "November").length,
+            data.verif.filter((el: any) => el.tanggal_surat.split(', ')[1].split(' ')[1] === "Desember").length,
           ];
           setNotulenLength(temp);
           setNotulens(data.verif);
@@ -171,8 +173,6 @@ function Home() {
       },
     },
   };
-
-  const labels = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
   const data = {
     labels,

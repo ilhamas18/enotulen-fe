@@ -1272,7 +1272,7 @@ const AddNotulenForm = ({
   }, [])
 
   const handleSubmit = async (values: FormValues) => {
-    setLoading(true);
+    // setLoading(true);
     let uuid;
     if (payload.step1 !== undefined) uuid = payload.step1.uuid;
     else uuid = uuidv4();
@@ -1289,8 +1289,8 @@ const AddNotulenForm = ({
       lokasi: values.lokasi,
       acara: values.acara,
       atasan: values.atasan?.data,
-      status: values.dibuatTanggal.split(', ')[1] > getIndoDate(new Date().toString()) ? 'Draft' : '-',
-      tanggal_surat: values.dibuatTanggal,
+      status: values.rangeTanggal[0].startDate > new Date() ? 'drafted' : '-',
+      tanggal_surat: getIndoDate(values.dibuatTanggal),
       link_img_surat_undangan: values.suratUndangan,
       link_img_daftar_hadir: values.daftarHadir,
       link_img_spj: values.spj,

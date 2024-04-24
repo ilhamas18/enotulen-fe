@@ -108,13 +108,12 @@ const RegistrasiForm = ({ dataOPD, profile }: PropTypes) => {
 
   const handleSubmit = async () => {
     setLoading(true);
-
     const payload = {
       nama: user.nama,
       nip: user.nip,
       password: process.env.PASSWORD_USER,
       pangkat: user.pangkat,
-      nama_pangkat: user.namaPangkat,
+      golongan: user.namaPangkat,
       eselon: user.eselon,
       jabatan: user.jabatan,
       role: role,

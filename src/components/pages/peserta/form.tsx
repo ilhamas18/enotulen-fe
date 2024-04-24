@@ -63,7 +63,6 @@ const AddPesertaForm = ({
   const router = useRouter();
   const [openAddPeserta, setOpenAddPeserta] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [user, setUser] = useState<any>([]);
 
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
@@ -83,7 +82,7 @@ const AddPesertaForm = ({
       jumlah_peserta: peserta[index].jumlah_peserta,
       jenis_peserta: peserta[index].jenis_peserta,
       tanggal: rangeDate,
-      penanggungjawab: user.length != 0 ? user.nip : null
+      // penanggungjawab: user.length != 0 ? user.nip : null
     }
 
     const response = await fetchApi({
@@ -112,20 +111,7 @@ const AddPesertaForm = ({
       setTrigger(true);
     }
   }
-
-  const formatDateHandle = (data: any) => {
-    const startDateString = data[0].startDate;
-    const startDate = new Date(startDateString);
-    const daysInIndonesian = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-    const monthsInIndonesian = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-    const day = daysInIndonesian[startDate.getUTCDay() + 1];
-    const date = startDate.getUTCDate() + 1;
-    const month = monthsInIndonesian[startDate.getUTCMonth()];
-    const year = startDate.getUTCFullYear();
-    const formattedDate = `${day}, ${date} ${month} ${year}`;
-    return formattedDate;
-  }
-  console.log(undangan, '???');
+  console.log(peserta);
 
   return (
     <div className='py-8 dark:bg-meta-4 w-full'>
@@ -235,44 +221,49 @@ const AddPesertaForm = ({
         </div>
         <div className='signature mt-14 flex justify-between'>
           <div></div>
-          <div className="flex flex-col items-center justify-between text-center w-[45%] h-[12em]">
-            <div>
-              <div className="font-bold text-black dark:text-white text-title-ss mt-1">
-                Pembuat
+          <div>
+            {peserta[index].penanggungjawab !== undefined && (
+              <div className='flex flex-col items-center justify-between text-center w-[45%] h-[12em]'>
+                <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                  Pembuat
+                </div>
+                <div>
+                  {undangan.signature !== "-" && undangan.signature !== null ? (
+                    <img src={undangan.signature} className="w-[270px] h-[100px]" alt="TTD" />
+                  ) : <></>}
+                </div>
+                <div>
+                  {peserta[index].penanggungjawab !== null ? (
+                    <>
+                      <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
+                        {peserta[index].penanggungjawab?.nama}
+                      </div>
+                      <div className="text-black dark:text-white text-title-ss mt-1">
+                        {" "}
+                        {peserta[index].penanggungjawab?.golongan}{" "}
+                      </div>
+                      <div className="flex flex-row font-bold text-black dark:text-white text-title-ss mt-1">
+                        <div>NIP.</div>
+                        <div className='ml-2'>{peserta[index].penanggungjawab?.nip}</div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
+                        {profile.nama}
+                      </div>
+                      <div className="text-black dark:text-white text-title-ss mt-1">
+                        {" "}
+                        {profile.nama_pangkat}{" "}
+                      </div>
+                      <div className="flex flex-row font-bold text-black dark:text-white text-title-ss mt-1">
+                        NIP. {profile?.nip}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-            {undangan.signature !== "-" && undangan.signature !== null ? (
-              <img src={undangan.signature} className="w-[270px] h-[180px]" alt="TTD" />
-            ) : <></>}
-            <div>
-              {user.length != 0 ? (
-                <>
-                  <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
-                    {user.nama}
-                  </div>
-                  <div className="text-black dark:text-white text-title-ss mt-1">
-                    {" "}
-                    {user.namaPangkat}{" "}
-                  </div>
-                  <div className="font-bold text-black dark:text-white text-title-ss mt-1">
-                    NIP. {user?.nip}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
-                    {profile.nama}
-                  </div>
-                  <div className="text-black dark:text-white text-title-ss mt-1">
-                    {" "}
-                    {profile.nama_pangkat}{" "}
-                  </div>
-                  <div className="font-bold text-black dark:text-white text-title-ss mt-1">
-                    NIP. {profile?.nip}
-                  </div>
-                </>
-              )}
-            </div>
+            )}
           </div>
         </div>
         {peserta[index].jumlah_peserta != 0 && peserta[index].uuid === undefined && (
@@ -315,8 +306,6 @@ const AddPesertaForm = ({
         setOpenAddPeserta={setOpenAddPeserta}
         peserta={peserta}
         setPeserta={setPeserta}
-        user={user}
-        setUser={setUser}
       />
     </div>
   )

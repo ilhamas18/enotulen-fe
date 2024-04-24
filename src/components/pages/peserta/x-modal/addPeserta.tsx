@@ -18,8 +18,6 @@ interface PropTypes {
   setOpenAddPeserta: any;
   peserta: any;
   setPeserta: any;
-  user: any;
-  setUser: any;
 }
 
 const XAddPeserta = ({
@@ -28,8 +26,6 @@ const XAddPeserta = ({
   setOpenAddPeserta,
   peserta,
   setPeserta,
-  user,
-  setUser
 }: PropTypes) => {
   const router = useRouter();
   const [storedNumber, setStoredNumber] = useState<number>(0);
@@ -40,7 +36,6 @@ const XAddPeserta = ({
   const [listUser, setListUser] = useState<any>([]);
   const [storedUser, setStoredUser] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  console.log(storedUser);
 
   const handleChangePeserta = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStoredParticipant((event.target as HTMLInputElement).value);
@@ -128,10 +123,10 @@ const XAddPeserta = ({
   const handleSave = () => {
     if (index !== undefined) {
       if (!isNaN(storedNumber)) {
-        const newArr1 = [...peserta];
-        newArr1[index].jumlah_peserta = +storedNumber
-        setPeserta(newArr1);
-        setUser(storedUser);
+        const arr = [...peserta];
+        arr[index].jumlah_peserta = +storedNumber;
+        arr[index].penanggungjawab = storedUser;
+        setPeserta(arr);
       }
       const newArr2 = [...peserta];
       newArr2[index].jenis_peserta = storedParticipant;
@@ -140,6 +135,7 @@ const XAddPeserta = ({
       const temp = peserta;
       temp.jumlah_peserta = +storedNumber;
       temp.jenis_peserta = storedParticipant;
+      temp.penanggungjawab = storedUser;
       temp.isFilled = true;
       setPeserta(temp);
     }
@@ -208,8 +204,8 @@ const XAddPeserta = ({
                       type="dropdown"
                       id="pembuat"
                       name="pembuat"
-                      label="Pilih Pegawai"
-                      placeholder="Pilih Pegawai"
+                      label="Pilih OPD"
+                      placeholder="Pilih OPD"
                       value={OPD}
                       options={listOPD}
                       change={(selectedOption: any) => {
@@ -220,28 +216,30 @@ const XAddPeserta = ({
                     />
                   </div>
                 )}
-                {listUser.length != 0 ? (
-                  loading ? (
-                    <div className='italic mt-4'>Sedang memuat data pegawai . . .</div>
+                {OPD.length != 0 && (
+                  listUser.length != 0 ? (
+                    loading ? (
+                      <div className='italic mt-4'>Sedang memuat data pegawai . . .</div>
+                    ) : (
+                      <div className='fixed md:w-1/4 w-1/2 mt-14 z-80'>
+                        <TextInput
+                          type="dropdown"
+                          id="user"
+                          name="user"
+                          label="Nama User"
+                          placeholder="Ketik dan Cari Pegawai"
+                          options={listUser}
+                          change={(selectedOption: any) => {
+                            handleChangeUser({
+                              target: { name: "user", value: selectedOption },
+                            });
+                          }}
+                        />
+                      </div>
+                    )
                   ) : (
-                    <div className='fixed md:w-1/4 w-1/2 mt-14 z-80'>
-                      <TextInput
-                        type="dropdown"
-                        id="user"
-                        name="user"
-                        label="Nama User"
-                        placeholder="Ketik dan Cari Pegawai"
-                        options={listUser}
-                        change={(selectedOption: any) => {
-                          handleChangeUser({
-                            target: { name: "user", value: selectedOption },
-                          });
-                        }}
-                      />
-                    </div>
+                    <div className='text-meta-1 mt-14'>User belum terdaftar. Silakan hubungi Admin untuk pengajuan !</div>
                   )
-                ) : (
-                  <div className='text-meta-1 mt-14'>User belum terdaftar. Silakan hubungi Admin untuk pengajuan !</div>
                 )}
               </div>
             )}
