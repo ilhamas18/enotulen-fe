@@ -16,7 +16,7 @@ const DateRangePicker = ({ isOpen, setIsOpen, rangeTanggal, setRangeTanggal }: X
   const onClose = () => setIsOpen(false);
 
   return (
-    <CommonModal isOpen={isOpen} onClose={onClose} animate={true}>
+    <CommonModal isOpen={isOpen} onClose={onClose}>
       <div className="flex flex-col items-center justify-center pt-3">
         <DateRange
           editableDateInputs={true}

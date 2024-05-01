@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
 import LaporanNotulenList from "@/components/pages/notulen/list";
@@ -18,6 +19,7 @@ import Loading from "@/components/global/Loading/loading";
 import { setPayload } from "@/store/payload/action";
 
 const LaporanNotulenProps = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [notulens, setNotulens] = useState<any>([]);
   const [month, setMonth] = useState<any>(null);
@@ -114,9 +116,11 @@ const LaporanNotulenProps = () => {
     setMonth(formattedDate);
   }
 
+  const goToAddNotulen = () => router.push('/notulen/form');
+
   return (
     <div>
-      <div className="bg-white dark:bg-meta-4 shadow-card flex flex-col gap-2 py-4 text-center font-bold text-title-sm rounded rounded-lg border-none">
+      <div className="bg-white dark:bg-meta-4 shadow-card flex flex-col gap-2 py-4 text-center font-bold text-title-sm rounded-lg border-none">
         <div>DAFTAR LAPORAN NOTULEN</div>
         {profile.role == 1 && <div>PEMERINTAH KOTA MADIUN</div>}
         {profile.role == 2 || profile.role == 3 ? <div>{profile.Perangkat_Daerah?.nama_opd}</div> : null}
@@ -125,12 +129,20 @@ const LaporanNotulenProps = () => {
       {/* <div className='md:w-[30%] w-full md:absolute md:right-0 md:top-[10em] top-[13em] bg-white'> */}
       <div className="flex md:justify-between justify-center">
         <div></div>
-        <div className="bg-white mt-10">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
-              <DatePicker label={'Bulan & Tahun'} views={['month', 'year']} onChange={handleDatePicked} />
-            </DemoContainer>
-          </LocalizationProvider>
+        <div className="flex gap-2 mt-10">
+          <div className="bg-white">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
+                <DatePicker label={'Bulan & Tahun'} views={['month', 'year']} onChange={handleDatePicked} />
+              </DemoContainer>
+            </LocalizationProvider>
+          </div>
+          {profile.role == 4 && (
+            <div
+              onClick={goToAddNotulen}
+              className="bg-xl-base px-3 mt-2 flex items-center justify-center text-white hover:bg-[#3b82f6] hover:cursor-pointer duration-300 rounded-sm"
+            >+</div>
+          )}
         </div>
       </div>
       <div style={gradientStyle} className="md:mt-[1em]">
@@ -142,7 +154,7 @@ const LaporanNotulenProps = () => {
       {loading ? (
         <Loading loading={loading} setLoading={setLoading} />
       ) : (
-        <LaporanNotulenList data={notulens} profile={profile} fetchData={fetchData} />
+        <LaporanNotulenList data={notulens} profile={profile} />
       )}
     </div>
   );

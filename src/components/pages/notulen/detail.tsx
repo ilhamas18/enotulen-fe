@@ -6,7 +6,7 @@ import { fetchApi } from "@/app/api/request";
 import { shallowEqual, useSelector } from "react-redux";
 import { State } from "@/store/reducer";
 import { useState } from "react";
-import XConfirmStatus from "../laporan/x-modal/XConfirmStatus";
+import XConfirmStatus from "./x-modal/XConfirmStatus";
 import Swal from "sweetalert2";
 import { getTime } from "@/components/hooks/formatDate";
 import { formatDate } from "@/components/hooks/formatDate";
@@ -15,6 +15,7 @@ import { Button } from "@/components/common/button/button";
 import Blocks from 'editorjs-blocks-react-renderer';
 import Loading from "@/components/global/Loading/loading";
 import { formatMonth } from "@/components/helpers/formatMonth";
+import { GoChecklist } from "react-icons/go";
 
 const editorJsHtml = require("editorjs-html");
 const EditorJsToHtml = editorJsHtml();
@@ -31,7 +32,6 @@ interface DetailProps {
 const NotulenDetailProps = ({ data }: DetailProps) => {
   const pathname = usePathname();
   const router = useRouter();
-
   const [isOpenEdit, setIsOpenEdit] = useState<boolean>(false);
   const [openConfirmSubmit, setOpenConfirmSubmit] = useState<boolean>(false);
   const [status, setStatus] = useState<string>('');
@@ -144,6 +144,56 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
     })
   }
 
+  const handleAgree = async () => {
+    Swal.fire({
+      title: `Saya yakin bahwa Notulen "${data.acara}" yang saya buat sudah benar`,
+      showDenyButton: true,
+      confirmButtonText: 'Setuju',
+      denyButtonText: `Batal`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setLoading(true);
+        const payload = {
+          status: "-",
+        };
+        const response = await fetchApi({
+          url: `/notulen/updateStatus/${data.id}`,
+          method: "put",
+          body: payload,
+          type: "auth",
+        })
+
+        if (!response.success) {
+          setLoading(false);
+          if (response.data.code == 401) {
+            Swal.fire({
+              icon: "error",
+              title: "Unauthorize",
+              text: "Unauthorize as Verificator!",
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Koneksi bermasalah!",
+            });
+          }
+        } else {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: `Sukses`,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          router.push('/notulen/laporan')
+        }
+      } else if (result.isDenied) {
+        Swal.fire('Changes are not saved', '', 'info')
+      }
+    })
+  }
+
   return (
     <React.Fragment>
       {loading ? (
@@ -151,13 +201,25 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
       ) : (
         <>
           <div className="flex items-center justify-between mt-8 mb-2">
-            <div
-              className="border border-xl-base rounded-md w-[10%] px-4 py-1 flex items-center gap-2 bg-white hover:shadow-md hover:cursor-pointer"
-              onClick={handlePrint}
-            >
-              <BsPrinter size={20} />
-              <div>Cetak</div>
-            </div>
+            {data.status === 'drafted' ? (
+              <div
+                className="rounded-md text-white px-8 py-1 flex items-center gap-2 bg-[#16a34a] hover:shadow-md hover:cursor-pointer"
+                onClick={handleAgree}
+              >
+                <GoChecklist size={22} />
+              </div>
+            ) : (
+              data.status !== 'Ditolak' ? (
+                <div
+                  className="border border-xl-base rounded-md px-4 py-1 flex items-center gap-2 bg-white hover:shadow-md hover:cursor-pointer"
+                  onClick={handlePrint}
+                >
+                  <BsPrinter size={20} />
+                </div>
+              ) : (
+                <div></div>
+              )
+            )}
             <div className={`${data.status === "Disetujui" ? 'hidden' : 'block'}`}>
               {isOpenEdit ? (
                 <div className="border bg-danger text-white hover:bg-xl-pink rounded-lg px-8 py-1 hover:shadow-lg hover:cursor-pointer" onClick={() => setIsOpenEdit(false)}>
@@ -178,7 +240,7 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
               )}
             </div>
           </div>
-          <div className={`detail-wrap bg-white dark:bg-meta-4 rounded-lg p-8 ${!isOpenEdit ? 'block' : 'hidden'}`}>
+          <div className={`detail-wrap ${data.status === 'drafted' ? "bg-[url('/draft-bg.png')]" : 'bg-white'} dark:bg-meta-4 rounded-lg p-8 ${!isOpenEdit ? 'block' : 'hidden'}`}>
             <div className="flex flex-col gap-4">
               <div className={`body flex flex-row md:flex-row flex-col items-center justify-between ${data.keterangan != '' && data.status === "Ditolak" ? 'block' : 'hidden'}`}>
                 <div className="text-label md:w-[20%] w-full md:text-left text-center">
@@ -221,6 +283,28 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
                         <span>{data.Uuid.Pegawai.nama}</span>
                         <span>({data.Uuid.Pegawai.nip})</span>
                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="body flex md:flex-row flex-col items-center justify-between">
+                <div className="text-label md:w-[20%] w-full md:text-left text-center">
+                  Penanggungjawab
+                </div>
+                <div className="md:mt-0 mt-2 md:w-[75%] w-full">
+                  <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
+                    <div className="flex gap-4">
+                      {data.Pegawai !== null ? (
+                        <div className="flex gap-4">
+                          <span>{data.Pegawai.nama}</span>
+                          <span>({data.Pegawai.nip})</span>
+                        </div>
+                      ) : (
+                        <>
+                          <span>{data.Uuid.Pegawai.nama}</span>
+                          <span>({data.Uuid.Pegawai.nip})</span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -274,7 +358,7 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
                   <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
                     <div className="flex flex-col">
                       {data.lokasi.split(', ').map((el: any, i: number) => (
-                        <div>{el}</div>
+                        <div key={i}>{el}</div>
                       ))}
                     </div>
                   </div>

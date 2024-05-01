@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SidebarLinkGroup from "./SiderbarLinkGroup";
-import { RxDashboard } from "react-icons/rx";
+import { MdDashboard } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
 import { AiOutlineDatabase } from "react-icons/ai";
 import { GiPapers } from "react-icons/gi";
@@ -11,6 +11,7 @@ import { shallowEqual, useSelector } from "react-redux";
 import { State } from "@/store/reducer";
 import { FaRegNewspaper } from "react-icons/fa";
 import { BiSolidReport } from "react-icons/bi";
+import { IoNotificationsSharp } from "react-icons/io5";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -136,7 +137,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4
                           ${pathname === "/" && "bg-graydark dark:bg-meta-4"}`}
                 >
-                  <RxDashboard size={20} />
+                  <MdDashboard size={20} />
                   Dashboard
                 </Link>
               </li>
@@ -201,7 +202,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
               <SidebarLinkGroup
                 activeCondition={
-                  pathname.includes("undangan")
+                  pathname.split('/')[1] === 'undangan'
                 }
               >
                 {(handleClick, open) => {
@@ -210,7 +211,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       <Link
                         href="#"
                         className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4
-                          ${pathname.includes("undangan") && "bg-graydark dark:bg-meta-4"}`}
+                          ${pathname.split('/')[1] === 'undangan' && "bg-graydark dark:bg-meta-4"}`}
                         onClick={(e) => {
                           e.preventDefault();
                           sidebarExpanded
@@ -240,15 +241,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               Permintaan Hapus
                             </Link>
                           </li>
-                          <li>
-                            <Link
-                              href="/undangan/tambah"
-                              className={`group relative flex items-center gap-2.5 mb-4 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${pathname === '/undangan/tambah' && "text-white"
-                                } ${profile.role == 4 || profile.role == 3 || profile.role == 2 ? 'block' : 'hidden'}`}
-                            >
-                              Input Undangan
-                            </Link>
-                          </li>
                         </ul>
                       </div>
                     </React.Fragment>
@@ -259,7 +251,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* {profile.role == 3 || profile.role == 4 && ( */}
               <SidebarLinkGroup
                 activeCondition={
-                  pathname.includes("notulen")
+                  pathname.split('/')[1] === 'notulen'
                 }
               >
                 {(handleClick, open) => {
@@ -268,7 +260,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       <Link
                         href="#"
                         className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4
-                          ${pathname.includes("notulen") && "bg-graydark dark:bg-meta-4"}`}
+                          ${pathname.split('/')[1] === 'notulen' && "bg-graydark dark:bg-meta-4"}`}
                         onClick={(e) => {
                           e.preventDefault();
                           sidebarExpanded
@@ -307,13 +299,52 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               Permintaan Hapus
                             </Link>
                           </li>
+                        </ul>
+                      </div>
+                    </React.Fragment>
+                  )
+                }}
+              </SidebarLinkGroup>
+
+              <SidebarLinkGroup
+                activeCondition={
+                  pathname.includes("notifikasi")
+                }
+              >
+                {(handleClick, open) => {
+                  return (
+                    <React.Fragment>
+                      <Link
+                        href="#"
+                        className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4
+                          ${pathname.split('/')[1] === 'notifikasi' && "bg-graydark dark:bg-meta-4"} ${profile.role == 4 ? 'block' : 'hidden'}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          sidebarExpanded
+                            ? handleClick()
+                            : setSidebarExpanded(true);
+                        }}
+                      >
+                        <IoNotificationsSharp size={20} />
+                        <div className="text-title-">Notifikasi</div>
+                        <IoIosArrowDown size={20} className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && "rotate-180"}`} />
+                      </Link>
+                      <div className={`translate transform overflow-hidden ${!open && "hidden"}`}>
+                        <ul className="mt-4 flex flex-col gap-2.5 pl-6">
                           <li>
                             <Link
-                              href="/notulen/form"
-                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${pathname === '/notulen/form' && "text-white"
-                                } ${profile.role == 4 || profile.role == 3 || profile.role == 2 ? 'block' : 'hidden'}`}
+                              href="/notifikasi/peserta"
+                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${pathname === "/undangan/laporan" || pathname.includes('/undangan/detail') ? "text-white" : ''}`}
                             >
-                              Input Notulen
+                              Peserta
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/notifikasi/notulen"
+                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${pathname === "/notifikasi/notulen" && "text-white"}`}
+                            >
+                              Notulen
                             </Link>
                           </li>
                         </ul>

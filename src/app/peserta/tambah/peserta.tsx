@@ -34,7 +34,6 @@ const PesertaProps = ({ id }: PropTypes) => {
     profile: state.profile.profile,
     payload: state.payload.payload
   }), shallowEqual);
-  console.log(payload, 'paymo');
 
   useEffect(() => {
     if (profile.role != 2 && profile.role != 3 && profile.role != 4) {
@@ -100,6 +99,8 @@ const PesertaProps = ({ id }: PropTypes) => {
     }
   }
 
+  const handleCancel = () => router.push('/laporan');
+
   const gradientStyle = {
     width: '100%',
     background: 'linear-gradient(to right, #00bcd4, #2196f3)',
@@ -137,12 +138,18 @@ const PesertaProps = ({ id }: PropTypes) => {
           )}
           <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-10 space-x-3">
             <div className="w-[8em]">
-              <CancelBtn
-                title="Keluar"
-                data={data}
-                url="/undangan/addUndangan"
-                setLoading={setLoading}
-              />
+              <Button
+                type="secondary"
+                variant="xl"
+                className="button-container px-8 py-2"
+                loading={loading}
+                rounded
+                onClick={handleCancel}
+              >
+                <div className="flex gap-2 justify-center items-center text-white font-Nunito">
+                  <span className="button-text text-xl-base">Batal</span>
+                </div>
+              </Button>
             </div>
             <div className="w-[8em]">
               <Button

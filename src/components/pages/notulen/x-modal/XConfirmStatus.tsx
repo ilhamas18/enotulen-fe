@@ -1,14 +1,12 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSelector, shallowEqual } from 'react-redux';
 import { CommonModal } from '@/components/common/common-modal/modal';
 import TextInput from '@/components/common/text-input/input';
 import { Button } from '@/components/common/button/button';
 import { fetchApi } from '@/app/api/request';
 import SignatureCanvas from 'react-signature-canvas';
 import Swal from 'sweetalert2';
-import { State } from '@/store/reducer';
 
 interface PropTypes {
   openConfirmSubmit: boolean,
@@ -31,10 +29,6 @@ const XConfirmStatus = ({
   const [sign, setSign] = useState<any>();
   const [signature, setSignature] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-
-  const { profile } = useSelector((state: State) => ({
-    profile: state.profile.profile
-  }), shallowEqual);
 
   const handleClear = (e: any) => {
     e.preventDefault();
@@ -109,11 +103,11 @@ const XConfirmStatus = ({
   }
 
   return (
-    <CommonModal isOpen={openConfirmSubmit} onClose={setOpenConfirmSubmit}>
-      <div className="relative items-center justify-center pt-3">
+    <CommonModal className='overflow-hidden' isOpen={openConfirmSubmit} onClose={setOpenConfirmSubmit} size='md'>
+      <div className="relative items-center justify-center overflow-hidden">
         {status === "Ditolak" ? (
           <div className='w-[100%]'>
-            <div className="font-Nunito-Bold md:text-xl text-md text-center">Mengapa Anda Menolak Notulen ?</div>
+            <div className="font-bold md:text-xl text-md text-center">Mengapa Anda Menolak Notulen ?</div>
             <div className="mt-6 w-[100%]">
               <TextInput
                 type="text-area"
@@ -129,7 +123,7 @@ const XConfirmStatus = ({
                 <Button
                   variant="error"
                   type="secondary"
-                  className="button-container mb-2 mt-5"
+                  className="button-container"
                   rounded
                   onClick={onClose}
                   loading={loading}
@@ -142,7 +136,7 @@ const XConfirmStatus = ({
               <div className="btn-cancell">
                 <Button
                   variant="error"
-                  className="button-container mb-2 mt-5"
+                  className="button-container"
                   rounded
                   disabled={reason === ''}
                   onClick={handleSubmit}
@@ -175,7 +169,7 @@ const XConfirmStatus = ({
               {signature === '' ? (
                 <>
                   <div className="text-title-xsm2 mb-2">Tanda tangan</div>
-                  <div className="w-full md:h-[200px] h-[130px] border-2 border-light-gray rounded rounded-lg">
+                  <div className="w-full md:w-[50%] md:h-[200px] h-[130px] border-2 border-light-gray rounded rounded-lg">
                     <SignatureCanvas
                       canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
                       ref={(data: any) => setSign(data)}
@@ -212,7 +206,7 @@ const XConfirmStatus = ({
                 <Button
                   variant="xl"
                   type="secondary"
-                  className="button-container mb-2 mt-5"
+                  className="button-container"
                   rounded
                   onClick={onClose}
                   loading={loading}
@@ -225,7 +219,7 @@ const XConfirmStatus = ({
               <div className="btn-cancell">
                 <Button
                   variant="xl"
-                  className="button-container mb-2 mt-5"
+                  className="button-container"
                   rounded
                   disabled={!agree || signature === ''}
                   onClick={handleSubmit}

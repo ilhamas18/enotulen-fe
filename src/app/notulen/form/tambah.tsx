@@ -34,7 +34,7 @@ const AddNotulenProps = () => {
   }), shallowEqual);
 
   useEffect(() => {
-    if (profile.role != 2 && profile.role != 3 && profile.role != 4) router.push('/unauthorized');
+    if (profile.role != 4) router.push('/unauthorized');
     if (profile.length != 0) fetchDataAtasan();
     if (payload.step3 !== undefined) setNotulen(payload.step3);
     else if (payload.step1 !== undefined) {

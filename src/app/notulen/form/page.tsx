@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 }
 
 const AddNotulen = () => {
-
   return (
     <div className="form-notulen-container">
       <Breadcrumb pageName="Tambah Notulen" />

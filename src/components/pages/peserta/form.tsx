@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useReactToPrint } from "react-to-print";
 import { styled } from '@mui/material/styles';
 import { IoPersonAdd } from "react-icons/io5";
@@ -62,6 +63,7 @@ const AddPesertaForm = ({
   const printRef: any = useRef();
   const router = useRouter();
   const [openAddPeserta, setOpenAddPeserta] = useState<boolean>(false);
+  const [storedUser, setStoredUser] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   const handlePrint = useReactToPrint({
@@ -82,7 +84,7 @@ const AddPesertaForm = ({
       jumlah_peserta: peserta[index].jumlah_peserta,
       jenis_peserta: peserta[index].jenis_peserta,
       tanggal: rangeDate,
-      // penanggungjawab: user.length != 0 ? user.nip : null
+      penanggungjawab: storedUser.length != 0 ? storedUser.nip : null
     }
 
     const response = await fetchApi({
@@ -94,11 +96,19 @@ const AddPesertaForm = ({
 
     if (!response.success) {
       setLoading(false);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Koneksi bermasalah!",
-      });
+      if (response.data.code == 401) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Unauthorize as user!",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Koneksi bermasalah!",
+        });
+      }
     } else {
       Swal.fire({
         position: "center",
@@ -111,7 +121,6 @@ const AddPesertaForm = ({
       setTrigger(true);
     }
   }
-  console.log(peserta);
 
   return (
     <div className='py-8 dark:bg-meta-4 w-full'>
@@ -223,7 +232,7 @@ const AddPesertaForm = ({
           <div></div>
           <div>
             {peserta[index].penanggungjawab !== undefined && (
-              <div className='flex flex-col items-center justify-between text-center w-[45%] h-[12em]'>
+              <div className='flex flex-col items-center justify-between text-center w-[45%] h-[8em]'>
                 <div className="font-bold text-black dark:text-white text-title-ss mt-1">
                   Pembuat
                 </div>
@@ -257,7 +266,8 @@ const AddPesertaForm = ({
                         {profile.nama_pangkat}{" "}
                       </div>
                       <div className="flex flex-row font-bold text-black dark:text-white text-title-ss mt-1">
-                        NIP. {profile?.nip}
+                        <div>NIP.</div>
+                        <div className='ml-2'>{profile?.nip}</div>
                       </div>
                     </>
                   )}
@@ -269,36 +279,22 @@ const AddPesertaForm = ({
         {peserta[index].jumlah_peserta != 0 && peserta[index].uuid === undefined && (
           <div className='flex justify-between mt-8'>
             <div></div>
-            <div
-              className='rounded-md px-4 py-1 bg-xl-base text-white flex gap-2 items-center justify-center hover:cursor-pointer'
-              onClick={handleSave}
-            ><IoIosSave size={20} /> Save</div>
+            <div className='w-full'>
+              {loading ? (
+                <div className='rounded-md px-4 py-1 bg-light-gray text-white flex gap-2 items-center justify-center'>
+                  <div><img src="/loading.gif" alt="Loading" className='w-6 h-6' /></div>
+                  <div>Loading . . .</div>
+                </div>
+              ) : (
+                <div
+                  className='rounded-md px-4 py-1 bg-xl-base text-white flex gap-2 items-center justify-center hover:cursor-pointer'
+                  onClick={handleSave}
+                ><IoIosSave size={20} /> Save</div>
+              )}
+            </div>
           </div>
         )}
       </div>
-      {/* <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-10 space-x-3">
-        <div className="w-[8em]">
-          <CancelBtn
-            title="Keluar"
-            data={undangan}
-            url="/undangan/addUndangan"
-            setLoading={setLoading}
-          />
-        </div>
-        <div className="w-[8em]">
-          <Button
-            variant="xl"
-            className="button-container"
-            onClick={handleNext}
-            loading={loading}
-            rounded
-          >
-            <div className="flex justify-center items-center text-white">
-              <span className="button-text">{step !== null ? 'Lanjut' : 'Simpan'}</span>
-            </div>
-          </Button>
-        </div>
-      </div> */}
 
       <XAddPeserta
         index={index}
@@ -306,6 +302,9 @@ const AddPesertaForm = ({
         setOpenAddPeserta={setOpenAddPeserta}
         peserta={peserta}
         setPeserta={setPeserta}
+        profile={profile}
+        storedUser={storedUser}
+        setStoredUser={setStoredUser}
       />
     </div>
   )

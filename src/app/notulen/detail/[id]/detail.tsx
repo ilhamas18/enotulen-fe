@@ -54,7 +54,7 @@ const NotulenDetail = ({ id }: PropTypes) => {
 
   return (
     <div>
-      <div className="bg-white dark:bg-meta-4 flex flex-col gap-2 shadow-lg py-4 text-center font-bold text-title-sm rounded rounded-lg border-none">
+      <div className="bg-white dark:bg-meta-4 flex flex-col gap-2 shadow-lg py-4 text-center font-bold text-title-sm rounded-lg border-none">
         <div className='uppercase'>
           {notulenDetail?.status === 'archieve' ? (
             <div>Hapus Notulen</div>

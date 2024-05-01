@@ -4,19 +4,48 @@ import { useRouter } from 'next/navigation';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import { darken, lighten, styled } from '@mui/material/styles';
+import { grey } from '@mui/material/colors';
 import Loading from '@/components/global/Loading/loading';
+import { fetchApi } from '@/app/api/request';
+import Swal from 'sweetalert2';
 
 interface PropTypes {
   data: any,
   profile: any,
-  fetchData?: any
+  pathname?: any;
 }
 
-const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
+const LaporanNotulenList = ({ data, profile, pathname }: PropTypes) => {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleOnCellClick = (params: any) => router.push(`/notulen/detail/${params.row.index}`);
+
+  const handleOnCellClickNotice = async (params: any) => {
+    if (params.row.status !== '-') {
+      setLoading(true);
+      const response = await fetchApi({
+        url: `/notulen/updateStatus/${params.row.id_notulen}`,
+        method: 'put',
+        type: 'auth',
+        body: {
+          status: '-'
+        }
+      })
+
+      if (!response.success) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Koneksi bermasalah!",
+        });
+      } else {
+        router.push(`/notulen/detail/${params.row.index}`);
+      }
+    } else {
+      router.push(`/notulen/detail/${params.row.index}`);
+    }
+  }
 
   const getBackgroundColor = (color: string, mode: string) =>
     mode === 'dark' ? darken(color, 0.7) : lighten(color, 0.7);
@@ -75,23 +104,47 @@ const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
     },
     '& .super-app-theme--Ditolak': {
       backgroundColor: getBackgroundColor(
-        theme.palette.error.main,
+        theme.palette.error.dark,
         theme.palette.mode,
       ),
       '&:hover': {
         backgroundColor: getHoverBackgroundColor(
-          theme.palette.error.main,
+          theme.palette.error.dark,
           theme.palette.mode,
         ),
       },
       '&.Mui-selected': {
         backgroundColor: getSelectedBackgroundColor(
-          theme.palette.error.main,
+          theme.palette.error.dark,
           theme.palette.mode,
         ),
         '&:hover': {
           backgroundColor: getSelectedHoverBackgroundColor(
-            theme.palette.error.main,
+            theme.palette.error.dark,
+            theme.palette.mode,
+          ),
+        },
+      },
+    },
+    '& .super-app-theme--unread': {
+      backgroundColor: getBackgroundColor(
+        grey[500],
+        theme.palette.mode,
+      ),
+      '&:hover': {
+        backgroundColor: getHoverBackgroundColor(
+          grey[500],
+          theme.palette.mode,
+        ),
+      },
+      '&.Mui-selected': {
+        backgroundColor: getSelectedBackgroundColor(
+          grey[500],
+          theme.palette.mode,
+        ),
+        '&:hover': {
+          backgroundColor: getSelectedHoverBackgroundColor(
+            grey[500],
             theme.palette.mode,
           ),
         },
@@ -500,6 +553,72 @@ const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
     }
   }
 
+  const dataNotice: any = {
+    "columns": [
+      {
+        "field": "id",
+        "headerName": "No",
+        "maxWidth": 40,
+        "headerAlign": "center",
+        "align": "center"
+      },
+      {
+        "field": "pelapor",
+        "headerName": "Pelapor",
+        "width": 180,
+        "headerAlign": "center",
+        "align": "center"
+      },
+      {
+        "field": "tanggal",
+        "headerName": "Hari/Tgl",
+        "width": 180,
+        "headerAlign": "center",
+        "align": "center"
+      },
+      {
+        "field": "waktu",
+        "headerName": "Waktu",
+        "width": 130,
+        "headerAlign": "center",
+        "align": "center"
+      },
+      {
+        "field": "acara",
+        "headerName": "Acara",
+        "width": 280,
+        "headerAlign": "center",
+        "align": "center"
+      },
+      {
+        "field": "lokasi",
+        "headerName": "Lokasi",
+        "width": 230,
+        "headerAlign": "center",
+        "align": "center"
+      },
+      {
+        "field": "sasaran",
+        "headerName": "Sasaran",
+        "width": 280,
+        "headerAlign": "center",
+        "align": "center"
+      },
+    ],
+    "rows": data,
+    "initialState": {
+      "columns": {
+        "columnVisibilityModel": {
+          "id": false,
+          "brokerId": false
+        }
+      }
+    },
+    "experimentalFeatures": {
+      "ariaV7": true
+    }
+  }
+
   return (
     <React.Fragment>
       {loading ? (
@@ -534,19 +653,34 @@ const LaporanNotulenList = ({ data, profile, fetchData }: PropTypes) => {
                   },
                 }}
               />
-            ) : (
-              <StyledDataGrid
-                {...dataRows}
-                onCellClick={handleOnCellClick}
-                getRowClassName={(params) => `super-app-theme--${params.row.status}`}
-                initialState={{
-                  pagination: {
-                    paginationModel: {
-                      pageSize: 5,
+            ) : profile.role == 4 && (
+              pathname !== '/notifikasi/notulen' ? (
+                <StyledDataGrid
+                  {...dataRows}
+                  onCellClick={handleOnCellClick}
+                  getRowClassName={(params) => `super-app-theme--${params.row.status}`}
+                  initialState={{
+                    pagination: {
+                      paginationModel: {
+                        pageSize: 5,
+                      },
                     },
-                  },
-                }}
-              />
+                  }}
+                />
+              ) : (
+                <StyledDataGrid
+                  {...dataNotice}
+                  onCellClick={handleOnCellClickNotice}
+                  getRowClassName={(params) => `super-app-theme--${params.row.status}`}
+                  initialState={{
+                    pagination: {
+                      paginationModel: {
+                        pageSize: 5,
+                      },
+                    },
+                  }}
+                />
+              )
             )}
           </Box>
         </div>

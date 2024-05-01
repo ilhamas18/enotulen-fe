@@ -8,7 +8,7 @@ import { Button } from "@/components/common/button/button";
 import SignatureCanvas from 'react-signature-canvas';
 import dynamic from "next/dynamic";
 import { AiFillPlusCircle } from "react-icons/ai";
-import DateRangePicker from "../laporan/x-modal/XDateRangePicker";
+import DateRangePicker from "./x-modal/XDateRangePicker";
 import { formatDate, getIndoDate } from "@/components/hooks/formatDate";
 import Loading from "@/components/global/Loading/loading";
 import { AiOutlineClose } from "react-icons/ai";
@@ -22,6 +22,7 @@ import { IoIosSave } from "react-icons/io";
 import Blocks from "editorjs-blocks-react-renderer";
 import { locationList } from "@/components/data/location";
 import { fetchApi } from "@/app/api/request";
+import ModalConfirm from "./x-modal/XConfirm";
 import Swal from "sweetalert2";
 
 const EditorBlock = dynamic(() => import("../../hooks/editor"));
@@ -44,6 +45,7 @@ interface FormValues {
   pendukung: any;
   signature: string;
   dibuatTanggal: any;
+  penanggungjawab: any;
   handleSave?: any;
 }
 
@@ -63,6 +65,7 @@ interface OtherProps {
   order?: number;
   notulens?: any;
   type?: string;
+  profile?: any;
 }
 
 interface MyFormProps extends OtherProps {
@@ -86,6 +89,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
     index,
     rangeDate,
     notulens,
+    profile,
     type,
     ref,
   } = props;
@@ -99,6 +103,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   const [openLocation, setOpenLocation] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [sign, setSign] = useState<any>();
+  const [openConfirm, setOpenConfirm] = useState<boolean>(false);
 
   const [uploadMsgUndangan, setUploadMsgUndangan] = useState<string>("");
   const [progressUndangan, setProgressUndangan] = useState<any>({
@@ -412,6 +417,8 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
   };
 
   const handleDownloadFile = async (val: any, e: any) => router.push(`${process.env.BASE_URL}/notulen/getFile?pathname=${val}`);
+
+  const handleCancel = () => router.push('/notulen/laporan');
 
   return (
     <React.Fragment>
@@ -1049,31 +1056,26 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                 </div>
               )}
             </div>
-            <div className="signature px-8 mt-6">
-              {values.signature === null ? (
-                <>
-                  <div className="text-title-xsm2 mb-2">Bubuhkan Tanda tangan (opsional)</div>
-                  <div className="md:w-[500px] w-full md:h-[200px] h-[130px] border-2 border-light-gray rounded rounded-lg">
-                    <SignatureCanvas
-                      canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
-                      ref={(data: any) => setSign(data)}
-                    />
-                  </div>
-                  <button style={{ height: "30px", width: "200px" }} className="text-meta-1" onClick={(e: any) => handleClear(e)}>BERSIHKAN</button>
-                  <button style={{ height: "30px", width: "200px" }} className="text-xl-base font-bold" onClick={(e: any) => handleGenerate(e)}>SIMPAN</button>
-                </>
+            <div className="mt-8 ml-8 flex flex-col gap-2 text-black">
+              <div>Penanggungjawab</div>
+              <div><img src={values.signature} /></div>
+              {values.penanggungjawab !== null ? (
+                <div className="flex flex-col">
+                  <div>{values.penanggungjawab?.nama}</div>
+                  <div>{values.penanggungjawab?.nip}</div>
+                </div>
               ) : (
-                <div className="flex md:flex-row md:items-center md:justify-between flex-col mb-2 md:mb-0">
-                  <img src={values.signature} />
-                  {index !== undefined && notulens[index].uuid === undefined && (
-                    <div className="text-danger text-title-xsm2 hover:cursor-pointer" onClick={handleDeleteSignature}>Hapus</div>
-                  )}
+                <div className="flex flex-col">
+                  <div>{profile?.nama}</div>
+                  <div>{profile?.nip}</div>
                 </div>
               )}
             </div>
-            <div className="text-danger text-title-ss mx-8 mt-3">*Pastikan mengisi seluruh data notulen, (kecuali yang opsional)</div>
+            {index !== undefined && notulens[index].uuid === undefined && (
+              <div className="text-danger text-title-ss mx-8 mt-5">*Pastikan mengisi seluruh data notulen, (kecuali yang opsional)</div>
+            )}
 
-            <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-4 space-x-3">
+            <div className="btn-submit mx-8 flex flex-row justify-between pb-4 mt-8 space-x-3">
               {step !== null ? (
                 index !== undefined && notulens[index].uuid === undefined && (
                   <div className="w-[8em] absolute bottom-6 right-8">
@@ -1095,7 +1097,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                           values.dibuatTanggal === null ?
                           true : false
                       }
-                      onClick={handleSubmit}
+                      onClick={() => setOpenConfirm(true)}
                     >
                       <div className="flex gap-2 justify-center items-center text-white font-Nunito">
                         <div><IoIosSave size={20} /></div>
@@ -1107,18 +1109,18 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               ) : (
                 <div className="flex items-center justify-between w-full mt-6">
                   <div>
-                    {/* <Button
+                    <Button
                       type="secondary"
                       variant="xl"
                       className="button-container px-8 py-2"
                       loading={loading}
                       rounded
-                    onClick={handleCancel}
+                      onClick={handleCancel}
                     >
                       <div className="flex gap-2 justify-center items-center text-white font-Nunito">
                         <span className="button-text text-xl-base">Batal</span>
                       </div>
-                    </Button> */}
+                    </Button>
                   </div>
                   <div>
                     <Button
@@ -1140,7 +1142,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                           values.dibuatTanggal === null ?
                           true : false
                       }
-                      onClick={handleSubmit}
+                      onClick={() => setOpenConfirm(true)}
                     >
                       <div className="flex gap-2 justify-center items-center text-white font-Nunito">
                         <span className="button-text">Submit</span>
@@ -1152,6 +1154,16 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
             </div>
           </div>
 
+          <ModalConfirm
+            openConfirm={openConfirm}
+            setOpenConfirm={setOpenConfirm}
+            values={values}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            notulens={notulens}
+            index={index}
+            profile={profile}
+          />
           <DateRangePicker
             isOpen={openDateRange}
             setIsOpen={setOpenDateRange}
@@ -1193,7 +1205,8 @@ function CreateForm({ handleSubmit, order, payload, tanggal, dibuatTanggal, ...o
       foto: payload.length != 0 ? payload.link_img_foto : null,
       pendukung: payload.length != 0 ? payload.link_img_pendukung : null,
       signature: payload.length != 0 ? payload.signature : null,
-      dibuatTanggal: payload.length != 0 ? dibuatTanggal : null
+      dibuatTanggal: payload.length != 0 ? dibuatTanggal : null,
+      penanggungjawab: payload.length != 0 ? payload.Pegawai : null
     }),
     validationSchema: Yup.object().shape({
       rangeTanggal: Yup.array()
@@ -1272,7 +1285,7 @@ const AddNotulenForm = ({
   }, [])
 
   const handleSubmit = async (values: FormValues) => {
-    // setLoading(true);
+    setLoading(true);
     let uuid;
     if (payload.step1 !== undefined) uuid = payload.step1.uuid;
     else uuid = uuidv4();
@@ -1289,7 +1302,7 @@ const AddNotulenForm = ({
       lokasi: values.lokasi,
       acara: values.acara,
       atasan: values.atasan?.data,
-      status: values.rangeTanggal[0].startDate > new Date() ? 'drafted' : '-',
+      status: values.rangeTanggal[0].startDate > new Date() ? 'drafted' : values.penanggungjawab !== undefined ? 'unread' : '-',
       tanggal_surat: getIndoDate(values.dibuatTanggal),
       link_img_surat_undangan: values.suratUndangan,
       link_img_daftar_hadir: values.daftarHadir,
@@ -1300,6 +1313,7 @@ const AddNotulenForm = ({
       kode_opd: profile.Perangkat_Daerah.kode_opd,
       nip_pegawai: profile.nip,
       nip_atasan: values.atasan.value,
+      penanggungjawab: values.penanggungjawab !== undefined ? values.penanggungjawab.nip : null
     };
 
     const response = await fetchApi({
@@ -1344,92 +1358,7 @@ const AddNotulenForm = ({
         }
       }
     }
-
-    // if (!response.success) {
-    // if (response.data.code == 400) {
-    //   setLoading(false);
-    //   Swal.fire({
-    //     icon: "error",
-    //     title: "Oops...",
-    //     text: "Periksa kembali data Notulen!",
-    //   });
-    // } else if (response.data.code == 500) {
-    //   setLoading(false);
-    //   Swal.fire({
-    //     icon: "error",
-    //     title: "Oops...",
-    //     text: "Koneksi bermasalah!",
-    //   });
-    // }
-    // } else {
-    //   if (step !== null) {
-    //     const response2 = await fetchApi({
-    //       url: '/undangan/addUndangan',
-    //       method: 'post',
-    //       type: 'auth',
-    //       body: payload.step1
-    //     })
-
-    //     if (!response2.success) {
-    //       if (response2.data.code == 400) {
-    //         setLoading(false);
-    //         Swal.fire({
-    //           icon: "error",
-    //           title: "Oops...",
-    //           text: "Periksa kembali data Undangan!",
-    //         });
-    //       } else if (response2.data.code == 500) {
-    //         setLoading(false);
-    //         Swal.fire({
-    //           icon: "error",
-    //           title: "Oops...",
-    //           text: "Koneksi bermasalah!",
-    //         });
-    //       }
-    //     } else {
-    //       const { data } = response2.data;
-
-    //       const response3 = await fetchApi({
-    //         url: `/undangan/addJumlahPeserta/${data.id}`,
-    //         method: 'post',
-    //         type: 'auth',
-    //         body: payload.step2
-    //       })
-    //       console.log(response3, 'response');
-
-    //       if (!response3.success) {
-    //         setLoading(false);
-    //         Swal.fire({
-    //           icon: "error",
-    //           title: "Oops...",
-    //           text: "Periksa kembali data peserta!",
-    //         });
-    //       } else {
-    // Swal.fire({
-    //   position: "center",
-    //   icon: "success",
-    //   title: "Berhasil menambahkan notulen",
-    //   showConfirmButton: false,
-    //   timer: 1500,
-    // });
-    // dispatch(setPayload([]));
-    // router.push("/notulen/laporan");
-    //       }
-    //     }
-    //   } else {
-    //     Swal.fire({
-    //       position: "center",
-    //       icon: "success",
-    //       title: "Berhasil menambahkan notulen",
-    //       showConfirmButton: false,
-    //       timer: 1500,
-    //     });
-    //     dispatch(setPayload([]));
-    //     router.push("/notulen/laporan");
-    //   }
-    // }
   };
-  // console.log(notulens, 'mombai');
 
   return (
     <div>
@@ -1447,6 +1376,7 @@ const AddNotulenForm = ({
             notulens={notulens}
             dibuatTanggal={dibuatTanggal}
             dataAtasan={dataAtasan}
+            profile={profile}
           />
         )
       ) : (
@@ -1463,6 +1393,7 @@ const AddNotulenForm = ({
           dibuatTanggal={dibuatTanggal}
           dataAtasan={dataAtasan}
           type={type}
+          profile={profile}
         />
       )}
     </div>

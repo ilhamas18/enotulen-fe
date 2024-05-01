@@ -8,7 +8,7 @@ import { Button } from "@/components/common/button/button";
 import dynamic from "next/dynamic";
 import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
-import DateRangePicker from "../laporan/x-modal/XDateRangePicker";
+import DateRangePicker from "../notulen/x-modal/XDateRangePicker";
 import { formatDate, getIndoDate } from "@/components/hooks/formatDate";
 import Loading from "@/components/global/Loading/loading";
 import { withFormik, FormikProps, FormikBag } from "formik";

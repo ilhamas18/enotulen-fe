@@ -18,6 +18,9 @@ interface PropTypes {
   setOpenAddPeserta: any;
   peserta: any;
   setPeserta: any;
+  profile: any;
+  storedUser: any;
+  setStoredUser: any;
 }
 
 const XAddPeserta = ({
@@ -26,15 +29,15 @@ const XAddPeserta = ({
   setOpenAddPeserta,
   peserta,
   setPeserta,
+  profile,
+  storedUser,
+  setStoredUser
 }: PropTypes) => {
   const router = useRouter();
   const [storedNumber, setStoredNumber] = useState<number>(0);
   const [storedParticipant, setStoredParticipant] = useState<string>('');
   const [storedPembuat, setStoredPembuat] = useState<string>('');
-  const [listOPD, setListOPD] = useState<any>([]);
-  const [OPD, setOPD] = useState<any>([]);
   const [listUser, setListUser] = useState<any>([]);
-  const [storedUser, setStoredUser] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleChangePeserta = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,46 +46,14 @@ const XAddPeserta = ({
 
   const handleChangePembuat = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStoredPembuat((event.target as HTMLInputElement).value);
+    fetchPegawai();
     if ((event.target as HTMLInputElement).value) setStoredUser([]);
-    fetchOPD();
   };
 
-  const fetchOPD = async () => {
+  const fetchPegawai = async () => {
     setLoading(true);
     const response = await fetchApi({
-      url: '/opd/getAllOPD',
-      method: 'get',
-      type: 'auth'
-    })
-
-    if (!response.success) {
-      if (response.data.code == 500) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Koneksi bermasalah!',
-        })
-      }
-      setLoading(false);
-    } else {
-      const { data } = response.data;
-      let temp: any = [];
-      data.forEach((el: any) => {
-        temp.push({
-          label: el.nama_opd,
-          value: el.kode_opd
-        })
-      })
-      setListOPD(temp);
-      setLoading(false);
-    }
-  }
-
-  const handleChangeOPD = async (val: any) => {
-    setLoading(true);
-    setOPD(val.target.value);
-    const response = await fetchApi({
-      url: `/pegawai/getAllPegawai/${val.target.value.value}`,
+      url: `/pegawai/getAllPegawai/${profile.kode_opd}`,
       method: 'get',
       type: 'auth'
     })
@@ -195,52 +166,26 @@ const XAddPeserta = ({
               </FormControl>
             </div>
             {storedPembuat === 'manual' && (
-              <div className='mt-6 flex flex-col my-14 mb-14'>
+              <div className='flex flex-col my-4 items-center justify-center'>
                 {loading ? (
-                  <div className='italic'>Loading . . .</div>
+                  <div className='italic mt-4'>Sedang memuat data pegawai . . .</div>
                 ) : (
-                  <div className='fixed md:w-1/4 w-1/2 z-99'>
+                  <div className='fixed md:w-1/4 w-1/2 mt-14 z-999'>
                     <TextInput
                       type="dropdown"
-                      id="pembuat"
-                      name="pembuat"
-                      label="Pilih OPD"
-                      placeholder="Pilih OPD"
-                      value={OPD}
-                      options={listOPD}
+                      id="user"
+                      name="user"
+                      label="Nama User"
+                      placeholder="Ketik dan Cari Pegawai"
+                      options={listUser}
                       change={(selectedOption: any) => {
-                        handleChangeOPD({
-                          target: { name: "role", value: selectedOption },
+                        handleChangeUser({
+                          target: { name: "user", value: selectedOption },
                         });
                       }}
                     />
                   </div>
-                )}
-                {OPD.length != 0 && (
-                  listUser.length != 0 ? (
-                    loading ? (
-                      <div className='italic mt-4'>Sedang memuat data pegawai . . .</div>
-                    ) : (
-                      <div className='fixed md:w-1/4 w-1/2 mt-14 z-80'>
-                        <TextInput
-                          type="dropdown"
-                          id="user"
-                          name="user"
-                          label="Nama User"
-                          placeholder="Ketik dan Cari Pegawai"
-                          options={listUser}
-                          change={(selectedOption: any) => {
-                            handleChangeUser({
-                              target: { name: "user", value: selectedOption },
-                            });
-                          }}
-                        />
-                      </div>
-                    )
-                  ) : (
-                    <div className='text-meta-1 mt-14'>User belum terdaftar. Silakan hubungi Admin untuk pengajuan !</div>
-                  )
-                )}
+                )})
               </div>
             )}
           </div>
@@ -261,7 +206,7 @@ const XAddPeserta = ({
               onClick={handleSave}
               disabled={
                 storedPembuat === 'otomatis' ? storedNumber == 0 || storedParticipant == '' ? true : false
-                  : OPD.length == 0 || storedUser.length == 0 ? true : false
+                  : storedUser.length == 0 ? true : false
               }
               rounded
             >

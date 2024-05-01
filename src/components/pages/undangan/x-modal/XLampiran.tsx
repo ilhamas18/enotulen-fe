@@ -45,10 +45,10 @@ const XLampiran = ({
   const handleCancel = () => setOpenLampiran(false);
 
   return (
-    <CommonModal isOpen={openLampiran} onClose={setOpenLampiran} animate={true}>
+    <CommonModal isOpen={openLampiran} onClose={setOpenLampiran} size="md">
       <div className='flex flex-col w-full py-3'>
         <div className='relative'>
-          <div className='text-center md:text-xsm text-title-xsm mb-6 font-bold'>Lembar Lampiran</div>
+          <div className='text-center md:text-xsm text-title-xsm mb-6 font-medium tracking-wider border-b border-light-gray pb-2'>Lembar Lampiran</div>
         </div>
         <div className="container border-2 border-light-gray rounded-lg">
           <EditorBlock
@@ -57,14 +57,19 @@ const XLampiran = ({
             holder="editorjs-containers"
           />
         </div>
-        <div className="btn-submit flex flex-row justify-between items-center mt-10 space-x-3">
+        <div className="btn-submit flex flex-row justify-between items-center mt-8 space-x-3">
           <div className="w-[8em]">
-            <button
-              className="text-danger"
+            <Button
+              variant="xl"
+              type="secondary"
+              className="button-container"
+              rounded
               onClick={handleCancel}
             >
-              Batal
-            </button>
+              <div className="flex px-6 text-[#002DBB] font-Nunito">
+                <span className="button-text">Batal</span>
+              </div>
+            </Button>
           </div>
           <div className="w-[8em]">
             <Button
