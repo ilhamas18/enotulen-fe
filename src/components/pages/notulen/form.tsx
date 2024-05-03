@@ -1282,10 +1282,23 @@ const AddNotulenForm = ({
       }
     }
     if (index !== undefined) setSudenly(index)
-  }, [])
+  }, []);
+
+  const getDay = (dateString: string) => {
+    var dateParts = dateString?.split(" ");
+    var day = parseInt(dateParts[0]);
+    var month = dateParts[1];
+    var year = parseInt(dateParts[2]);
+    var date = new Date(year, ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"].indexOf(month), day);
+    var days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    var dayName = days[date.getDay()];
+    var formattedDate = dayName + ", " + dateString;
+
+    return formattedDate;
+  }
 
   const handleSubmit = async (values: FormValues) => {
-    setLoading(true);
+    // setLoading(true);
     let uuid;
     if (payload.step1 !== undefined) uuid = payload.step1.uuid;
     else uuid = uuidv4();
@@ -1303,7 +1316,7 @@ const AddNotulenForm = ({
       acara: values.acara,
       atasan: values.atasan?.data,
       status: values.rangeTanggal[0].startDate > new Date() ? 'drafted' : values.penanggungjawab !== undefined ? 'unread' : '-',
-      tanggal_surat: values.dibuatTanggal,
+      tanggal_surat: payload.step1 !== undefined ? values.dibuatTanggal : getDay(values.dibuatTanggal),
       link_img_surat_undangan: values.suratUndangan,
       link_img_daftar_hadir: values.daftarHadir,
       link_img_spj: values.spj,
@@ -1317,48 +1330,48 @@ const AddNotulenForm = ({
       nip_penanggungjawab: values.penanggungjawab !== undefined ? values.penanggungjawab.nip : null
     };
 
-    const response = await fetchApi({
-      url: `/notulen/addNotulen`,
-      method: "post",
-      type: "auth",
-      body: dataNotulen
-    });
+    // const response = await fetchApi({
+    //   url: `/notulen/addNotulen`,
+    //   method: "post",
+    //   type: "auth",
+    //   body: dataNotulen
+    // });
 
-    if (!response.success) {
-      if (response.data.code == 400) {
-        setLoading(false);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Periksa kembali data Notulen!",
-        });
-      } else if (response.data.code == 500) {
-        setLoading(false);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Koneksi bermasalah!",
-        });
-      }
-    } else {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "Berhasil menambahkan notulen",
-        showConfirmButton: false,
-        timer: 1500,
-      });
-      if (step !== null) {
-        setLoading(false);
-        setTrigger(true);
-      } else {
-        if (type !== undefined) {
-          router.push('/laporan');
-        } else {
-          router.push('/notulen/laporan');
-        }
-      }
-    }
+    // if (!response.success) {
+    //   if (response.data.code == 400) {
+    //     setLoading(false);
+    //     Swal.fire({
+    //       icon: "error",
+    //       title: "Oops...",
+    //       text: "Periksa kembali data Notulen!",
+    //     });
+    //   } else if (response.data.code == 500) {
+    //     setLoading(false);
+    //     Swal.fire({
+    //       icon: "error",
+    //       title: "Oops...",
+    //       text: "Koneksi bermasalah!",
+    //     });
+    //   }
+    // } else {
+    //   Swal.fire({
+    //     position: "center",
+    //     icon: "success",
+    //     title: "Berhasil menambahkan notulen",
+    //     showConfirmButton: false,
+    //     timer: 1500,
+    //   });
+    //   if (step !== null) {
+    //     setLoading(false);
+    //     setTrigger(true);
+    //   } else {
+    //     if (type !== undefined) {
+    //       router.push('/laporan');
+    //     } else {
+    //       router.push('/notulen/laporan');
+    //     }
+    //   }
+    // }
   };
 
   return (
