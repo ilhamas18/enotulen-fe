@@ -1329,6 +1329,12 @@ const AddNotulenForm = ({
       penanggungjawab: values.penanggungjawab !== undefined ? values.penanggungjawab : null,
       nip_penanggungjawab: values.penanggungjawab !== undefined ? values.penanggungjawab.nip : null
     };
+    console.log(values.dibuatTanggal, new Date());
+
+    console.log(payload.step1);
+
+    console.log(dataNotulen);
+
 
     // const response = await fetchApi({
     //   url: `/notulen/addNotulen`,
