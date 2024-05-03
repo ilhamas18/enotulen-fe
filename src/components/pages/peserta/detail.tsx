@@ -49,12 +49,14 @@ const DetailPeserta = ({
   id,
   profile,
   peserta,
-  setPeserta,
+  setPeserta
 }: PropTypes) => {
   const printRef: any = useRef();
   const router = useRouter();
   const [openAddPeserta, setOpenAddPeserta] = useState<boolean>(false);
+  const [storedUser, setStoredUser] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  console.log(peserta, '??/');
 
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
@@ -83,6 +85,7 @@ const DetailPeserta = ({
       uuid: peserta.uuid,
       jumlah_peserta: peserta.jumlah_peserta,
       jenis_peserta: peserta.jenis_peserta,
+      penanggungjawab: storedUser.length != 0 ? storedUser.nip : null
     }
     const response = await fetchApi({
       url: `/peserta/editPeserta/${id}`,
@@ -160,19 +163,21 @@ const DetailPeserta = ({
           <BsPrinter size={20} />
           <div>Cetak</div>
         </button>
-        <div className='flex gap-2'>
-          <div>
-            <button
-              className='border border-none rounded-lg px-8 py-1 hover:shadow-lg bg-danger text-white hover:cursor-pointer'
-              onClick={handleDelete}
-            >
-              Hapus
-            </button>
+        {peserta.Uuid?.Pegawai?.nip === profile.nip && (
+          <div className='flex gap-2'>
+            <div>
+              <button
+                className='border border-none rounded-lg px-8 py-1 hover:shadow-lg bg-danger text-white hover:cursor-pointer'
+                onClick={handleDelete}
+              >
+                Hapus
+              </button>
+            </div>
+            <div>
+              <button className='bg-xl-base rounded-lg px-4 py-2 text-white hover:shadow-lg' onClick={hanleAddParticipant}><IoPersonAdd size={18} /></button>
+            </div>
           </div>
-          <div>
-            <button className='bg-xl-base rounded-lg px-4 py-2 text-white hover:shadow-lg' onClick={hanleAddParticipant}><IoPersonAdd size={18} /></button>
-          </div>
-        </div>
+        )}
       </div>
 
       <div
@@ -190,7 +195,7 @@ const DetailPeserta = ({
               Hari / Tanggal
             </div>
             <div className="w-[2%]">:</div>
-            <div className="w-[85%]">{getDay(peserta.tanggal)}</div>
+            <div className="w-[85%]">{peserta.tanggal}</div>
           </div>
           <div className="flex gap-2 w-full">
             <div className="w-[10%]">
@@ -259,65 +264,93 @@ const DetailPeserta = ({
         </div>
         <div className='signature mt-14 flex justify-between'>
           <div></div>
-          <div className="flex flex-col items-center justify-between text-center w-[45%] h-[12em]">
-            <div>
-              <div className="font-bold text-black dark:text-white text-title-ss mt-1">
-                Pembuat
+          <div>
+            {peserta.penanggungjawab !== undefined && (
+              <div className='flex flex-col items-center justify-between text-center w-[45%] h-[8em]'>
+                <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                  Pembuat
+                </div>
+                <div>
+                  {peserta.Uuid.Undangan.signature !== "-" && peserta.Uuid.Undangan.signature !== null ? (
+                    <img src={peserta.Uuid.Undangan.signature} className="w-[270px] h-[100px]" alt="TTD" />
+                  ) : <></>}
+                </div>
+                <div>
+                  {peserta.penanggungjawab !== null ? (
+                    <>
+                      <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
+                        {peserta.penanggungjawab?.nama}
+                      </div>
+                      <div className="text-black dark:text-white text-title-ss mt-1">
+                        {" "}
+                        {peserta.penanggungjawab?.golongan}{" "}
+                      </div>
+                      <div className="flex flex-row font-bold text-black dark:text-white text-title-ss mt-1">
+                        <div>NIP.</div>
+                        <div className='ml-2'>{peserta.penanggungjawab?.nip}</div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
+                        {profile.nama}
+                      </div>
+                      <div className="text-black dark:text-white text-title-ss mt-1">
+                        {" "}
+                        {profile.nama_pangkat}{" "}
+                      </div>
+                      <div className="flex flex-row font-bold text-black dark:text-white text-title-ss mt-1">
+                        <div>NIP.</div>
+                        <div className='ml-2'>{profile?.nip}</div>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-            {peserta.Uuid.Undangan.signature !== "-" && peserta.Uuid.Undangan.signature !== null ? (
-              <img src={peserta.Uuid.Undangan.signature} className="w-[270px] h-[180px]" alt="TTD" />
-            ) : <></>}
-            <div>
-              <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
-                {profile.nama}
-              </div>
-              <div className="text-black dark:text-white text-title-ss mt-1">
-                {" "}
-                {profile.nama_pangkat}{" "}
-              </div>
-              <div className="font-bold text-black dark:text-white text-title-ss mt-1">
-                NIP. {profile?.nip}
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
-      <div className="btn-submit flex flex-row justify-between mt-10 space-x-3">
-        <div className="w-[8em]">
-          <Button
-            variant="xl"
-            type="secondary"
-            className="button-container"
-            onClick={handleCancel}
-            rounded
-          >
-            <div className="flex justify-center items-center text-[#002DBB] font-Nunito">
-              <span className="button-text">Batal</span>
-            </div>
-          </Button>
+      {peserta.Uuid?.Pegawai?.nip === profile.nip && (
+        <div className="btn-submit flex flex-row justify-between mt-10 space-x-3">
+          <div className="w-[8em]">
+            <Button
+              variant="xl"
+              type="secondary"
+              className="button-container"
+              onClick={handleCancel}
+              rounded
+            >
+              <div className="flex justify-center items-center text-[#002DBB] font-Nunito">
+                <span className="button-text">Batal</span>
+              </div>
+            </Button>
+          </div>
+          <div className="w-[8em]">
+            <Button
+              variant="xl"
+              className="button-container"
+              onClick={handleSubmit}
+              loading={loading}
+              disabled={!peserta.isFilled ? true : false}
+              rounded
+            >
+              <div className="flex justify-center items-center text-white">
+                <span className="button-text">Simpan</span>
+              </div>
+            </Button>
+          </div>
         </div>
-        <div className="w-[8em]">
-          <Button
-            variant="xl"
-            className="button-container"
-            onClick={handleSubmit}
-            loading={loading}
-            disabled={!peserta.isFilled ? true : false}
-            rounded
-          >
-            <div className="flex justify-center items-center text-white">
-              <span className="button-text">Simpan</span>
-            </div>
-          </Button>
-        </div>
-      </div>
+      )}
 
       <XAddPeserta
         openAddPeserta={openAddPeserta}
         setOpenAddPeserta={setOpenAddPeserta}
         peserta={peserta}
         setPeserta={setPeserta}
+        profile={profile}
+        storedUser={storedUser}
+        setStoredUser={setStoredUser}
       />
     </div>
   )

@@ -68,9 +68,10 @@ const PesertaProps = ({ id }: PropTypes) => {
       });
     } else {
       const { data } = response.data;
+
       const updatedState = arr.map((item: any) => {
         const matchingData = data[0].Peserta.find((data: any) => {
-          return data.tanggal === item.tanggal;
+          return data.tanggal.split(', ')[1] === item.tanggal;
         });
 
         return matchingData
@@ -79,7 +80,7 @@ const PesertaProps = ({ id }: PropTypes) => {
             uuid: matchingData.uuid,
             jumlah_peserta: matchingData.jumlah_peserta,
             jenis_peserta: matchingData.jenis_peserta,
-            penanggungjawab: matchingData.Pegawai
+            penanggungjawab: matchingData.penanggungjawab
           }
           : item;
       });

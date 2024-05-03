@@ -49,12 +49,6 @@ const DetailProps = ({ id }: PropTypes) => {
 
   return (
     <div className='detail-peseta-container'>
-      <div className="bg-white dark:bg-meta-4 flex flex-col gap-2 shadow-lg py-4 text-center font-bold text-title-sm rounded rounded-lg border-none">
-        <div className='uppercase'>
-          Daftar Hadir
-        </div>
-        <div className='text-title-xsm2'>{peserta?.Uuid?.Pegawai?.nama}</div>
-      </div>
       {loading ? (
         <Loading loading={loading} setLoading={setLoading} />
       ) : (

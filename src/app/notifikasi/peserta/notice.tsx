@@ -12,10 +12,9 @@ import { shallowEqual, useSelector, useDispatch } from "react-redux";
 import { State } from "@/store/reducer";
 import Loading from "@/components/global/Loading/loading";
 import { setPayload } from "@/store/payload/action";
+import LaporanPesertaList from "@/components/pages/peserta/list";
 
 const NoticePesertaProps = () => {
-  const pathname = usePathname();
-  const dispatch = useDispatch();
   const [peserta, setPeserta] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -56,14 +55,10 @@ const NoticePesertaProps = () => {
             id_peserta: el.id,
             opd: el.Uuid.Perangkat_Daerah.nama_opd,
             pelapor: el.Uuid.Pegawai.nama,
-            tanggal: el.tanggal[0]?.startDate !== el.tanggal[0]?.endDate
-              ? getShortDate(el.tanggal[0]?.startDate) +
-              " - " +
-              getShortDate(el.tanggal[0]?.endDate)
-              : getShortDate(el.tanggal[0]?.startDate),
-            waktu: getTime(el.waktu) + " WIB",
-            acara: el.acara,
-            lokasi: el.lokasi,
+            tanggal: el.tanggal,
+            waktu: getTime(el.Uuid?.Undangan?.waktu) + " WIB",
+            acara: el.Uuid?.Undangan?.acara,
+            lokasi: el.Uuid?.Undangan?.lokasi,
           })
         })
         setPeserta(temp);
@@ -88,6 +83,13 @@ const NoticePesertaProps = () => {
           <div className="text-title-xsm">Daftar Hadir</div>
         </div>
       </div>
+      {loading ? (
+        <Loading loading={loading} setLoading={setLoading} />
+      ) : (
+        <LaporanPesertaList
+          data={peserta}
+        />
+      )}
     </div>
   )
 }

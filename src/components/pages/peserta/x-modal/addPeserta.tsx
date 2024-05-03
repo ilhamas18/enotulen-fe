@@ -18,9 +18,9 @@ interface PropTypes {
   setOpenAddPeserta: any;
   peserta: any;
   setPeserta: any;
-  profile: any;
-  storedUser: any;
-  setStoredUser: any;
+  profile?: any;
+  storedUser?: any;
+  setStoredUser?: any;
 }
 
 const XAddPeserta = ({
@@ -68,7 +68,8 @@ const XAddPeserta = ({
       }
       setLoading(false);
     } else {
-      const { data } = response.data;
+      const data = response.data.data.filter((el: any) => el.nip !== profile.nip)
+
       let temp: any = [];
       data.forEach((el: any) => {
         temp.push({
@@ -119,7 +120,7 @@ const XAddPeserta = ({
   const handleCancel = () => setOpenAddPeserta(false);
 
   return (
-    <CommonModal isOpen={openAddPeserta} onClose={setOpenAddPeserta} animate={true}>
+    <CommonModal isOpen={openAddPeserta} onClose={setOpenAddPeserta} size='md'>
       <div className='flex flex-col w-full py-3'>
         <div className='relative container'>
           <div className='text-center md:text-xsm text-title-xsm mb-6 font-bold'>Masukkan Jumlah Peserta</div>
@@ -170,7 +171,7 @@ const XAddPeserta = ({
                 {loading ? (
                   <div className='italic mt-4'>Sedang memuat data pegawai . . .</div>
                 ) : (
-                  <div className='fixed md:w-1/4 w-1/2 mt-14 z-999'>
+                  <div className='fixed w-1/2 mt-14 z-99999'>
                     <TextInput
                       type="dropdown"
                       id="user"
@@ -185,7 +186,7 @@ const XAddPeserta = ({
                       }}
                     />
                   </div>
-                )})
+                )}
               </div>
             )}
           </div>
@@ -222,7 +223,3 @@ const XAddPeserta = ({
 }
 
 export default XAddPeserta;
-
-function dispatch(arg0: { payload: any; type: "payload/setPayload"; }) {
-  throw new Error('Function not implemented.');
-}

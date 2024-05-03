@@ -83,8 +83,9 @@ const AddPesertaForm = ({
       uuid: undangan.uuid,
       jumlah_peserta: peserta[index].jumlah_peserta,
       jenis_peserta: peserta[index].jenis_peserta,
-      tanggal: rangeDate,
-      penanggungjawab: storedUser.length != 0 ? storedUser.nip : null
+      tanggal: getDay(rangeDate),
+      penanggungjawab: storedUser.length != 0 ? storedUser : null,
+      nip_penanggungjawab: storedUser.length != 0 ? storedUser.nip : null
     }
 
     const response = await fetchApi({
@@ -120,6 +121,19 @@ const AddPesertaForm = ({
       setLoading(false);
       setTrigger(true);
     }
+  }
+
+  const getDay = (dateString: string) => {
+    var dateParts = dateString.split(" ");
+    var day = parseInt(dateParts[0]);
+    var month = dateParts[1];
+    var year = parseInt(dateParts[2]);
+    var date = new Date(year, ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"].indexOf(month), day);
+    var days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    var dayName = days[date.getDay()];
+    var formattedDate = dayName + ", " + dateString;
+
+    return formattedDate;
   }
 
   return (
@@ -160,7 +174,7 @@ const AddPesertaForm = ({
             <div className="w-[2%]">:</div>
             <div className="w-[85%]">
               {/* {formatDateHandle(undangan.tanggal)} */}
-              {peserta[index].tanggal}
+              {getDay(peserta[index].tanggal)}
             </div>
           </div>
           <div className="flex gap-2 w-full">
@@ -242,7 +256,7 @@ const AddPesertaForm = ({
                   ) : <></>}
                 </div>
                 <div>
-                  {peserta[index].penanggungjawab !== null ? (
+                  {peserta[index].penanggungjawab !== null && peserta[index].penanggungjawab?.length != 0 ? (
                     <>
                       <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
                         {peserta[index].penanggungjawab?.nama}

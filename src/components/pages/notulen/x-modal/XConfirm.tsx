@@ -65,7 +65,7 @@ const ModalConfirm = ({
       }
       setLoading(false);
     } else {
-      const { data } = response.data;
+      const data = response.data.data.filter((el: any) => el.nip !== profile.nip);
       let temp: any = [];
       data.forEach((el: any) => {
         temp.push({

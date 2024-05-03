@@ -106,19 +106,20 @@ const LaporanPage = () => {
       if (matchingResponseItem) {
         const updatedPeserta = item.Peserta.map((peserta: any) => {
           const matchingData = matchingResponseItem.Peserta.find(
-            (responsePeserta: any) => responsePeserta.tanggal === peserta.tanggal
+            (responsePeserta: any) => responsePeserta.tanggal.split(', ')[1] === peserta.tanggal
           );
 
           return matchingData ? { ...matchingData } : peserta;
         });
 
         const newPeserta = matchingResponseItem.Peserta
-          .filter((responsePeserta: any) => !item.Peserta.some((peserta: any) => peserta.tanggal === responsePeserta.tanggal))
+          .filter((responsePeserta: any) => !item.Peserta.some((peserta: any) => peserta.tanggal === responsePeserta.tanggal.split(', ')[1]))
           .map((responsePeserta: any) => ({ ...responsePeserta }));
+
 
         const updatedNotulen = item.Notulens.map((notulen: any) => {
           const matchingData = matchingResponseItem.Notulens.find(
-            (responseNotulen: any) => localDateFormat(responseNotulen.tanggal[0].startDate) === notulen.tanggal
+            (el: any) => localDateFormat(el.tanggal[0].startDate) === notulen.tanggal
           )
 
           return matchingData ? { ...matchingData } : notulen

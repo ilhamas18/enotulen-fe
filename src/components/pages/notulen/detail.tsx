@@ -457,13 +457,15 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
                 </div>
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-10">
-                    <ul>
-                      {data.Uuid.Sasarans?.map((el: any, i: number) => (
-                        <li className="list-decimal" key={i}>
-                          {el.sasaran}
-                        </li>
-                      ))}
-                    </ul>
+                    {data.Uuid.Sasarans.length !== 0 ? (
+                      <ul>
+                        {data.Uuid.Sasarans?.map((el: any, i: number) => (
+                          <li className="list-decimal" key={i}>
+                            {el.sasaran}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : <div>-</div>}
                   </div>
                 </div>
               </div>

@@ -1303,7 +1303,7 @@ const AddNotulenForm = ({
       acara: values.acara,
       atasan: values.atasan?.data,
       status: values.rangeTanggal[0].startDate > new Date() ? 'drafted' : values.penanggungjawab !== undefined ? 'unread' : '-',
-      tanggal_surat: getIndoDate(values.dibuatTanggal),
+      tanggal_surat: values.dibuatTanggal,
       link_img_surat_undangan: values.suratUndangan,
       link_img_daftar_hadir: values.daftarHadir,
       link_img_spj: values.spj,
@@ -1313,7 +1313,8 @@ const AddNotulenForm = ({
       kode_opd: profile.Perangkat_Daerah.kode_opd,
       nip_pegawai: profile.nip,
       nip_atasan: values.atasan.value,
-      penanggungjawab: values.penanggungjawab !== undefined ? values.penanggungjawab.nip : null
+      penanggungjawab: values.penanggungjawab !== undefined ? values.penanggungjawab : null,
+      nip_penanggungjawab: values.penanggungjawab !== undefined ? values.penanggungjawab.nip : null
     };
 
     const response = await fetchApi({
