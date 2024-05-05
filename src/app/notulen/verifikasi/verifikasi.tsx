@@ -30,23 +30,28 @@ const VerifikasiProps = () => {
     shallowEqual
   );
 
+  const monthNames = [
+    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+  ];
+
   useEffect(() => {
     fetchData();
 
     if (month === null) {
       const currentDate = new Date();
-      const currentShortMonth = currentDate.getMonth() + 1;
-      const currentMonth = month !== null ? month.toLocaleString("id-ID", { month: "long", }) : currentDate.toLocaleString("id-ID", { month: "long", });
+      const currentMonthIndex = currentDate.getMonth();
       const currentYear = currentDate.getFullYear();
-
-      setMonth({ month: currentShortMonth, year: currentYear })
+      const currentMonthName = monthNames[currentMonthIndex];
+      const currentMonthAndYear = currentMonthName + ' ' + currentYear;
+      setMonth(currentMonthAndYear);
     }
   }, [month]);
 
   const fetchData = async () => {
     setLoading(true);
     const response = await fetchApi({
-      url: `/notulen/getAgreement/${profile.Perangkat_Daerah.kode_opd}/${month.month}/${month.year}`,
+      url: `/notulen/getAgreement/${profile.Perangkat_Daerah.kode_opd}/${month}`,
       method: "get",
       type: "auth",
     });
@@ -65,6 +70,7 @@ const VerifikasiProps = () => {
     } else {
       if (response.data.code == 200) {
         const { data } = response.data;
+        // console.log(data);
 
         const temp: any = [];
         data.map((el: any, i: number) => {
@@ -91,6 +97,8 @@ const VerifikasiProps = () => {
             lainLain: el.link_img_pendukung !== null ? "V" : "X",
           });
         });
+        console.log(temp, '?>?><');
+
         setNotulens(temp);
         setLoading(false);
       }
@@ -103,11 +111,11 @@ const VerifikasiProps = () => {
   };
 
   const handleDatePicked = (val: any) => {
-    let temp: any = {
-      month: val.$M + 1,
-      year: val.$y
-    }
-    setMonth(temp)
+    const date = new Date(val);
+    const month = monthNames[date.getMonth()];
+    const year = date.getFullYear();
+    const formattedDate = `${month} ${year}`;
+    setMonth(formattedDate);
   }
 
   return (
@@ -118,12 +126,14 @@ const VerifikasiProps = () => {
       </div>
       <div className="flex md:justify-between justify-center">
         <div></div>
-        <div className="bg-white mt-10">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
-              <DatePicker label={'"Bulan" & "Tahun"'} views={['month', 'year']} onChange={handleDatePicked} />
-            </DemoContainer>
-          </LocalizationProvider>
+        <div className="flex gap-2 mt-10">
+          <div className="bg-white">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
+                <DatePicker label={'Bulan & Tahun'} views={['month', 'year']} onChange={handleDatePicked} />
+              </DemoContainer>
+            </LocalizationProvider>
+          </div>
         </div>
       </div>
       <div style={gradientStyle} className="md:mt-[1em]">
@@ -135,7 +145,7 @@ const VerifikasiProps = () => {
       {loading ? (
         <Loading loading={loading} setLoading={setLoading} />
       ) : (
-        <LaporanNotulenAuth data={notulens} profile={profile} fetchData={fetchData} />
+        <LaporanNotulenAuth data={notulens} profile={profile} />
       )}
     </div>
   )

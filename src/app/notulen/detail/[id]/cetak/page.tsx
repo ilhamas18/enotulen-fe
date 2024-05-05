@@ -281,7 +281,7 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
               </div>
             </div>
             <div className="flex items-center justify-between px-4">
-              <div className="flex flex-col items-center justify-between text-center w-[45%] h-[20em]">
+              <div className="flex flex-col items-center justify-between text-center w-[45%] h-[22em]">
                 <div className="mt-[10em]">
                   <div className="font-bold text-black dark:text-white text-title-ss2">
                     Mengetahui,
@@ -291,7 +291,7 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                   </div>
                 </div>
                 {laporan.signature_atasan !== null && (
-                  <img src={laporan.signature_atasan} className="max-w-[180px] max-h-[60px]" alt="TTD" />
+                  <img src={laporan.signature_atasan} className="max-w-[180px] max-h-[80px]" alt="TTD" />
                 )}
                 <div>
                   <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
@@ -306,7 +306,7 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col items-center justify-between text-center w-[45%] h-[20em]">
+              <div className="flex flex-col items-center justify-between text-center w-[45%] h-[22em]">
                 <div className="text-right mt-12">
                   <div className="text-black dark:text-white text-title-ss2">
                     Madiun, {laporan.tanggal_surat.split(', ')[1]}
@@ -317,7 +317,7 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                     Yang Melapor,
                   </div>
                 </div>
-                {laporan.Pegawai === null ? (
+                {laporan.Notification === null ? (
                   <div>
                     {laporan.signature !== '-' || laporan.signature !== null && (
                       <div>
@@ -328,11 +328,11 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                       <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
                         {laporan.Uuid.Pegawai?.nama}
                       </div>
-                      <div className="text-black dark:text-white text-title-ss mt-1">
+                      <div className="text-black dark:text-white text-title-ss2 mt-1">
                         {" "}
                         {laporan.Uuid.Pegawai?.nama_pangkat}{" "}
                       </div>
-                      <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                      <div className="font-bold text-black dark:text-white text-title-ss2 mt-1">
                         NIP. {laporan.Uuid.Pegawai?.nip}
                       </div>
                     </div>
@@ -341,19 +341,19 @@ const CetakNotulen = ({ params }: { params: { id: number } }) => {
                   <div>
                     {laporan.signature !== '-' || laporan.signature !== null && (
                       <div>
-                        <img src={laporan.signature} className="max-w-[180px] max-h-[60px]" alt="TTD" />
+                        <img src={laporan.signature} className="max-w-[180px] max-h-[80px]" alt="TTD" />
                       </div>
                     )}
                     <div>
                       <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
-                        {laporan.Pegawai?.nama}
+                        {laporan.Notification?.Penanggungjawab?.nama}
                       </div>
-                      <div className="text-black dark:text-white text-title-ss mt-1">
+                      <div className="text-black dark:text-white text-title-ss2 mt-1">
                         {" "}
-                        {laporan.Pegawai?.nama_pangkat}{" "}
+                        {laporan.Notification?.Penanggungjawab?.nama_pangkat}{" "}
                       </div>
-                      <div className="font-bold text-black dark:text-white text-title-ss mt-1">
-                        NIP. {laporan.Pegawai?.nip}
+                      <div className="font-bold text-black dark:text-white text-title-ss2 mt-1">
+                        NIP. {laporan.Notification?.Penanggungjawab?.nip}
                       </div>
                     </div>
                   </div>

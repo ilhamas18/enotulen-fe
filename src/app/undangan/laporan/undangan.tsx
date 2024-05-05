@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import withAuth from "@/components/hocs/withAuth";
 import { shallowEqual, useSelector, useDispatch } from "react-redux";
 import { fetchApi } from "@/app/api/request";
@@ -17,6 +18,7 @@ import LaporanUndanganList from "@/components/pages/undangan/list";
 import { setPayload } from "@/store/payload/action";
 
 const LaporanUndanganProps = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [undangan, setUndangan] = useState<any>([]);
   const [month, setMonth] = useState<any>(null);
@@ -105,6 +107,11 @@ const LaporanUndanganProps = () => {
     setMonth(formattedDate);
   }
 
+  const goToAddNotulen = () => {
+    dispatch(setPayload([]));
+    router.push('/undangan/form');
+  }
+
   return (
     <div className="list-undangan-container relative">
       <div className="bg-white dark:bg-meta-4 shadow-card flex flex-col gap-2 py-4 text-center font-bold text-title-sm rounded-lg border-none">
@@ -115,12 +122,20 @@ const LaporanUndanganProps = () => {
       </div>
       <div className="flex md:justify-between justify-center">
         <div></div>
-        <div className="bg-white mt-10">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
-              <DatePicker label={'Bulan & Tahun'} views={['month', 'year']} onChange={handleDatePicked} />
-            </DemoContainer>
-          </LocalizationProvider>
+        <div className="flex gap-2 mt-10">
+          <div className="bg-white">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
+                <DatePicker label={'Bulan & Tahun'} views={['month', 'year']} onChange={handleDatePicked} />
+              </DemoContainer>
+            </LocalizationProvider>
+          </div>
+          {profile.role == 4 && (
+            <div
+              onClick={goToAddNotulen}
+              className="bg-xl-base px-3 mt-2 flex items-center justify-center text-white hover:bg-[#3b82f6] hover:cursor-pointer duration-300 rounded-sm"
+            >+</div>
+          )}
         </div>
       </div>
       <div style={gradientStyle} className="md:mt-[1em]">

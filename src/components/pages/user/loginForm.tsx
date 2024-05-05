@@ -205,7 +205,7 @@ const LoginForm: any = () => {
           text: 'Password salah!',
         })
         setLoading(false);
-      } else if (response.code == 500) {
+      } else {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
@@ -214,7 +214,7 @@ const LoginForm: any = () => {
         setLoading(false);
       }
       return false
-    } else if (response.success) {
+    } else {
       setAuthenticated(true);
       setActive(true);
       setCookie("refreshSession", response.data.data.access_token, {

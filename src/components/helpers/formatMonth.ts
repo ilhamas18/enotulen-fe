@@ -13,6 +13,20 @@ export const formatMonth = [
   'Desember'
 ];
 
+export const formatLocalDate = (inputDateStr: string) => {
+  const date = new Date(inputDateStr);
+
+  const options: any = {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'Asia/Jakarta' // Set the desired timezone
+  };
+
+  const formatter = new Intl.DateTimeFormat('id-ID', options);
+  return formatter.format(date);
+}
 
 export const formattedDate = (data: any) => {
   const dateParts = data.split('/');

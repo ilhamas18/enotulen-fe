@@ -8,7 +8,7 @@ import SignatureCanvas from 'react-signature-canvas';
 import { AiFillPlusCircle } from "react-icons/ai";
 import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
-import DateRangePicker from "../laporan/x-modal/XDateRangePicker";
+import DateRangePicker from "../notulen/x-modal/XDateRangePicker";
 import { conversionDate, formatDate, getTime } from "@/components/hooks/formatDate";
 import Loading from "@/components/global/Loading/loading";
 import { AiOutlineClose } from "react-icons/ai";

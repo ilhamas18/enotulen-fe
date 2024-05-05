@@ -653,6 +653,19 @@ const LaporanNotulenList = ({ data, profile, pathname }: PropTypes) => {
                   },
                 }}
               />
+            ) : profile.role == 3 ? (
+              <StyledDataGrid
+                {...dataRowsAdmin2}
+                onCellClick={handleOnCellClick}
+                getRowClassName={(params) => `super-app-theme--${params.row.status}`}
+                initialState={{
+                  pagination: {
+                    paginationModel: {
+                      pageSize: 5,
+                    },
+                  },
+                }}
+              />
             ) : profile.role == 4 && (
               pathname !== '/notifikasi/notulen' ? (
                 <StyledDataGrid

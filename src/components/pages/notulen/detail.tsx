@@ -294,10 +294,10 @@ const NotulenDetailProps = ({ data }: DetailProps) => {
                 <div className="md:mt-0 mt-2 md:w-[75%] w-full">
                   <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
                     <div className="flex gap-4">
-                      {data.Pegawai !== null ? (
+                      {data.Notification !== null ? (
                         <div className="flex gap-4">
-                          <span>{data.Pegawai.nama}</span>
-                          <span>({data.Pegawai.nip})</span>
+                          <span>{data.Notification?.Penanggungjawab?.nama}</span>
+                          <span>({data.Notification?.Penanggungjawab?.nip})</span>
                         </div>
                       ) : (
                         <>

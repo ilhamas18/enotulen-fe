@@ -24,6 +24,7 @@ import { locationList } from "@/components/data/location";
 import { fetchApi } from "@/app/api/request";
 import ModalConfirm from "./x-modal/XConfirm";
 import Swal from "sweetalert2";
+import { localDateFormat } from "@/components/helpers/formatMonth";
 
 const EditorBlock = dynamic(() => import("../../hooks/editor"));
 
@@ -869,7 +870,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                         <span>{values.dibuatTanggal}</span>
                       </div>
                     </div>
-                    {index !== undefined && notulens[index].uuid === undefined ? (
+                    {step === null && index !== undefined && notulens[index].uuid === undefined ? (
                       <div className="data flex flex-row w-full">
                         <div className="flex flex-col gap-2">
                           <div>Edit tanggal pembuatan notulen :</div>
@@ -888,7 +889,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                           />
                         </div>
                       </div>
-                    ) : <div className="w-full"></div>}
+                    ) : <div className="w-full flex justify-start"></div>}
                   </div>
                 </div>
               )}
@@ -1206,7 +1207,7 @@ function CreateForm({ handleSubmit, order, payload, tanggal, dibuatTanggal, ...o
       pendukung: payload.length != 0 ? payload.link_img_pendukung : null,
       signature: payload.length != 0 ? payload.signature : null,
       dibuatTanggal: payload.length != 0 ? dibuatTanggal : null,
-      penanggungjawab: payload.length != 0 ? payload.Pegawai : null
+      penanggungjawab: payload.length != 0 ? payload.Notification !== null ? payload.Notification?.Penanggungjawab : null : null
     }),
     validationSchema: Yup.object().shape({
       rangeTanggal: Yup.array()
@@ -1298,7 +1299,7 @@ const AddNotulenForm = ({
   }
 
   const handleSubmit = async (values: FormValues) => {
-    // setLoading(true);
+    setLoading(true);
     let uuid;
     if (payload.step1 !== undefined) uuid = payload.step1.uuid;
     else uuid = uuidv4();
@@ -1315,8 +1316,8 @@ const AddNotulenForm = ({
       lokasi: values.lokasi,
       acara: values.acara,
       atasan: values.atasan?.data,
-      status: values.rangeTanggal[0].startDate > new Date() ? 'drafted' : values.penanggungjawab !== undefined ? 'unread' : '-',
-      tanggal_surat: payload.step1 !== undefined ? values.dibuatTanggal : getDay(values.dibuatTanggal),
+      status: values.dibuatTanggal > new Date() ? 'drafted' : values.penanggungjawab !== null ? 'unread' : '-',
+      tanggal_surat: payload.step1 !== undefined ? getDay(localDateFormat(values.dibuatTanggal)) : getDay(values.dibuatTanggal),
       link_img_surat_undangan: values.suratUndangan,
       link_img_daftar_hadir: values.daftarHadir,
       link_img_spj: values.spj,
@@ -1326,58 +1327,51 @@ const AddNotulenForm = ({
       kode_opd: profile.Perangkat_Daerah.kode_opd,
       nip_pegawai: profile.nip,
       nip_atasan: values.atasan.value,
-      penanggungjawab: values.penanggungjawab !== undefined ? values.penanggungjawab : null,
-      nip_penanggungjawab: values.penanggungjawab !== undefined ? values.penanggungjawab.nip : null
+      nip_penanggungjawab_notulen: values.dibuatTanggal > new Date() ? null : values.penanggungjawab !== null ? values.penanggungjawab.nip : null
     };
-    console.log(values.dibuatTanggal, new Date());
 
-    console.log(payload.step1);
+    const response = await fetchApi({
+      url: `/notulen/addNotulen`,
+      method: "post",
+      type: "auth",
+      body: dataNotulen
+    });
 
-    console.log(dataNotulen);
-
-
-    // const response = await fetchApi({
-    //   url: `/notulen/addNotulen`,
-    //   method: "post",
-    //   type: "auth",
-    //   body: dataNotulen
-    // });
-
-    // if (!response.success) {
-    //   if (response.data.code == 400) {
-    //     setLoading(false);
-    //     Swal.fire({
-    //       icon: "error",
-    //       title: "Oops...",
-    //       text: "Periksa kembali data Notulen!",
-    //     });
-    //   } else if (response.data.code == 500) {
-    //     setLoading(false);
-    //     Swal.fire({
-    //       icon: "error",
-    //       title: "Oops...",
-    //       text: "Koneksi bermasalah!",
-    //     });
-    //   }
-    // } else {
-    //   Swal.fire({
-    //     position: "center",
-    //     icon: "success",
-    //     title: "Berhasil menambahkan notulen",
-    //     showConfirmButton: false,
-    //     timer: 1500,
-    //   });
-    //   if (step !== null) {
-    //     setLoading(false);
-    //     setTrigger(true);
-    //   } else {
-    //     if (type !== undefined) {
-    //       router.push('/laporan');
-    //     } else {
-    //       router.push('/notulen/laporan');
-    //     }
-    //   }
-    // }
+    if (!response.success) {
+      if (response.data.code == 400) {
+        setLoading(false);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Periksa kembali data Notulen!",
+        });
+      } else if (response.data.code == 500) {
+        setLoading(false);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Koneksi bermasalah!",
+        });
+      }
+    } else {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Berhasil menambahkan notulen",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      if (step !== null) {
+        setLoading(false);
+        setTrigger(true);
+      } else {
+        if (type !== undefined) {
+          router.push('/laporan');
+        } else {
+          router.push('/notulen/laporan');
+        }
+      }
+    }
   };
 
   return (

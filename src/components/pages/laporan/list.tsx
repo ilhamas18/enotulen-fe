@@ -83,6 +83,7 @@ const LaporanList = ({ data, profile, fetchData }: PropTypes) => {
   };
 
   const handleClickAddForm = (data: any, index: number, type: string, url: string) => {
+    dispatch(setPayload([]));
     if (data.Undangan !== null) {
       const dateRange = dateRangeFormat(data.Undangan.tanggal[0]);
       const dateFormat = dateISOFormat(dateRange[index]);

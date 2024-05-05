@@ -25,7 +25,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { Line } from 'react-chartjs-2';
 import WelcomeBanner from '@/components/global/Banner/WelcomeBanner';
-import SEO from '@/components/global/seo';
 import { setPayload } from '@/store/payload/action';
 
 ChartJS.register(
@@ -210,7 +209,7 @@ function Home() {
     <div>
       <WelcomeBanner />
       <div
-        className={`absolute right-0 top-[9em] py-2 px-4 rounded-md bg-gradient-to-r from-[#6366f1] from-10% via-[#0ea5e9] via-30% to-[#10b981] to-90% text-white font-bold text-center mb-3 animate-pulse hover:shadow-lg hover:cursor-pointer hover:scale-102 ${profile.role == 1 ? 'hidden' : 'show'}`}
+        className={`absolute right-0 top-[9em] py-2 px-4 rounded-md bg-gradient-to-r from-[#6366f1] from-10% via-[#0ea5e9] via-30% to-[#10b981] to-90% text-white font-bold text-center mb-3 animate-pulse hover:shadow-lg hover:cursor-pointer hover:scale-102 ${profile.role != 4 ? 'hidden' : 'show'}`}
         onClick={handleGoToForm}
       >Tambah Undangan & Notulen</div>
       <div className='bg-white h-[400px] w-full relative flex mt-[5em]'>
