@@ -109,7 +109,7 @@ const LaporanUndanganProps = () => {
 
   const goToAddNotulen = () => {
     dispatch(setPayload([]));
-    router.push('/undangan/form');
+    router.push('/undangan/tambah');
   }
 
   return (
