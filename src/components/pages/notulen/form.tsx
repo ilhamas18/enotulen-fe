@@ -1316,7 +1316,7 @@ const AddNotulenForm = ({
       lokasi: values.lokasi,
       acara: values.acara,
       atasan: values.atasan?.data,
-      status: values.dibuatTanggal > new Date() ? 'drafted' : values.penanggungjawab !== null ? 'unread' : '-',
+      status: values.dibuatTanggal > new Date() ? 'drafted' : '-',
       tanggal_surat: payload.step1 !== undefined ? getDay(localDateFormat(values.dibuatTanggal)) : getDay(values.dibuatTanggal),
       link_img_surat_undangan: values.suratUndangan,
       link_img_daftar_hadir: values.daftarHadir,

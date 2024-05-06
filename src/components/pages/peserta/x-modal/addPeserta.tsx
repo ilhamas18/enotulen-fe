@@ -47,7 +47,7 @@ const XAddPeserta = ({
   const handleChangePembuat = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStoredPembuat((event.target as HTMLInputElement).value);
     fetchPegawai();
-    if ((event.target as HTMLInputElement).value) setStoredUser([]);
+    if ((event.target as HTMLInputElement).value) setStoredUser(null);
   };
 
   const fetchPegawai = async () => {
@@ -97,7 +97,7 @@ const XAddPeserta = ({
       if (!isNaN(storedNumber)) {
         const arr = [...peserta];
         arr[index].jumlah_peserta = +storedNumber;
-        arr[index].penanggungjawab = storedUser;
+        arr[index].Notification.Penanggungjawab = storedUser;
         setPeserta(arr);
       }
       const newArr2 = [...peserta];
@@ -107,7 +107,7 @@ const XAddPeserta = ({
       const temp = peserta;
       temp.jumlah_peserta = +storedNumber;
       temp.jenis_peserta = storedParticipant;
-      temp.penanggungjawab = storedUser;
+      temp.Notification.Penanggungjawab = storedUser;
       temp.isFilled = true;
       setPeserta(temp);
     }
@@ -207,7 +207,7 @@ const XAddPeserta = ({
               onClick={handleSave}
               disabled={
                 storedPembuat === 'otomatis' ? storedNumber == 0 || storedParticipant == '' ? true : false
-                  : storedUser.length == 0 ? true : false
+                  : storedUser === null ? true : false
               }
               rounded
             >

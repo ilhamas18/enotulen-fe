@@ -22,14 +22,14 @@ const LaporanNotulenList = ({ data, profile, pathname }: PropTypes) => {
   const handleOnCellClick = (params: any) => router.push(`/notulen/detail/${params.row.index}`);
 
   const handleOnCellClickNotice = async (params: any) => {
-    if (params.row.status !== '-') {
+    if (params.row.status === 'unread') {
       setLoading(true);
       const response = await fetchApi({
-        url: `/notulen/updateStatus/${params.row.id_notulen}`,
+        url: `/notulen/updateNotification/${params.row.id_notulen}`,
         method: 'put',
         type: 'auth',
         body: {
-          status: '-'
+          status: null
         }
       })
 
