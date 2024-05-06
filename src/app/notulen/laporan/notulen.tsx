@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { fetchApi } from "@/app/api/request";
 import Swal from "sweetalert2";
 import LaporanNotulenList from "@/components/pages/notulen/list";
-import Breadcrumb from "@/components/global/Breadcrumbs/Breadcrumb";
 import { getShortDate, getTime } from "@/components/hooks/formatDate";
 import { ImTable2 } from "react-icons/im";
 import withAuth from "@/components/hocs/withAuth";
@@ -94,7 +93,7 @@ const LaporanNotulenProps = () => {
             daftarHadir: el.link_img_daftar_hadir !== null ? "V" : "X",
             undangan: el.link_img_surat_undangan !== null ? "V" : "X",
             spj: el.link_img_spj !== null ? "V" : "X",
-            lainLain: el.link_img_pendukung !== null ? "V" : "X",
+            lainLain: el.link_img_pendukung !== null ? "V" : "X"
           });
         });
         setNotulens(temp);
@@ -116,7 +115,10 @@ const LaporanNotulenProps = () => {
     setMonth(formattedDate);
   }
 
-  const goToAddNotulen = () => router.push('/notulen/form');
+  const goToAddNotulen = () => {
+    dispatch(setPayload([]));
+    router.push('/notulen/form');
+  }
 
   return (
     <div>

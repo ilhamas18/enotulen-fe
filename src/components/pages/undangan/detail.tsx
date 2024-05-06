@@ -6,7 +6,7 @@ import { fetchApi } from "@/app/api/request";
 import { shallowEqual, useSelector } from "react-redux";
 import { State } from "@/store/reducer";
 import { useState } from "react";
-import XConfirmStatus from "../laporan/x-modal/XConfirmStatus";
+import XConfirmStatus from "../notulen/x-modal/XConfirmStatus";
 import Swal from "sweetalert2";
 import { getTime } from "@/components/hooks/formatDate";
 import { formatDate } from "@/components/hooks/formatDate";

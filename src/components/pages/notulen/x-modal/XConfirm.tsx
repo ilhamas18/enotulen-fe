@@ -37,13 +37,14 @@ const ModalConfirm = ({
 }: PropTypes) => {
   const [storedPembuat, setStoredPembuat] = useState<string>('otomatis');
   const [listUser, setListUser] = useState<any>([]);
-  const [storedUser, setStoredUser] = useState<any>([]);
   const [sign, setSign] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleChangePembuat = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleChange({
+      target: { name: "penanggungjawab", value: null },
+    });
     setStoredPembuat((event.target as HTMLInputElement).value);
-    if ((event.target as HTMLInputElement).value) setStoredUser([]);
     fetchPegawai();
   };
 

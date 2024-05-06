@@ -20,6 +20,8 @@ import { State } from "@/store/reducer";
 import axios from "axios";
 import { getCookies } from "cookies-next";
 import { IoMdClose } from "react-icons/io";
+import { formatLocalDate, formattedDate, localDateFormat } from "@/components/helpers/formatMonth";
+import { dateISOFormat } from "@/components/helpers/dateRange";
 
 const EditorBlock = dynamic(() => import("../../hooks/editor"));
 
@@ -692,7 +694,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
               <div className="data items-center flex md:flex-row flex-col md:gap-4 w-full">
                 <div className="data flex flex-row mt-4 md:mt-0 md:w-[25%] w-full">
                   <div className="flex border-2 border-light-gray rounded-lg w-full py-3 px-4">
-                    <span>{formatDate(values.dibuatTanggal)}</span>
+                    <span>{values.dibuatTanggal}</span>
                   </div>
                 </div>
                 <div className="w-[15%] text-right">Edit Waktu Pembuatan: </div>
@@ -704,7 +706,7 @@ const FormField = (props: OtherProps & FormikProps<FormValues>) => {
                     touched={touched.dibuatTanggal}
                     change={(e: any) => {
                       handleChange({
-                        target: { name: "dibuatTanggal", value: e.$d },
+                        target: { name: "dibuatTanggal", value: formatLocalDate(e.$d) },
                       });
                     }}
                     errors={errors.dibuatTanggal}
@@ -1004,8 +1006,10 @@ interface PropTypes {
 }
 
 const EditNotulenForm = ({ dataNotulen }: PropTypes) => {
+  const router = useRouter();
   const [atasan, setAtasan] = useState<any>(null);
   const [dibuatTanggal, setDibuatTanggal] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { profile } = useSelector(
     (state: State) => ({
@@ -1013,9 +1017,6 @@ const EditNotulenForm = ({ dataNotulen }: PropTypes) => {
     }),
     shallowEqual
   );
-
-  const [loading, setLoading] = useState<boolean>(false);
-  const router = useRouter();
 
   useEffect(() => {
     setAtasan({
@@ -1029,37 +1030,10 @@ const EditNotulenForm = ({ dataNotulen }: PropTypes) => {
         jabatan: dataNotulen.atasan.jabatan
       },
     })
-
-    formattedDate();
+    if (dataNotulen.tanggal_surat) {
+      setDibuatTanggal(dataNotulen.tanggal_surat);
+    }
   }, []);
-
-  const formattedDate = () => {
-    let tempDate: any = dataNotulen.Uuid.hari + '/' + Number(dataNotulen.Uuid.bulan - 1) + '/' + dataNotulen.Uuid.tahun;
-    const dateParts = tempDate.split('/');
-    const day = parseInt(dateParts[0], 10);
-    const month = parseInt(dateParts[1], 10); // Months are 0-based (0 = January, 1 = February, etc.)
-    const year = parseInt(dateParts[2], 10);
-    // Create a Date object with the parsed values
-    const formattedDate = new Date(year, month, day);
-
-    // Define a formatting option for the date
-    const options: any = {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZoneName: 'long',
-      timeZone: 'Asia/Jakarta' // Set the desired time zone
-    };
-
-    // Format the date using the Intl.DateTimeFormat API
-    const formatter = new Intl.DateTimeFormat('en-US', options);
-    const formattedDateString = formatter.format(formattedDate);
-    setDibuatTanggal(formattedDate);
-  }
 
   const handleSubmit = async (values: FormValues) => {
     setLoading(true);
@@ -1075,17 +1049,13 @@ const EditNotulenForm = ({ dataNotulen }: PropTypes) => {
       acara: values.acara,
       atasan: values.atasan.data,
       status: "editted",
-      hari: new Date(values.dibuatTanggal).getDate(),
-      bulan: new Date(values.dibuatTanggal).getMonth() + 1,
-      tahun: new Date(values.dibuatTanggal).getFullYear(),
+      tanggal_surat: values.dibuatTanggal,
       link_img_surat_undangan: values.suratUndangan,
       link_img_daftar_hadir: values.daftarHadir,
       link_img_spj: values.spj,
       link_img_foto: values.foto,
       link_img_pendukung: values.pendukung,
       signature: values.signature !== '' ? values.signature : '-',
-      kode_opd: profile.Perangkat_Daerah.kode_opd,
-      nip_pegawai: profile.nip,
       nip_atasan: values.atasan.value
     };
 

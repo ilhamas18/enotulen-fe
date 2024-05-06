@@ -84,8 +84,7 @@ const AddPesertaForm = ({
       jumlah_peserta: peserta[index].jumlah_peserta,
       jenis_peserta: peserta[index].jenis_peserta,
       tanggal: getDay(rangeDate),
-      penanggungjawab: storedUser.length != 0 ? storedUser : null,
-      nip_penanggungjawab: storedUser.length != 0 ? storedUser.nip : null
+      nip_penanggungjawab_peserta: storedUser.length != 0 ? storedUser.nip : null
     }
 
     const response = await fetchApi({
@@ -168,30 +167,30 @@ const AddPesertaForm = ({
         </div>
         <div className='text-black mt-[4em] text-ss font-medium'>
           <div className="flex gap-2 w-full">
-            <div className="w-[10%]">
+            <div className="w-[15%]">
               Hari / Tanggal
             </div>
             <div className="w-[2%]">:</div>
-            <div className="w-[85%]">
+            <div className="w-[83%]">
               {/* {formatDateHandle(undangan.tanggal)} */}
-              {getDay(peserta[index].tanggal)}
+              {peserta[index].tanggal}
             </div>
           </div>
           <div className="flex gap-2 w-full">
-            <div className="w-[10%]">
+            <div className="w-[15%]">
               Waktu
             </div>
             <div className="w-[2%]">:</div>
-            <div className="w-[85%]">
+            <div className="w-[83%]">
               {getTime(undangan.waktu)} WIB
             </div>
           </div>
           <div className="flex gap-2 w-full">
-            <div className="w-[10%]">
+            <div className="w-[15%]">
               Tempat
             </div>
             <div className="w-[2%]">:</div>
-            <div className="w-[85%]">
+            <div className="w-[83%]">
               <div className='flex flex-col'>
                 {undangan.lokasi.split(', ').map((el: any, i: number) => (
                   <div key={i}>{el}</div>
@@ -245,49 +244,49 @@ const AddPesertaForm = ({
         <div className='signature mt-14 flex justify-between'>
           <div></div>
           <div>
-            {peserta[index].penanggungjawab !== undefined && (
-              <div className='flex flex-col items-center justify-between text-center w-[45%] h-[8em]'>
-                <div className="font-bold text-black dark:text-white text-title-ss mt-1">
-                  Pembuat
-                </div>
-                <div>
-                  {undangan.signature !== "-" && undangan.signature !== null ? (
-                    <img src={undangan.signature} className="w-[270px] h-[100px]" alt="TTD" />
-                  ) : <></>}
-                </div>
-                <div>
-                  {peserta[index].penanggungjawab !== null && peserta[index].penanggungjawab?.length != 0 ? (
-                    <>
-                      <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
-                        {peserta[index].penanggungjawab?.nama}
-                      </div>
-                      <div className="text-black dark:text-white text-title-ss mt-1">
-                        {" "}
-                        {peserta[index].penanggungjawab?.golongan}{" "}
-                      </div>
-                      <div className="flex flex-row font-bold text-black dark:text-white text-title-ss mt-1">
-                        <div>NIP.</div>
-                        <div className='ml-2'>{peserta[index].penanggungjawab?.nip}</div>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
-                        {profile.nama}
-                      </div>
-                      <div className="text-black dark:text-white text-title-ss mt-1">
-                        {" "}
-                        {profile.nama_pangkat}{" "}
-                      </div>
-                      <div className="flex flex-row font-bold text-black dark:text-white text-title-ss mt-1">
-                        <div>NIP.</div>
-                        <div className='ml-2'>{profile?.nip}</div>
-                      </div>
-                    </>
-                  )}
-                </div>
+            {/* {peserta[index].penanggungjawab !== undefined && ( */}
+            <div className='flex flex-col items-center justify-between text-center w-[45%] h-[11em]'>
+              <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                Pembuat
               </div>
-            )}
+              <div>
+                {undangan.signature !== "-" && undangan.signature !== null ? (
+                  <img src={undangan.signature} className="w-[270px] h-[180px]" alt="TTD" />
+                ) : <></>}
+              </div>
+              <div>
+                {peserta[index].penanggungjawab !== undefined ? (
+                  <>
+                    <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
+                      {peserta[index].penanggungjawab?.nama}
+                    </div>
+                    <div className="text-black dark:text-white text-title-ss mt-1">
+                      {" "}
+                      {peserta[index].penanggungjawab?.nama_pangkat}{" "}
+                    </div>
+                    <div className="flex flex-row font-bold text-black dark:text-white text-title-ss mt-1">
+                      <div>NIP.</div>
+                      <div className='ml-2'>{peserta[index].penanggungjawab?.nip}</div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
+                      {profile.nama}
+                    </div>
+                    <div className="text-black dark:text-white text-title-ss mt-1">
+                      {" "}
+                      {profile.nama_pangkat}{" "}
+                    </div>
+                    <div className="flex flex-row font-bold text-black dark:text-white text-title-ss mt-1">
+                      <div>NIP.</div>
+                      <div className='ml-2'>{profile?.nip}</div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+            {/* )} */}
           </div>
         </div>
         {peserta[index].jumlah_peserta != 0 && peserta[index].uuid === undefined && (

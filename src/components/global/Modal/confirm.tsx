@@ -24,7 +24,7 @@ const ModalConfirm = ({
   handleNext,
 }: PropTypes) => {
   return (
-    <CommonModal isOpen={openModal} onClose={setOpenModal} animate={true}>
+    <CommonModal isOpen={openModal} onClose={setOpenModal} size='md'>
       <div className="relative items-center flex flex-col justify-between space-y-4 gap-2 pt-2">
         {condition === "success" ? (
           <>

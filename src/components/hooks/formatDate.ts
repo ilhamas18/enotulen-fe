@@ -34,7 +34,7 @@ export const getShortDate = (input: any) => {
   // Extract the day, month, and year components
   const day = date.getUTCDate();
   // Note: Months are zero-indexed, so we add 1 to get the correct month
-  const month = date.getUTCMonth() + 1;
+  const month = date.getUTCMonth();
   const year = date.getUTCFullYear();
 
   // Format the date components

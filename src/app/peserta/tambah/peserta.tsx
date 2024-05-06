@@ -80,10 +80,11 @@ const PesertaProps = ({ id }: PropTypes) => {
             uuid: matchingData.uuid,
             jumlah_peserta: matchingData.jumlah_peserta,
             jenis_peserta: matchingData.jenis_peserta,
-            penanggungjawab: matchingData.penanggungjawab
+            penanggungjawab: matchingData.Notification?.Penanggungjawab
           }
           : item;
       });
+
       if (data[0].Peserta.length != 0) setPeserta(updatedState);
       setLoading(false);
       setTrigger(false);

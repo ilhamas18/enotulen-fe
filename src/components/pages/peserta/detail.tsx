@@ -56,7 +56,6 @@ const DetailPeserta = ({
   const [openAddPeserta, setOpenAddPeserta] = useState<boolean>(false);
   const [storedUser, setStoredUser] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  console.log(peserta, '??/');
 
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
@@ -82,10 +81,9 @@ const DetailPeserta = ({
   const handleSubmit = async () => {
     setLoading(true);
     const payload = {
-      uuid: peserta.uuid,
       jumlah_peserta: peserta.jumlah_peserta,
       jenis_peserta: peserta.jenis_peserta,
-      penanggungjawab: storedUser.length != 0 ? storedUser.nip : null
+      nip_penanggungjawab_peserta: storedUser !== null ? storedUser.nip : null
     }
     const response = await fetchApi({
       url: `/peserta/editPeserta/${id}`,
@@ -265,49 +263,44 @@ const DetailPeserta = ({
         <div className='signature mt-14 flex justify-between'>
           <div></div>
           <div>
-            {peserta.penanggungjawab !== undefined && (
-              <div className='flex flex-col items-center justify-between text-center w-[45%] h-[8em]'>
-                <div className="font-bold text-black dark:text-white text-title-ss mt-1">
-                  Pembuat
-                </div>
-                <div>
-                  {peserta.Uuid.Undangan.signature !== "-" && peserta.Uuid.Undangan.signature !== null ? (
-                    <img src={peserta.Uuid.Undangan.signature} className="w-[270px] h-[100px]" alt="TTD" />
-                  ) : <></>}
-                </div>
-                <div>
-                  {peserta.penanggungjawab !== null ? (
-                    <>
-                      <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
-                        {peserta.penanggungjawab?.nama}
-                      </div>
-                      <div className="text-black dark:text-white text-title-ss mt-1">
-                        {" "}
-                        {peserta.penanggungjawab?.golongan}{" "}
-                      </div>
-                      <div className="flex flex-row font-bold text-black dark:text-white text-title-ss mt-1">
-                        <div>NIP.</div>
-                        <div className='ml-2'>{peserta.penanggungjawab?.nip}</div>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
-                        {profile.nama}
-                      </div>
-                      <div className="text-black dark:text-white text-title-ss mt-1">
-                        {" "}
-                        {profile.nama_pangkat}{" "}
-                      </div>
-                      <div className="flex flex-row font-bold text-black dark:text-white text-title-ss mt-1">
-                        <div>NIP.</div>
-                        <div className='ml-2'>{profile?.nip}</div>
-                      </div>
-                    </>
-                  )}
-                </div>
+            <div className='flex flex-col items-center justify-between text-center h-[8em]'>
+              <div className="font-bold text-black dark:text-white text-title-ss mt-1">
+                Pembuat
               </div>
-            )}
+              <div className="w-[270px] h-[100px]">
+              </div>
+              <div>
+                {peserta.Notification !== null && peserta.Notification?.Penanggungjawab !== null ? (
+                  <>
+                    <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
+                      {peserta.Notification?.Penanggungjawab?.nama}
+                    </div>
+                    <div className="text-black dark:text-white text-title-ss mt-1">
+                      {" "}
+                      {peserta.Notification?.Penanggungjawab?.golongan}{" "}
+                    </div>
+                    <div className="flex flex-row font-bold text-black dark:text-white text-title-ss mt-1">
+                      <div>NIP.</div>
+                      <div className='ml-2'>{peserta.Notification?.Penanggungjawab?.nip}</div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="font-bold text-black dark:text-white text-title-ss2 border-b border-black">
+                      {profile.nama}
+                    </div>
+                    <div className="text-black dark:text-white text-title-ss mt-1">
+                      {" "}
+                      {profile.nama_pangkat}{" "}
+                    </div>
+                    <div className="flex flex-row font-bold text-black dark:text-white text-title-ss mt-1">
+                      <div>NIP.</div>
+                      <div className='ml-2'>{profile?.nip}</div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
